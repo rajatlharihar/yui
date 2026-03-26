@@ -172,6 +172,69 @@ body.on-link #cur-dot{background:var(--red);transform:translate(-50%,-50%) scale
 .chef-kanji{font-size:120px;font-weight:900;color:rgba(26,22,18,.04);position:absolute;bottom:-20px;right:40px;line-height:1;pointer-events:none;letter-spacing:-.04em;}
 .chef-section.reverse .chef-kanji{right:auto;left:40px;}
 
+/* HAMBURGER BUTTON */
+.nav-hamburger{display:none;flex-direction:column;gap:4px;padding:8px;cursor:pointer;z-index:900}
+.nav-hamburger span{width:4px;height:4px;border-radius:50%;background:var(--text);transition:background .2s}
+.nav-hamburger.active span{background:var(--red)}
+
+/* MOBILE NAV DRAWER */
+.nav-drawer{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(255,255,255,.98);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:20px 24px;z-index:799;flex-direction:column;gap:16px;transform:translateY(-100%);opacity:0;transition:transform .35s var(--ease),opacity .35s var(--ease)}
+.nav-drawer.open{transform:translateY(0);opacity:1}
+.nav-drawer a{font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text);padding:10px 0;border-bottom:1px solid var(--border)}
+.nav-drawer a:last-child{border-bottom:none}
+.nav-drawer a.active{color:var(--red);font-weight:700}
+
+/* ── RESPONSIVE: TABLET (≤768px) ──────────────────── */
+@media(max-width:768px){
+  .nav{padding:0 20px;height:64px}
+  .nav-logo{margin-top:0;width:26px;height:46px}
+  .nav-logo-full{opacity:0;pointer-events:none}
+  .nav-logo-mark{opacity:1;pointer-events:auto}
+  .nav-center{display:none}
+  .nav-cta{display:none}
+  .nav-hamburger{display:flex}
+  .nav-drawer{display:flex}
+
+  .about-hero{grid-template-columns:1fr;min-height:auto;padding-top:64px}
+  .about-hero-text{padding:40px 24px 32px}
+  .about-hed{font-size:clamp(36px,7vw,56px)}
+  .about-logo-panel{min-height:320px}
+
+  .chef-section{grid-template-columns:1fr;min-height:auto}
+  .chef-section.reverse{direction:ltr}
+  .chef-photo{min-height:320px}
+  .chef-info{padding:48px 24px}
+  .chef-section.reverse .chef-info{padding:48px 24px}
+  .chef-kanji{font-size:72px;bottom:-10px;right:20px}
+  .chef-section.reverse .chef-kanji{left:20px}
+
+  .footer{padding:48px 24px 28px}
+  .footer-body{grid-template-columns:1fr 1fr;gap:32px;padding-bottom:32px}
+  .footer-bottom{flex-direction:column;gap:12px;align-items:flex-start}
+
+  .marquee-item{font-size:10px;padding:0 20px;gap:20px}
+}
+
+/* ── RESPONSIVE: MOBILE (≤480px) ──────────────────── */
+@media(max-width:480px){
+  .nav{padding:0 14px}
+
+  .about-hero-text{padding:28px 16px 24px}
+  .about-hed{font-size:clamp(28px,8vw,42px)}
+  .about-logo-panel{min-height:240px}
+
+  .chef-photo{min-height:240px}
+  .chef-info{padding:32px 16px}
+  .chef-section.reverse .chef-info{padding:32px 16px}
+  .chef-name{font-size:clamp(28px,6vw,42px)}
+  .chef-body{font-size:14px}
+  .chef-kanji{font-size:56px}
+
+  .footer{padding:32px 16px 20px}
+  .footer-body{grid-template-columns:1fr;gap:24px;padding-bottom:24px}
+
+  .marquee-item{font-size:9px;padding:0 14px;gap:14px}
+}
 </style>
 </head>
 <body>
@@ -188,7 +251,15 @@ body.on-link #cur-dot{background:var(--red);transform:translate(-50%,-50%) scale
   </a>
   <nav class="nav-center"><a href="index.html" class="hov">Home</a><a href="menu.html" class="hov">Menu</a><a href="about.html" class="active hov">About</a><a href="reservation.html" class="hov">Reservation</a></nav>
   <a href="reservation.html" class="nav-cta hov">Reserve a Table</a>
+  <div class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
 </nav>
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html">Home</a>
+  <a href="menu.html">Menu</a>
+  <a href="about.html" class="active">About</a>
+  <a href="reservation.html">Reservation</a>
+</div>
+
 
 <section class="about-hero">
   <div class="about-logo-panel" id="aboutLogoPanel">
@@ -380,6 +451,14 @@ document.querySelectorAll('.r').forEach(el=>obs.observe(el));
   });
   panel.addEventListener('mouseenter',()=>inner.style.transition='none');
 })();
+
+// Mobile nav toggle
+function toggleMobileNav(){
+  const drawer=document.getElementById('navDrawer');
+  const hamburger=document.getElementById('navHamburger');
+  drawer.classList.toggle('open');
+  hamburger.classList.toggle('active');
+}
 </script>
 </body>
 </html>

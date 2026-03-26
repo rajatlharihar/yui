@@ -108,6 +108,52 @@ body.on-link #cur-dot{background:#D22B2B;transform:translate(-50%,-50%) scale(1.
 .cf-submit svg{width:15px;height:15px}
 
 .marquee{margin-top:0!important;padding-top:13px}
+
+/* HAMBURGER BUTTON */
+.nav-hamburger{display:none;flex-direction:column;gap:4px;padding:8px;cursor:pointer;z-index:900}
+.nav-hamburger span{width:4px;height:4px;border-radius:50%;background:var(--text);transition:background .2s}
+.nav-hamburger.active span{background:var(--red)}
+
+/* MOBILE NAV DRAWER */
+.nav-drawer{display:none;position:fixed;top:64px;left:0;right:0;background:rgba(255,255,255,.98);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:20px 24px;z-index:799;flex-direction:column;gap:16px;transform:translateY(-100%);opacity:0;transition:transform .35s var(--ease),opacity .35s var(--ease)}
+.nav-drawer.open{transform:translateY(0);opacity:1}
+.nav-drawer a{font-size:14px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text);padding:10px 0;border-bottom:1px solid var(--border)}
+.nav-drawer a:last-child{border-bottom:none}
+.nav-drawer a.active{color:var(--red);font-weight:700}
+
+/* ── RESPONSIVE: TABLET (≤768px) ──────────────────── */
+@media(max-width:768px){
+  .nav{padding:0 20px}
+  .nav-center{display:none}
+  .nav-cta{display:none}
+  .nav-hamburger{display:flex}
+  .nav-drawer{display:flex}
+
+  .res-wrap{grid-template-columns:1fr;min-height:auto}
+  .res-left{padding:80px 24px 48px;min-height:auto}
+  .res-hed{font-size:clamp(28px,5vw,40px)}
+  .res-right{padding:40px 24px}
+  .f2{grid-template-columns:1fr;gap:16px}
+
+  .footer{padding:48px 24px 28px}
+  .footer-body{grid-template-columns:1fr 1fr;gap:32px;padding-bottom:32px}
+  .footer-bottom{flex-direction:column;gap:12px;align-items:flex-start}
+  .marquee-item{font-size:10px;padding:0 20px;gap:20px}
+}
+
+/* ── RESPONSIVE: MOBILE (≤480px) ──────────────────── */
+@media(max-width:480px){
+  .nav{padding:0 14px}
+  .res-left{padding:72px 16px 36px}
+  .res-hed{font-size:clamp(24px,6vw,34px)}
+  .res-body{font-size:12px}
+  .res-right{padding:28px 16px}
+  .res-kanji{font-size:140px}
+
+  .footer{padding:32px 16px 20px}
+  .footer-body{grid-template-columns:1fr;gap:24px;padding-bottom:24px}
+  .marquee-item{font-size:9px;padding:0 14px;gap:14px}
+}
 </style>
 
 <style>
@@ -131,8 +177,14 @@ body.on-link #cur-dot{background:#D22B2B;transform:translate(-50%,-50%) scale(1.
     <span class="nav-logo-word">Yui</span>
   </a>
   <nav class="nav-center"><a href="index.html" class="hov">Home</a><a href="menu.html" class="hov">Menu</a><a href="about.html" class="hov">About</a><a href="reservation.html" class="active hov">Reservation</a></nav>
-  
+  <div class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span></div>
 </nav>
+<div class="nav-drawer" id="navDrawer">
+  <a href="index.html">Home</a>
+  <a href="menu.html">Menu</a>
+  <a href="about.html">About</a>
+  <a href="reservation.html" class="active">Reservation</a>
+</div>
 
 <div class="marquee"><div class="marquee-inner" id="mq"><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div></div>
 <section class="res-wrap">
@@ -274,6 +326,14 @@ const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.targ
 document.querySelectorAll('.r').forEach(el=>obs.observe(el));
 
 function pickChip(el,g){document.querySelectorAll(`.chip[onclick*="'${g}'"]`).forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+
+// Mobile nav toggle
+function toggleMobileNav(){
+  const drawer=document.getElementById('navDrawer');
+  const hamburger=document.getElementById('navHamburger');
+  drawer.classList.toggle('open');
+  hamburger.classList.toggle('active');
+}
 </script>
 </body>
 </html>
