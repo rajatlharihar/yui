@@ -99,13 +99,21 @@ body.on-link #cur-dot{background:#D22B2B;transform:translate(-50%,-50%) scale(1.
 .fi{width:100%;font-size:14px;color:var(--text);background:transparent;border:none;border-bottom:1px solid var(--border);padding:10px 0;outline:none;transition:border-color .2s}
 .fi:focus{border-color:var(--blue)}
 .fi::placeholder{color:rgba(122,116,112,.32)}
+.fi-textarea{width:100%;font-size:14px;color:var(--text);background:transparent;border:1px solid var(--border);padding:12px;outline:none;transition:border-color .2s;resize:vertical;min-height:80px;border-radius:4px;line-height:1.6}
+.fi-textarea:focus{border-color:var(--blue)}
+.fi-textarea::placeholder{color:rgba(122,116,112,.32)}
 .f2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chip{font-family:var(--ff);font-size:11px;font-weight:500;letter-spacing:.05em;color:var(--text);background:transparent;border:1px solid var(--border);padding:7px 16px;border-radius:3.5px;transition:background .2s,color .2s,border-color .2s;cursor:none}
 .chip.on,.chip:hover{background:var(--btn);color:#fff;border-color:var(--btn)}
-.cf-submit{margin-top:32px;display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:#D22B2B;padding:15px 30px;border-radius:6px;transition:opacity .2s,transform .2s;cursor:none}
+.cf-submit{margin-top:32px;display:inline-flex;align-items:center;gap:10px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:#D22B2B;padding:15px 30px;border-radius:6px;transition:opacity .2s,transform .2s;cursor:none;position:relative}
 .cf-submit:hover{opacity:.85;transform:translateY(-1px)}
+.cf-submit:disabled{opacity:.55;pointer-events:none;transform:none}
 .cf-submit svg{width:15px;height:15px}
+.cf-submit .spinner{display:none;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+.cf-submit.loading .spinner{display:block}
+.cf-submit.loading .btn-label{opacity:0}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 .marquee{margin-top:0!important;padding-top:13px}
 
@@ -205,40 +213,55 @@ body.on-link #cur-dot{background:#D22B2B;transform:translate(-50%,-50%) scale(1.
   <div class="res-right">
     <h2 class="cf-title r">Reserve your visit</h2>
     <p class="cf-sub r d1">Fill in the details and we will confirm within 4 hours.</p>
-    <div class="f2">
-      <div class="fg r d1"><label class="fl">First name</label><input class="fi" type="text" placeholder="Arjun" /></div>
-      <div class="fg r d2"><label class="fl">Last name</label><input class="fi" type="text" placeholder="Mehta" /></div>
-    </div>
-    <div class="f2">
-      <div class="fg r d2"><label class="fl">Email</label><input class="fi" type="email" placeholder="you@example.com" /></div>
-      <div class="fg r d3"><label class="fl">Phone</label><input class="fi" type="tel" placeholder="+91 98765 43210" /></div>
-    </div>
-    <div class="f2">
-      <div class="fg r d3"><label class="fl">Date</label><input class="fi" type="date" /></div>
-      <div class="fg r d4"><label class="fl">Time</label><input class="fi" type="time" /></div>
-    </div>
-    <div class="fg r d4">
-      <label class="fl">Party size</label>
-      <div class="chips">
-        <button class="chip on hov" onclick="pickChip(this,'sz')">1–2</button>
-        <button class="chip hov" onclick="pickChip(this,'sz')">3–4</button>
-        <button class="chip hov" onclick="pickChip(this,'sz')">5–6</button>
-        <button class="chip hov" onclick="pickChip(this,'sz')">7+</button>
+    <form id="reservationForm" autocomplete="off" novalidate>
+      <div class="fg r d1">
+        <label class="fl" for="res-name">Full Name</label>
+        <input class="fi" id="res-name" name="name" type="text" placeholder="Arjun Mehta" required />
       </div>
-    </div>
-    <div class="fg r d4">
-      <label class="fl">Occasion</label>
-      <div class="chips">
-        <button class="chip hov" onclick="pickChip(this,'oc')">Birthday</button>
-        <button class="chip hov" onclick="pickChip(this,'oc')">Anniversary</button>
-        <button class="chip hov" onclick="pickChip(this,'oc')">Business</button>
-        <button class="chip hov" onclick="pickChip(this,'oc')">Casual dining</button>
+      <div class="fg r d2">
+        <label class="fl" for="res-phone">Phone Number</label>
+        <input class="fi" id="res-phone" name="phone" type="tel" placeholder="+91 98765 43210" required />
       </div>
-    </div>
-    <button class="cf-submit hov r" style="margin-top:28px">
-      Confirm Reservation
-      <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h13M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </button>
+      <div class="f2">
+        <div class="fg r d3">
+          <label class="fl" for="res-date">Date</label>
+          <input class="fi" id="res-date" name="date" type="date" required />
+        </div>
+        <div class="fg r d3">
+          <label class="fl" for="res-time">Time</label>
+          <input class="fi" id="res-time" name="time" type="time" required />
+        </div>
+      </div>
+      <div class="fg r d4">
+        <label class="fl">Party Size</label>
+        <div class="chips" id="partySizeChips">
+          <button type="button" class="chip on hov" data-value="2" onclick="pickSize(this)">2</button>
+          <button type="button" class="chip hov" data-value="4" onclick="pickSize(this)">4</button>
+          <button type="button" class="chip hov" data-value="6" onclick="pickSize(this)">6</button>
+          <button type="button" class="chip hov" data-value="8" onclick="pickSize(this)">8+</button>
+        </div>
+        <input type="hidden" name="partySize" id="res-partySize" value="2" />
+      </div>
+      <div class="fg r d4">
+        <label class="fl">Occasion <span style="font-weight:400;letter-spacing:.08em;text-transform:none;opacity:.5">(optional)</span></label>
+        <div class="chips" id="occasionChips">
+          <button type="button" class="chip hov" data-value="Birthday" onclick="pickOccasion(this)">Birthday</button>
+          <button type="button" class="chip hov" data-value="Anniversary" onclick="pickOccasion(this)">Anniversary</button>
+          <button type="button" class="chip hov" data-value="Business" onclick="pickOccasion(this)">Business</button>
+          <button type="button" class="chip hov" data-value="Casual dining" onclick="pickOccasion(this)">Casual dining</button>
+        </div>
+        <input type="hidden" name="occasion" id="res-occasion" value="" />
+      </div>
+      <div class="fg r d4">
+        <label class="fl" for="res-note">Note <span style="font-weight:400;letter-spacing:.08em;text-transform:none;opacity:.5">(optional)</span></label>
+        <textarea class="fi-textarea" id="res-note" name="note" placeholder="Any special requests" rows="3"></textarea>
+      </div>
+      <button type="submit" class="cf-submit hov r" id="submitBtn" style="margin-top:28px">
+        <span class="btn-label">Confirm Reservation</span>
+        <span class="spinner"></span>
+        <svg viewBox="0 0 15 15" fill="none"><path d="M1 7.5h13M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </form>
   </div>
 </section>
 
@@ -325,7 +348,78 @@ if(nav) window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',win
 const obs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('up')}),{threshold:.08,rootMargin:'0px 0px -24px 0px'});
 document.querySelectorAll('.r').forEach(el=>obs.observe(el));
 
-function pickChip(el,g){document.querySelectorAll(`.chip[onclick*="'${g}'"]`).forEach(c=>c.classList.remove('on'));el.classList.add('on')}
+// Party size: always one selected (mandatory)
+function pickSize(el){
+  document.querySelectorAll('#partySizeChips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('res-partySize').value=el.dataset.value;
+}
+
+// Occasion: toggle (optional, deselect on second click)
+function pickOccasion(el){
+  if(el.classList.contains('on')){
+    el.classList.remove('on');
+    document.getElementById('res-occasion').value='';
+    return;
+  }
+  document.querySelectorAll('#occasionChips .chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('res-occasion').value=el.dataset.value;
+}
+
+// Form submission → JSON
+document.getElementById('reservationForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  const form=this;
+  const btn=document.getElementById('submitBtn');
+
+  // Basic validation
+  const name=form.name.value.trim();
+  const phone=form.phone.value.trim();
+  const date=form.date.value;
+  const time=form.time.value;
+  if(!name||!phone||!date||!time){
+    // Highlight first empty required field
+    if(!name) form.name.focus();
+    else if(!phone) form.phone.focus();
+    else if(!date) form.date.focus();
+    else if(!time) form.time.focus();
+    return;
+  }
+
+  const partySize=parseInt(document.getElementById('res-partySize').value,10);
+  const occasion=document.getElementById('res-occasion').value;
+  const note=form.note.value.trim();
+
+  const payload={
+    name,
+    phone,
+    date,
+    time,
+    partySize,
+    occasion,
+    note
+  };
+
+  // Loading state
+  btn.disabled=true;
+  btn.classList.add('loading');
+
+  // Simulate API call (replace with real fetch later)
+  console.log('Reservation payload:',JSON.stringify(payload,null,2));
+  setTimeout(()=>{
+    btn.disabled=false;
+    btn.classList.remove('loading');
+    alert('Reservation submitted! We will confirm within 4 hours.');
+    form.reset();
+    // Reset chips to defaults
+    document.querySelectorAll('#partySizeChips .chip').forEach(c=>c.classList.remove('on'));
+    document.querySelector('#partySizeChips .chip[data-value="2"]').classList.add('on');
+    document.getElementById('res-partySize').value='2';
+    document.querySelectorAll('#occasionChips .chip').forEach(c=>c.classList.remove('on'));
+    document.getElementById('res-occasion').value='';
+  },1500);
+});
 
 // Mobile nav toggle
 function toggleMobileNav(){
