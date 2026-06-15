@@ -1009,13 +1009,24 @@
       transition: clip-path 0.1s linear;
     }
 
-    .hero-overlay {
+    /* Japanese vertical body text — right side of hero */
+    .hero-jp-panel {
       position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to right, rgba(13,12,10,0.88) 0%, rgba(13,12,10,0.55) 45%, rgba(13,12,10,0.0) 100%),
-        linear-gradient(to bottom, rgba(13,12,10,0.4) 0%, transparent 30%, transparent 70%, rgba(13,12,10,0.5) 100%);
-      z-index: 2;
+      right: clamp(32px, 3.5vw, 90px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+
+    .hero-jp-text {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: var(--ff-jp);
+      font-size: clamp(13px, 1.1vw, 20px);
+      color: rgba(255,255,255,0.72);
+      letter-spacing: 0.18em;
+      line-height: 2.2;
+      margin: 0;
     }
 
     .hero-content {
@@ -1024,7 +1035,7 @@
       top: 50%;
       transform: translateY(-50%);
       z-index: 10;
-      padding-top: 60px;
+      padding-top: 80px;
       will-change: transform;
       color: #F5F0E8;
     }
@@ -1058,10 +1069,11 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-bottom: 56px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: .4em;
+      margin-top: 28px;
+      margin-bottom: 32px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .35em;
       text-transform: lowercase;
       color: var(--text);
     }
@@ -1075,7 +1087,7 @@
       display: inline-block;
       width: fit-content;
       cursor: crosshair;
-      margin-bottom: 56px;
+      margin-bottom: 0;
     }
 
     .glitch-hed {
