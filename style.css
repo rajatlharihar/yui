@@ -167,7 +167,7 @@
       justify-content: space-between;
       padding: 32px 80px;
       background: transparent;
-      transition: all .5s var(--ease);
+      transition: background 0.5s var(--ease), color 0.5s var(--ease), height 0.5s var(--ease), padding 0.5s var(--ease);
       overflow: visible;
       color: #fff;
     }
@@ -177,9 +177,6 @@
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
       color: var(--text);
-    }
-
-    .nav.scrolled {
       height: 64px;
     }
 

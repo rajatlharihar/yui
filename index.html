@@ -664,14 +664,11 @@
     const nav = document.getElementById('nav');
     if (nav) {
       const heroEl = document.getElementById('home');
-      function updateNav() {
-        const pastHero = heroEl
-          ? window.scrollY > (heroEl.scrollHeight - window.innerHeight * 0.5)
-          : window.scrollY > window.innerHeight;
-        nav.classList.toggle('scrolled', pastHero);
+      if (heroEl) {
+        new IntersectionObserver(([e]) => {
+          nav.classList.toggle('scrolled', !e.isIntersecting);
+        }, { threshold: 0.05 }).observe(heroEl);
       }
-      updateNav(); // run once on load
-      window.addEventListener('scroll', updateNav, { passive: true });
     }
     // Reveal
     const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('up') }), { threshold: .08, rootMargin: '0px 0px -24px 0px' });
@@ -1826,8 +1823,8 @@
       });
     }
 
-    // All glitch headings get hover effect — except the chef title which plays on entry
-    document.querySelectorAll('.glitch-hed:not(.chef-title-hed)').forEach(initGlitchEffect);
+    // All glitch headings get hover effect — except hero headline and chef title
+    document.querySelectorAll('.glitch-hed:not(.chef-title-hed):not(#heroHeadline)').forEach(initGlitchEffect);
 
     // Chef title: glitch in once on section entry, then stay as "The Artisans" permanently
     function initChefTitleOnEntry(headline) {
