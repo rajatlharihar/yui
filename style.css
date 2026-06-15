@@ -68,9 +68,12 @@
       cursor: none;
     }
 
-    h1, h2, h3, h4, h5, h6 {
-      font-feature-settings: "liga" 1, "dlig" 1, "calt" 1, "salt" 1, "ss01" 1, "ordn" 1;
-      font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
+    h1, h2, h3, h4, h5, h6,
+    h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
+    .glitch-hed, .glitch-hed *, .hed-layer, .hed-layer * {
+      font-feature-settings: "liga" 1, "dlig" 1, "calt" 1, "salt" 1, "ss01" 1, "ss02" 1, "ss03" 1, "ordn" 1 !important;
+      font-variant-ligatures: common-ligatures discretionary-ligatures contextual !important;
+      -webkit-font-feature-settings: "liga" 1, "dlig" 1, "calt" 1, "salt" 1, "ss01" 1, "ss02" 1, "ss03" 1, "ordn" 1;
     }
 
     a {
