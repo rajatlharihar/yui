@@ -1018,7 +1018,7 @@
     }
 
     #heroVideo {
-      clip-path: inset(10% 0 10% 0);
+      clip-path: inset(13% 0 10% 0);
       transition: clip-path 0.1s linear;
     }
 
@@ -1054,14 +1054,16 @@
 
     #heroContent * { color: inherit; }
     #heroContent .glitch-hed, #heroContent h1, #heroContent .hed-layer { color: #F5F0E8 !important; }
-    #heroContent .hero-eyebrow { color: rgba(255,255,255,0.55) !important; }
+    #heroContent .hero-eyebrow { color: rgba(255,255,255,0.9) !important; }
     #heroContent .hero-sub { color: rgba(255,255,255,0.65) !important; opacity: 1 !important; }
     #heroContent .hero-cta-group .fc-link { color: rgba(255,255,255,0.82) !important; }
     #heroContent .hero-cta-group .fc-link:hover { color: #fff !important; }
 
     /* Logo builds in the nav on page load */
-    #logoCanvas { opacity: 0; transition: opacity 0.4s ease; }
+    #logoCanvas { opacity: 0; transition: opacity 0.4s ease, filter 0.5s ease; }
     .logo-canvas-visible { opacity: 1 !important; }
+    /* On white nav, make logo dark so it's readable */
+    .nav.scrolled #logoCanvas { filter: brightness(0); }
 
     .hero-eyebrow {
       display: flex;
@@ -1091,7 +1093,7 @@
     .glitch-hed {
       display: grid;
       font-family: var(--ff-heading);
-      font-size: clamp(72px, 9vw, 220px) !important;
+      font-size: clamp(60px, 7vw, 175px) !important;
       line-height: 0.85 !important;
       font-weight: 900 !important;
       letter-spacing: -0.04em !important;

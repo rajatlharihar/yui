@@ -2507,26 +2507,32 @@
 
     if (video && heroSection) {
       let duration = 0;
+
       video.addEventListener('loadedmetadata', () => {
         duration = video.duration;
-        // Paint the first frame immediately without a scroll event
+      });
+
+      // play/pause is the most reliable way to decode the first frame on any browser
+      video.play().then(() => {
+        video.pause();
+        video.currentTime = 0;
+      }).catch(() => {
         video.currentTime = 0.001;
       });
-      // Do NOT call video.load() — it resets the element and breaks scrubbing.
-      // preload="auto" on the element already triggers loading.
 
       window.addEventListener('scroll', () => {
         const heroScrollDepth = heroSection.offsetHeight - window.innerHeight;
         const progress = Math.max(0, Math.min(1, window.scrollY / heroScrollDepth));
 
-        // Scrub video
+        // Scrub
         if (duration) video.currentTime = progress * duration;
 
-        // Expand from letterbox: inset goes 10% → 0% over first 40% of hero scroll
-        const expandProgress = Math.min(1, progress / 0.4);
-        const inset = 10 * (1 - expandProgress);
-        video.style.clipPath = inset > 0.05
-          ? `inset(${inset}% 0 ${inset}% 0)`
+        // Letterbox: top starts at 13%, bottom at 10%, both collapse to 0 over first 40%
+        const exp = Math.min(1, progress / 0.4);
+        const top = 13 * (1 - exp);
+        const bot = 10 * (1 - exp);
+        video.style.clipPath = (top > 0.05 || bot > 0.05)
+          ? `inset(${top}% 0 ${bot}% 0)`
           : 'none';
       }, { passive: true });
     }
