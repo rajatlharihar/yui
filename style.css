@@ -1044,7 +1044,7 @@
 
     .hero-content {
       position: absolute;
-      left: clamp(60px, 5.5vw, 140px);
+      left: 80px;
       top: 50%;
       transform: translateY(-50%);
       z-index: 10;
@@ -4654,13 +4654,9 @@
     padding: 36px clamp(80px, 6vw, 160px);
   }
 
+  /* Match hero-content left to nav's exact left padding formula */
   .hero-content {
-    left: clamp(80px, 7vw, 200px);
-  }
-
-  /* Hero h1 scales more aggressively on wide screens */
-  #heroHeadline.glitch-hed {
-    font-size: clamp(140px, 11vw, 280px) !important;
+    left: clamp(80px, 6vw, 160px);
   }
 
   /* Prevent body copy from becoming uncomfortably wide */
