@@ -660,15 +660,21 @@
       el.addEventListener('mouseenter', () => document.body.classList.add('on-link'));
       el.addEventListener('mouseleave', () => document.body.classList.remove('on-link'));
     });
-    // Nav scroll
+    // Nav scroll — prevent browser scroll restoration from causing a white flash
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     const nav = document.getElementById('nav');
     if (nav) {
       const heroEl = document.getElementById('home');
-      if (heroEl) {
-        new IntersectionObserver(([e]) => {
-          nav.classList.toggle('scrolled', !e.isIntersecting);
-        }, { threshold: 0.05 }).observe(heroEl);
+      function checkNav() {
+        const heroBottom = heroEl
+          ? heroEl.getBoundingClientRect().bottom
+          : -1;
+        // Nav stays transparent while any part of the hero is still visible
+        nav.classList.toggle('scrolled', heroBottom < window.innerHeight * 0.1);
       }
+      window.addEventListener('scroll', checkNav, { passive: true });
+      // Run immediately (sync) so the correct state is set before first paint
+      checkNav();
     }
     // Reveal
     const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('up') }), { threshold: .08, rootMargin: '0px 0px -24px 0px' });
@@ -2540,11 +2546,16 @@
 
     if (video && heroSection) {
       let duration = 0;
-      video.addEventListener('loadedmetadata', () => { duration = video.duration; });
-      video.load();
+      video.addEventListener('loadedmetadata', () => {
+        duration = video.duration;
+        // Paint the first frame immediately without a scroll event
+        video.currentTime = 0.001;
+      });
+      // Do NOT call video.load() — it resets the element and breaks scrubbing.
+      // preload="auto" on the element already triggers loading.
 
       window.addEventListener('scroll', () => {
-        const heroScrollDepth = heroSection.scrollHeight - window.innerHeight;
+        const heroScrollDepth = heroSection.offsetHeight - window.innerHeight;
         const progress = Math.max(0, Math.min(1, window.scrollY / heroScrollDepth));
 
         // Scrub video
