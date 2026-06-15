@@ -674,16 +674,20 @@
     const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
     const trails = ['ct1', 'ct2', 'ct3'].map(id => document.getElementById(id)).filter(Boolean);
     let mx = 0, my = 0, rx = 0, ry = 0, tx = [0, 0, 0], ty = [0, 0, 0], px = 0, py = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px' });
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     (function ac() {
+      dot.style.transform = `translate(${mx - 2}px,${my - 2}px)`;
       rx += (mx - rx) * .1; ry += (my - ry) * .1;
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      ring.style.transform = `translate(${rx - 22}px,${ry - 22}px)`;
       const spd = Math.sqrt((mx - px) ** 2 + (my - py) ** 2);
       trails.forEach((t, i) => {
         const lag = .055 - .012 * i;
         tx[i] += (mx - tx[i]) * lag; ty[i] += (my - ty[i]) * lag;
         const dx = tx[i] - mx, dy = ty[i] - my, ang = Math.atan2(dy, dx) * 180 / Math.PI + 90, h = Math.min(spd * 1.4, 26);
-        t.style.cssText = `left:${tx[i]}px;top:${ty[i]}px;height:${h}px;opacity:${spd > 3 ? (.28 - .07 * i) : 0};transform:translate(-50%,-50%) rotate(${ang}deg);background:linear-gradient(to bottom,rgba(8,110,196,${.45 - .1 * i}),transparent)`;
+        t.style.transform = `translate(${tx[i] - 1.5}px,${ty[i]}px) rotate(${ang}deg)`;
+        t.style.height = h + 'px';
+        t.style.opacity = spd > 3 ? (.28 - .07 * i) : 0;
+        t.style.background = `linear-gradient(to bottom,rgba(8,110,196,${.45 - .1 * i}),transparent)`;
       });
       px = mx; py = my; requestAnimationFrame(ac);
     })();
@@ -749,15 +753,21 @@
       if (!c1 || !c2) return;
       const i1 = document.getElementById('wc1i'), i2 = document.getElementById('wc2i');
       c1.appendChild(i1.cloneNode(true)); c2.appendChild(i2.cloneNode(true));
-      let p1 = 0, p2 = 0;
+      let p1 = 0, p2 = 0, running = false;
       const h1 = i1.scrollHeight, h2 = i2.scrollHeight;
-      (function tick() {
+      function tick() {
         p1 += .36; p2 -= .36;
         if (p1 >= h1) p1 = 0; if (p2 <= -h2) p2 = 0;
         c1.style.transform = `translateY(-${p1}px)`;
         c2.style.transform = `translateY(${p2}px)`;
-        requestAnimationFrame(tick);
-      })();
+        if (running) requestAnimationFrame(tick);
+      }
+      const wSection = c1.closest('.whispers') || c1.parentElement;
+      new IntersectionObserver(en => {
+        const vis = en[0].isIntersecting;
+        if (vis && !running) { running = true; requestAnimationFrame(tick); }
+        else if (!vis) running = false;
+      }, { threshold: 0 }).observe(wSection);
     })();
 
     // Mobile nav toggle
@@ -2189,7 +2199,10 @@
       infoMap = reconcileChildren(minimapInfoListEl, min, max, createMinimapInfoEl);
     };
 
+    let chefVisible = false;
+
     const animationLoop = () => {
+      if (!chefVisible) { state.requestRef = null; return; }
       animate();
 
       const currentIndex = Math.round(-state.targetY / state.projectHeight);
@@ -2395,6 +2408,17 @@
     onResize();
 
     // ── IntersectionObserver to trigger snap-lock ──
+    const visObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const wasVisible = chefVisible;
+        chefVisible = entry.isIntersecting;
+        if (chefVisible && !wasVisible) {
+          // Re-enter: restart animation loop if not already running
+          if (!state.requestRef) state.requestRef = requestAnimationFrame(animationLoop);
+        }
+      });
+    }, { threshold: 0 });
+
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -2414,9 +2438,11 @@
     });
 
     observer.observe(parallaxContainer);
+    visObserver.observe(parallaxContainer);
 
-    // Start animation loop
-    state.requestRef = requestAnimationFrame(animationLoop);
+    // Start animation loop (starts only when section first enters view)
+    chefVisible = false;
+    // Don't start until section is visible
   });
   </script>
 
