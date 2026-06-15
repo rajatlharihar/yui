@@ -1077,10 +1077,11 @@
       gap: 16px;
       margin-top: 24px;
       margin-bottom: 28px;
-      font-size: 14px;
+      font-family: var(--ff-heading);
+      font-size: 15px;
       font-weight: 700;
-      letter-spacing: .22em;
-      text-transform: lowercase;
+      letter-spacing: .18em;
+      text-transform: none;
       color: var(--text);
     }
 
