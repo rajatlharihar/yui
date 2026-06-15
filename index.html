@@ -150,7 +150,11 @@
 
   <section id="home" class="hero">
     <div class="hero-sticky-track">
-      <div class="hero-left">
+      <video id="heroVideo" muted preload="auto" playsinline>
+        <source src="videos/Box.mp4" type="video/mp4">
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-content" id="heroContent">
         <div class="hero-eyebrow">
           <span class="hero-eyebrow-line"></span>
           <span>Bengaluru • Japanese Cuisine</span>
@@ -164,19 +168,13 @@
         <p class="hero-sub">
           A modern Japanese kitchen rooted in the art of umami where every dish carries the quiet precision of craft.
         </p>
-  
         <div class="hero-cta-group">
           <a href="#reservation" class="nav-cta hov">Reserve a table</a>
           <a href="#menu" class="fc-link hov">Explore menu</a>
         </div>
       </div>
-  
-      <div class="hero-right">
-        <div class="hero-visual-container">
-          <video id="heroVideo" autoplay muted loop playsinline>
-            <source src="videos/Box.mp4" type="video/mp4">
-          </video>
-        </div>
+      <div id="heroLogoIntro">
+        <canvas id="logoIntroCanvas" width="300" height="297"></canvas>
       </div>
     </div>
   </section>
@@ -2442,63 +2440,124 @@
       document.querySelectorAll('.food-reveal').forEach(img => observer.observe(img));
     });
   </script>
-  <!-- Logo PNG Sequence Animation -->
+  <!-- Logo Intro + Video Scroll Scrub + Hero Parallax -->
   <script>
   (function() {
-    const canvas = document.getElementById('logoCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const frameCount = 90;
-    const fps = 24;
-    const frames = new Array(frameCount).fill(null);
-    let loaded = 0;
-    let playing = false;
-    let currentFrame = 0;
-    let lastTime = 0;
-    const interval = 1000 / fps;
+    const FRAME_COUNT = 90;
+    const FPS = 24;
+    const INTERVAL = 1000 / FPS;
+    const frames = new Array(FRAME_COUNT).fill(null);
+    let loadedCount = 0;
 
     function pad(n) { return n.toString().padStart(2, '0'); }
 
-    function loadFrames() {
-      for (let i = 0; i < frameCount; i++) {
-        const img = new Image();
-        img.onload = () => {
-          frames[i] = img;
-          loaded++;
-          if (loaded === 1 && i === 0) { drawFrame(0); startAnim(); }
-        };
-        img.onerror = () => { loaded++; };
-        img.src = `images/yui/logo-frames/logo_reveal${pad(i)}.png`;
+    // Pre-load all frames
+    for (let i = 0; i < FRAME_COUNT; i++) {
+      const img = new Image();
+      img.onload = () => { frames[i] = img; loadedCount++; };
+      img.onerror = () => { loadedCount++; };
+      img.src = `images/yui/logo-frames/logo_reveal${pad(i)}.png`;
+    }
+
+    // ── LOGO INTRO (plays centered in hero, then flies to nav) ──
+    const introEl = document.getElementById('heroLogoIntro');
+    const introCanvas = document.getElementById('logoIntroCanvas');
+    const navCanvas = document.getElementById('logoCanvas');
+
+    if (introEl && introCanvas && navCanvas) {
+      const introCtx = introCanvas.getContext('2d');
+      const navCtx = navCanvas.getContext('2d');
+      let frame = 0, playing = false, lastTime = 0;
+
+      function drawIntro(idx) {
+        const img = frames[idx];
+        if (!img) return;
+        introCtx.clearRect(0, 0, introCanvas.width, introCanvas.height);
+        introCtx.drawImage(img, 0, 0, introCanvas.width, introCanvas.height);
       }
-    }
 
-    function drawFrame(idx) {
-      const img = frames[idx];
-      if (!img) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    }
+      function drawNav(idx) {
+        const img = frames[idx];
+        if (!img) return;
+        navCtx.clearRect(0, 0, navCanvas.width, navCanvas.height);
+        navCtx.drawImage(img, 0, 0, navCanvas.width, navCanvas.height);
+      }
 
-    function startAnim() {
-      if (playing) return;
-      playing = true;
-      lastTime = performance.now();
-      requestAnimationFrame(tick);
-    }
+      function flyToNav() {
+        drawIntro(FRAME_COUNT - 1);
+        drawNav(FRAME_COUNT - 1);
 
-    function tick(now) {
-      if (currentFrame >= frameCount - 1) { playing = false; drawFrame(frameCount - 1); return; }
-      if (now - lastTime >= interval) {
-        lastTime = now;
-        if (frames[currentFrame]) {
-          drawFrame(currentFrame);
-          currentFrame++;
+        const iRect = introEl.getBoundingClientRect();
+        const nRect = navCanvas.getBoundingClientRect();
+        const scale = nRect.width / iRect.width;
+
+        // Compute delta from current centered position to nav logo position
+        const dx = (nRect.left + nRect.width / 2) - (iRect.left + iRect.width / 2);
+        const dy = (nRect.top + nRect.height / 2) - (iRect.top + iRect.height / 2);
+
+        introEl.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scale})`;
+        introEl.style.transformOrigin = 'center center';
+
+        setTimeout(() => {
+          introEl.style.opacity = '0';
+          navCanvas.classList.add('logo-canvas-visible');
+          setTimeout(() => introEl.remove(), 400);
+        }, 650);
+      }
+
+      function startPlay() {
+        if (playing) return;
+        playing = true;
+        lastTime = performance.now();
+        requestAnimationFrame(tick);
+      }
+
+      function tick(now) {
+        if (frame >= FRAME_COUNT - 1) { flyToNav(); return; }
+        if (now - lastTime >= INTERVAL) {
+          lastTime = now;
+          if (frames[frame]) { drawIntro(frame); frame++; }
         }
+        requestAnimationFrame(tick);
       }
-      requestAnimationFrame(tick);
+
+      // Start as soon as first frame is ready (poll)
+      function waitAndStart() {
+        if (frames[0]) { drawIntro(0); startPlay(); }
+        else requestAnimationFrame(waitAndStart);
+      }
+      waitAndStart();
     }
 
-    loadFrames();
+    // ── VIDEO SCROLL SCRUB ──
+    const video = document.getElementById('heroVideo');
+    const heroSection = document.getElementById('home');
+
+    if (video && heroSection) {
+      let duration = 0;
+      video.addEventListener('loadedmetadata', () => { duration = video.duration; });
+      // Also try setting currentTime=0 to trigger load
+      video.load();
+
+      window.addEventListener('scroll', () => {
+        if (!duration) return;
+        const heroScrollDepth = heroSection.scrollHeight - window.innerHeight;
+        const progress = Math.max(0, Math.min(1, window.scrollY / heroScrollDepth));
+        video.currentTime = progress * duration;
+      }, { passive: true });
+    }
+
+    // ── HERO PARALLAX ──
+    const heroContent = document.getElementById('heroContent');
+    if (heroContent && heroSection) {
+      window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const heroHeight = heroSection.scrollHeight;
+        if (scrollY < heroHeight) {
+          heroContent.style.transform = `translateY(calc(-50% + ${scrollY * 0.18}px))`;
+        }
+      }, { passive: true });
+    }
   })();
   </script>
 

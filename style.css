@@ -983,7 +983,7 @@
     /* HERO FIX - EDITORIAL REBUILD */
     /* HERO FIX - EDITORIAL RESTORATION */
     .hero {
-      height: 250vh; /* Scroll Depth Track */
+      height: 250vh;
       background: #0D0C0A;
       position: relative;
     }
@@ -992,31 +992,57 @@
       position: sticky;
       top: 0;
       height: 100vh;
-      display: grid;
-      grid-template-columns: 30% 70%;
       overflow: hidden;
       width: 100%;
     }
 
-    .hero-sticky-track::before {
-      content: '';
+    #heroVideo {
       position: absolute;
-      inset: 0;
-      background-image: radial-gradient(var(--red) 0.8px, transparent 0.8px);
-      background-size: 60px 60px;
-      opacity: 0.04;
-      pointer-events: none;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
       z-index: 1;
     }
 
-    .hero-left {
-      padding: clamp(120px, 12vw, 280px) clamp(48px, 4vw, 100px) 80px clamp(60px, 5.5vw, 140px);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-      position: relative;
-      z-index: 10;
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        105deg,
+        rgba(13,12,10,0.82) 0%,
+        rgba(13,12,10,0.50) 40%,
+        rgba(13,12,10,0.08) 100%
+      );
+      z-index: 2;
     }
+
+    .hero-content {
+      position: absolute;
+      left: clamp(60px, 5.5vw, 140px);
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+      padding-top: 60px;
+      will-change: transform;
+    }
+
+    /* Logo intro — fixed centered on load, flies to nav after animation */
+    #heroLogoIntro {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999;
+      pointer-events: none;
+      transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+    }
+    #heroLogoIntro canvas {
+      width: 200px;
+      height: auto;
+      display: block;
+    }
+    #logoCanvas { opacity: 0; transition: opacity 0.3s; }
+    .logo-canvas-visible { opacity: 1 !important; }
 
     .hero-eyebrow {
       display: flex;
@@ -1143,12 +1169,11 @@
     }
 
     /* Hero dark background — text overrides */
-    .hero .hero-eyebrow { color: rgba(255,255,255,0.5); }
-    .hero .hero-eyebrow-line { background: rgba(255,255,255,0.25) !important; }
-    .hero .glitch-hed .hed-layer { color: #F5F0E8; }
-    .hero .hero-sub { color: rgba(255,255,255,0.62); }
-    .hero .hero-cta-group .fc-link { color: rgba(255,255,255,0.85); }
-    .hero .hero-cta-group .fc-link:hover { color: #fff; opacity: 1; }
+    .hero-content .hero-eyebrow { color: rgba(255,255,255,0.5); }
+    .hero-content .glitch-hed .hed-layer { color: #F5F0E8; }
+    .hero-content .hero-sub { color: rgba(255,255,255,0.62); }
+    .hero-content .hero-cta-group .fc-link { color: rgba(255,255,255,0.85); }
+    .hero-content .hero-cta-group .fc-link:hover { color: #fff; opacity: 1; }
 
     /* Logo canvas — same display size as the SVG it replaces */
     #logoCanvas {
@@ -1157,26 +1182,7 @@
       display: block;
     }
 
-    .hero-right {
-      position: relative;
-      height: 100%;
-      background: transparent;
-      z-index: 5;
-    }
-
-    .hero-visual-container {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      background: transparent;
-    }
-
-    #heroVideo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .hero-right, .hero-left { display: none; }
 
     /* index-page-art-style as base art */
     .hero-pattern-layer {
@@ -4618,14 +4624,8 @@
     padding: 36px clamp(80px, 6vw, 160px);
   }
 
-  /* Wider left column so heading doesn't sit in a tiny 30% sliver */
-  .hero-sticky-track {
-    grid-template-columns: 45% 55%;
-  }
-
-  .hero-left {
-    padding-left: clamp(60px, 6vw, 160px);
-    padding-right: clamp(48px, 4vw, 120px);
+  .hero-content {
+    left: clamp(80px, 7vw, 200px);
   }
 
   /* Hero h1 scales more aggressively on wide screens */
