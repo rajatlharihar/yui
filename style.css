@@ -172,6 +172,21 @@
       color: #fff;
     }
 
+    /* CSS-level dark gradient — shows on dark hero regardless of JS timing */
+    .nav::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 260px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 100%);
+      z-index: -1;
+      pointer-events: none;
+      transition: opacity 0.5s var(--ease);
+    }
+    .nav.scrolled::after {
+      opacity: 0;
+    }
+
     .nav.scrolled {
       background: rgba(255,255,255,0.97);
       backdrop-filter: blur(14px);
@@ -1032,7 +1047,6 @@
       top: 50%;
       transform: translateY(-50%);
       z-index: 10;
-      padding-top: 80px;
       will-change: transform;
       color: #F5F0E8;
     }
@@ -1044,22 +1058,8 @@
     #heroContent .hero-cta-group .fc-link { color: rgba(255,255,255,0.82) !important; }
     #heroContent .hero-cta-group .fc-link:hover { color: #fff !important; }
 
-    /* Logo intro — fixed centered on load, flies to nav after animation */
-    #heroLogoIntro {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 9999;
-      pointer-events: none;
-      transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
-    }
-    #heroLogoIntro canvas {
-      width: 200px;
-      height: auto;
-      display: block;
-    }
-    #logoCanvas { opacity: 0; transition: opacity 0.3s; }
+    /* Logo builds in the nav on page load */
+    #logoCanvas { opacity: 0; transition: opacity 0.4s ease; }
     .logo-canvas-visible { opacity: 1 !important; }
 
     .hero-eyebrow {
@@ -1090,7 +1090,7 @@
     .glitch-hed {
       display: grid;
       font-family: var(--ff-heading);
-      font-size: clamp(60px, 7vw, 210px) !important;
+      font-size: clamp(72px, 9vw, 220px) !important;
       line-height: 0.85 !important;
       font-weight: 900 !important;
       letter-spacing: -0.04em !important;

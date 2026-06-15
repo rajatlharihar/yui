@@ -171,9 +171,6 @@
       <div class="hero-jp-panel">
         <p class="hero-jp-text">うま味の芸術に根ざした、現代的な日本料理。すべての料理に静かな精巧さが宿る。</p>
       </div>
-      <div id="heroLogoIntro">
-        <canvas id="logoIntroCanvas" width="300" height="297"></canvas>
-      </div>
     </div>
   </section>
   <!-- Japanese Precision: Sequence + Typewriter + Glitch -->
@@ -660,20 +657,17 @@
       el.addEventListener('mouseenter', () => document.body.classList.add('on-link'));
       el.addEventListener('mouseleave', () => document.body.classList.remove('on-link'));
     });
-    // Nav scroll — prevent browser scroll restoration from causing a white flash
+    // Nav scroll
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     const nav = document.getElementById('nav');
     if (nav) {
       const heroEl = document.getElementById('home');
       function checkNav() {
-        const heroBottom = heroEl
-          ? heroEl.getBoundingClientRect().bottom
-          : -1;
-        // Nav stays transparent while any part of the hero is still visible
+        if (!heroEl) return; // leave nav transparent (CSS gradient handles dark look)
+        const heroBottom = heroEl.getBoundingClientRect().bottom;
         nav.classList.toggle('scrolled', heroBottom < window.innerHeight * 0.1);
       }
       window.addEventListener('scroll', checkNav, { passive: true });
-      // Run immediately (sync) so the correct state is set before first paint
       checkNav();
     }
     // Reveal
@@ -2470,22 +2464,11 @@
       img.src = `images/yui/logo-frames/logo_reveal${pad(i)}.png`;
     }
 
-    // ── LOGO INTRO (plays centered in hero, then flies to nav) ──
-    const introEl = document.getElementById('heroLogoIntro');
-    const introCanvas = document.getElementById('logoIntroCanvas');
+    // ── LOGO ANIMATION — plays directly in nav position ──
     const navCanvas = document.getElementById('logoCanvas');
-
-    if (introEl && introCanvas && navCanvas) {
-      const introCtx = introCanvas.getContext('2d');
+    if (navCanvas) {
       const navCtx = navCanvas.getContext('2d');
       let frame = 0, playing = false, lastTime = 0;
-
-      function drawIntro(idx) {
-        const img = frames[idx];
-        if (!img) return;
-        introCtx.clearRect(0, 0, introCanvas.width, introCanvas.height);
-        introCtx.drawImage(img, 0, 0, introCanvas.width, introCanvas.height);
-      }
 
       function drawNav(idx) {
         const img = frames[idx];
@@ -2494,47 +2477,25 @@
         navCtx.drawImage(img, 0, 0, navCanvas.width, navCanvas.height);
       }
 
-      function flyToNav() {
-        drawIntro(FRAME_COUNT - 1);
-        drawNav(FRAME_COUNT - 1);
-
-        const iRect = introEl.getBoundingClientRect();
-        const nRect = navCanvas.getBoundingClientRect();
-        const scale = nRect.width / iRect.width;
-
-        // Compute delta from current centered position to nav logo position
-        const dx = (nRect.left + nRect.width / 2) - (iRect.left + iRect.width / 2);
-        const dy = (nRect.top + nRect.height / 2) - (iRect.top + iRect.height / 2);
-
-        introEl.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scale})`;
-        introEl.style.transformOrigin = 'center center';
-
-        setTimeout(() => {
-          introEl.style.opacity = '0';
-          navCanvas.classList.add('logo-canvas-visible');
-          setTimeout(() => introEl.remove(), 400);
-        }, 650);
-      }
-
       function startPlay() {
         if (playing) return;
         playing = true;
+        navCanvas.classList.add('logo-canvas-visible');
         lastTime = performance.now();
         requestAnimationFrame(tick);
       }
 
       function tick(now) {
-        if (frame >= FRAME_COUNT - 1) { flyToNav(); return; }
+        if (frame >= FRAME_COUNT - 1) { drawNav(FRAME_COUNT - 1); return; }
         if (now - lastTime >= INTERVAL) {
           lastTime = now;
-          if (frames[frame]) { drawIntro(frame); frame++; }
+          if (frames[frame]) { drawNav(frame); frame++; }
         }
         requestAnimationFrame(tick);
       }
 
-      // Start as soon as first frame is ready (poll)
       function waitAndStart() {
-        if (frames[0]) { drawIntro(0); startPlay(); }
+        if (frames[0]) { drawNav(0); startPlay(); }
         else requestAnimationFrame(waitAndStart);
       }
       waitAndStart();
