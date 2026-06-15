@@ -1077,9 +1077,9 @@
       gap: 16px;
       margin-top: 24px;
       margin-bottom: 28px;
-      font-family: var(--ff-heading);
+      font-family: 'Restora', serif;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 400;
       letter-spacing: .18em;
       text-transform: none;
       color: var(--text);
@@ -1100,7 +1100,7 @@
     .glitch-hed {
       display: grid;
       font-family: var(--ff-heading);
-      font-size: clamp(52px, 5.8vw, 148px) !important;
+      font-size: clamp(40px, 4.2vw, 108px) !important;
       line-height: 0.85 !important;
       font-weight: 900 !important;
       letter-spacing: -0.04em !important;
