@@ -1004,15 +1004,17 @@
       z-index: 1;
     }
 
+    #heroVideo {
+      clip-path: inset(10% 0 10% 0);
+      transition: clip-path 0.1s linear;
+    }
+
     .hero-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(
-        105deg,
-        rgba(13,12,10,0.82) 0%,
-        rgba(13,12,10,0.50) 40%,
-        rgba(13,12,10,0.08) 100%
-      );
+      background:
+        linear-gradient(to right, rgba(13,12,10,0.88) 0%, rgba(13,12,10,0.55) 45%, rgba(13,12,10,0.0) 100%),
+        linear-gradient(to bottom, rgba(13,12,10,0.4) 0%, transparent 30%, transparent 70%, rgba(13,12,10,0.5) 100%);
       z-index: 2;
     }
 
@@ -1024,7 +1026,15 @@
       z-index: 10;
       padding-top: 60px;
       will-change: transform;
+      color: #F5F0E8;
     }
+
+    #heroContent * { color: inherit; }
+    #heroContent .glitch-hed, #heroContent h1, #heroContent .hed-layer { color: #F5F0E8 !important; }
+    #heroContent .hero-eyebrow { color: rgba(255,255,255,0.55) !important; }
+    #heroContent .hero-sub { color: rgba(255,255,255,0.65) !important; opacity: 1 !important; }
+    #heroContent .hero-cta-group .fc-link { color: rgba(255,255,255,0.82) !important; }
+    #heroContent .hero-cta-group .fc-link:hover { color: #fff !important; }
 
     /* Logo intro — fixed centered on load, flies to nav after animation */
     #heroLogoIntro {
@@ -1168,12 +1178,9 @@
       text-transform: uppercase !important;
     }
 
-    /* Hero dark background — text overrides */
-    .hero-content .hero-eyebrow { color: rgba(255,255,255,0.5); }
-    .hero-content .glitch-hed .hed-layer { color: #F5F0E8; }
-    .hero-content .hero-sub { color: rgba(255,255,255,0.62); }
-    .hero-content .hero-cta-group .fc-link { color: rgba(255,255,255,0.85); }
-    .hero-content .hero-cta-group .fc-link:hover { color: #fff; opacity: 1; }
+    /* Hero dark background — text overrides (weaker fallbacks; strong rules on #heroContent above) */
+    .hero-content .hero-eyebrow { color: rgba(255,255,255,0.55); }
+    .hero-content .hero-sub { color: rgba(255,255,255,0.65); }
 
     /* Logo canvas — same display size as the SVG it replaces */
     #logoCanvas {

@@ -664,7 +664,17 @@
     });
     // Nav scroll
     const nav = document.getElementById('nav');
-    if (nav) window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50), { passive: true });
+    if (nav) {
+      const heroEl = document.getElementById('home');
+      function updateNav() {
+        const pastHero = heroEl
+          ? window.scrollY > (heroEl.scrollHeight - window.innerHeight * 0.5)
+          : window.scrollY > window.innerHeight;
+        nav.classList.toggle('scrolled', pastHero);
+      }
+      updateNav(); // run once on load
+      window.addEventListener('scroll', updateNav, { passive: true });
+    }
     // Reveal
     const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('up') }), { threshold: .08, rootMargin: '0px 0px -24px 0px' });
     document.querySelectorAll('.r').forEach(el => obs.observe(el));
@@ -2536,14 +2546,21 @@
     if (video && heroSection) {
       let duration = 0;
       video.addEventListener('loadedmetadata', () => { duration = video.duration; });
-      // Also try setting currentTime=0 to trigger load
       video.load();
 
       window.addEventListener('scroll', () => {
-        if (!duration) return;
         const heroScrollDepth = heroSection.scrollHeight - window.innerHeight;
         const progress = Math.max(0, Math.min(1, window.scrollY / heroScrollDepth));
-        video.currentTime = progress * duration;
+
+        // Scrub video
+        if (duration) video.currentTime = progress * duration;
+
+        // Expand from letterbox: inset goes 10% → 0% over first 40% of hero scroll
+        const expandProgress = Math.min(1, progress / 0.4);
+        const inset = 10 * (1 - expandProgress);
+        video.style.clipPath = inset > 0.05
+          ? `inset(${inset}% 0 ${inset}% 0)`
+          : 'none';
       }, { passive: true });
     }
 
