@@ -1018,7 +1018,7 @@
     }
 
     #heroVideo {
-      clip-path: inset(13% 0 10% 0);
+      clip-path: inset(16% 0 10% 0);
       transition: clip-path 0.1s linear;
     }
 
@@ -1060,7 +1060,13 @@
     #heroContent .hero-cta-group .fc-link:hover { color: #fff !important; }
 
     /* Logo builds in the nav on page load */
-    #logoCanvas { opacity: 0; transition: opacity 0.4s ease, filter 0.5s ease; }
+    #logoCanvas {
+      opacity: 0;
+      transition: opacity 0.4s ease, filter 0.5s ease;
+      width: 190px;
+      height: 188px;
+      display: block;
+    }
     .logo-canvas-visible { opacity: 1 !important; }
     /* On white nav, make logo dark so it's readable */
     .nav.scrolled #logoCanvas { filter: brightness(0); }
@@ -1069,11 +1075,11 @@
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-top: 28px;
-      margin-bottom: 32px;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: .35em;
+      margin-top: 24px;
+      margin-bottom: 28px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: .22em;
       text-transform: lowercase;
       color: var(--text);
     }
@@ -1093,7 +1099,7 @@
     .glitch-hed {
       display: grid;
       font-family: var(--ff-heading);
-      font-size: clamp(60px, 7vw, 175px) !important;
+      font-size: clamp(52px, 5.8vw, 148px) !important;
       line-height: 0.85 !important;
       font-weight: 900 !important;
       letter-spacing: -0.04em !important;
@@ -1170,13 +1176,13 @@
 
     .hero-cta-group .fc-link {
       color: var(--red);
-      font-weight: 600;
-      font-size: 14px;
-      letter-spacing: 0.05em;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: 0.12em;
       text-transform: lowercase;
       padding-bottom: 4px;
       transition: all 0.3s var(--ease);
-      white-space: nowrap; /* Prevent wrapping */
+      white-space: nowrap;
     }
 
     .hero-cta-group .fc-link:hover {
@@ -1184,8 +1190,12 @@
       opacity: 0.8;
     }
 
-    /* Hero CTA Uppercase Overrides */
-    .hero-cta-group .nav-cta,
+    /* Hero CTA overrides — larger + uppercase */
+    .hero-cta-group .nav-cta {
+      font-size: 13px !important;
+      padding: 13px 28px !important;
+      text-transform: uppercase !important;
+    }
     .hero-cta-group .fc-link {
       text-transform: uppercase !important;
     }
