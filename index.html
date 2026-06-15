@@ -2507,33 +2507,37 @@
 
     if (video && heroSection) {
       let duration = 0;
+      let ticking = false;
+      let latestProgress = 0;
 
-      video.addEventListener('loadedmetadata', () => {
-        duration = video.duration;
-      });
+      video.addEventListener('loadedmetadata', () => { duration = video.duration; });
 
-      // play/pause is the most reliable way to decode the first frame on any browser
-      video.play().then(() => {
-        video.pause();
-        video.currentTime = 0;
-      }).catch(() => {
-        video.currentTime = 0.001;
-      });
+      // Muted play/pause forces the browser to decode + paint the first frame
+      video.play().then(() => { video.pause(); video.currentTime = 0; })
+           .catch(() => { video.currentTime = 0.001; });
 
-      window.addEventListener('scroll', () => {
-        const heroScrollDepth = heroSection.offsetHeight - window.innerHeight;
-        const progress = Math.max(0, Math.min(1, window.scrollY / heroScrollDepth));
+      function applyProgress(p) {
+        // fastSeek is designed for scrubbing (exact=false but instant)
+        const t = p * (duration || 0);
+        if (typeof video.fastSeek === 'function') video.fastSeek(t);
+        else video.currentTime = t;
 
-        // Scrub
-        if (duration) video.currentTime = progress * duration;
-
-        // Letterbox: top starts at 13%, bottom at 10%, both collapse to 0 over first 40%
-        const exp = Math.min(1, progress / 0.4);
+        const exp = Math.min(1, p / 0.4);
         const top = 13 * (1 - exp);
         const bot = 10 * (1 - exp);
         video.style.clipPath = (top > 0.05 || bot > 0.05)
-          ? `inset(${top}% 0 ${bot}% 0)`
-          : 'none';
+          ? `inset(${top}% 0 ${bot}% 0)` : 'none';
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        const depth = heroSection.offsetHeight - window.innerHeight;
+        latestProgress = Math.max(0, Math.min(1, window.scrollY / depth));
+        // rAF ticking: queue at most one update per frame, always use latest value
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(() => applyProgress(latestProgress));
+        }
       }, { passive: true });
     }
 
