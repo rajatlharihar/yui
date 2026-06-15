@@ -1049,15 +1049,15 @@
       transform: translateY(-50%);
       z-index: 10;
       will-change: transform;
-      color: #F5F0E8;
+      color: var(--cream);
     }
 
     #heroContent * { color: inherit; }
-    #heroContent .glitch-hed, #heroContent h1, #heroContent .hed-layer { color: #F5F0E8 !important; }
-    #heroContent .hero-eyebrow { color: rgba(255,255,255,0.9) !important; }
-    #heroContent .hero-sub { color: rgba(255,255,255,0.65) !important; opacity: 1 !important; }
-    #heroContent .hero-cta-group .fc-link { color: rgba(255,255,255,0.82) !important; }
-    #heroContent .hero-cta-group .fc-link:hover { color: #fff !important; }
+    #heroContent .glitch-hed, #heroContent h1, #heroContent .hed-layer { color: var(--cream) !important; }
+    #heroContent .hero-eyebrow { color: var(--cream) !important; }
+    #heroContent .hero-sub { color: rgba(238,226,212,0.7) !important; opacity: 1 !important; }
+    #heroContent .hero-cta-group .fc-link { color: var(--cream) !important; }
+    #heroContent .hero-cta-group .fc-link:hover { color: var(--cream) !important; opacity: 0.75; }
 
     /* Logo builds in the nav on page load */
     #logoCanvas {
@@ -1100,7 +1100,7 @@
     .glitch-hed {
       display: grid;
       font-family: var(--ff-heading);
-      font-size: clamp(40px, 4.2vw, 108px) !important;
+      font-size: clamp(62px, 4.2vw, 82px) !important;
       line-height: 0.85 !important;
       font-weight: 900 !important;
       letter-spacing: -0.04em !important;
