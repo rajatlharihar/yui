@@ -1,0 +1,3153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Home — Yui</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&family=Inter:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/svg+xml" href="images/yui/yui-logo-mark.svg.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/svg+xml" href="images/yui/Main_Logo_Illustrations 2.svg" media="(prefers-color-scheme: dark)">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <!-- Lenis Smooth Scroll Library -->
+  <script src="https://unpkg.com/@studio-freight/lenis@1.0.36/dist/lenis.min.js"></script>
+  <style>
+    /* JAPANESE PRECISION SECTION */
+    .precision-section {
+      position: relative;
+      height: 250vh; /* Reduced height to minimize the gap before Artisans section */
+      background: #fff;
+      z-index: 5;
+    }
+    .precision-track {
+      height: 100%;
+    }
+    .precision-sticky {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+    }
+    #precisionCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #fff;
+    }
+    .precision-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10vw; /* Perfect horizontal alignment with Artisans section */
+      pointer-events: none;
+      z-index: 10;
+    }
+    .precision-content {
+      width: 100%;
+      height: 80%;
+      display: flex;
+      flex-direction: column-reverse; /* Headline bottom, Typewriter top */
+      justify-content: space-between;
+      color: #000;
+    }
+    .precision-typewriter {
+      font-family: 'Inter', sans-serif;
+      font-size: 20px;
+      line-height: 1.4;
+      max-width: 50vw;
+      align-self: flex-end;
+      text-align: right;
+      font-weight: 300; /* Thinner weight to match Space Within */
+      letter-spacing: 0.02em;
+      color: var(--muted); /* Light grey to match Space Within */
+    }
+    @media (max-width: 768px) {
+      .precision-overlay { padding: 40px 24px; }
+      .precision-content { height: 90%; }
+      .precision-typewriter { max-width: 100%; text-align: left; align-self: flex-start; }
+      .precision-section, .menu-precision-section .precision-track { height: 140vh !important; }
+    }
+
+    /* PRELOADER */
+    #site-preloader {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    #site-preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+    .preloader-logo {
+      width: 60px;
+      height: auto;
+      animation: preloader-hover 1.2s infinite ease-in-out alternate;
+    }
+    @keyframes preloader-hover {
+      0% { transform: translateY(0) scale(1); opacity: 0.7; }
+      100% { transform: translateY(-12px) scale(1.05); opacity: 1; }
+    }
+  </style>
+
+
+</head>
+
+<body>
+  <div id="site-preloader">
+    <img src="images/yui/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+  </div>
+  <div id="cur-dot"></div>
+  <div id="cur-ring"></div>
+  <div class="cur-trail" id="ct1"></div>
+  <div class="cur-trail" id="ct2"></div>
+  <div class="cur-trail" id="ct3"></div>
+
+  <nav class="nav" id="nav">
+    <a href="#home" class="nav-logo hov">
+      <span class="nav-logo-full"><svg width="277" height="281" viewBox="0 0 277 281" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <g clip-path="url(#nlf)">
+            <path
+              d="M220.16 0C226.76 5.6 237.01 16.68 242.31 25.28L236.01 37.07C231.35 28.7 218.66 13.91 212.26 8.81L220.16 0.01V0ZM216.16 61.1C237.06 50.3 254.96 25.2 261.96 1.2L272.36 4.6C266.46 30.1 244.36 59.6 222.16 71.7L216.16 61.1Z"
+              fill="#222222" />
+            <path
+              d="M130.89 255.94C127.43 263.23 125.74 271.48 126.06 279.71C126.07 280.07 126.11 280.44 126.14 280.8H132.07C132.03 280.25 131.98 279.71 131.96 279.16C131.67 271.71 133.1 265.04 136.46 258.16L136.52 258.04C136.81 257.49 143.5 244.85 158.17 238.42C158.76 238.16 159.38 237.89 160.01 237.61V232.76C156.37 234.39 152.78 236.04 149.6 237.58C137.96 243.22 131.18 255.42 130.9 255.94H130.89Z"
+              fill="#222222" />
+            <path
+              d="M147.89 263.93C145.53 268.79 144.56 273.36 144.76 278.66C144.79 279.37 144.84 280.08 144.91 280.79H150.99C153.51 280.79 155.79 279.75 157.42 278.08C157.24 273.61 156.24 269.69 154.27 265.77L153.8 264.83L154.4 263.97C155.76 262.05 157.56 260.31 159.98 258.62V251.85C152.01 256.56 148.06 263.59 147.87 263.92L147.89 263.93Z"
+              fill="#222222" />
+            <path
+              d="M45.79 36.61C55.54 52.25 65.51 60.26 81.34 65.19L81.72 65.32C81.92 65.4 97.48 71.19 114.75 65.83C125.53 62.48 134.01 58.04 140.67 52.26L141.24 51.77L141.99 51.84C145.07 52.14 148.15 52.44 151.2 52.73C152.09 52.82 153.06 52.92 154.08 53.03L157.5 53.4L155.19 55.95C149.35 62.38 139.2 71.68 118.55 78.08C111.68 80.21 105.09 80.95 99.26 80.95C87.47 80.95 78.83 77.93 77.33 77.37C58.58 71.49 46.29 61.65 34.91 43.4C26.48 29.86 23.97 14.34 27.22 0.80002H21.11C20.65 2.93002 20.31 5.11002 20.12 7.34002C19.04 20.14 22.48 33.74 30.05 46.66C40.23 64.04 57.61 77.92 75.39 82.87C94.06 88.07 111.36 87.42 128.28 80.9C141.25 75.9 151.89 68.53 159.99 58.97V47.86C157.2 47.61 154.36 47.36 151.87 47.15L148.76 46.88C144 46.47 138.61 46 131.52 45.27L128.98 45.01L133.82 35.51C134.07 35 134.32 34.45 134.57 33.9L135.08 32.75L136.34 32.87C141.58 33.39 145.95 33.77 149.81 34.1C153.07 34.38 156.38 34.67 159.99 35.02V29.53C158.61 29.35 157.31 29.15 156.04 28.96C154.3 28.69 152.65 28.44 151.1 28.3C147.97 28.01 144.5 27.69 139.15 27.14L137.14 26.93L137.63 24.97C138.36 22.09 138.87 19.08 139.17 16.02L139.34 14.27L141.09 14.45C146.02 14.95 149.31 15.26 152.27 15.53C153.43 15.64 154.79 15.72 156.2 15.8C157.45 15.88 158.72 15.96 159.97 16.06V9.78002C159.97 4.81002 155.94 0.78002 150.97 0.78002H133.45C134.11 6.42002 134.81 19.71 128.92 32.07C124.84 40.64 119.06 51.52 114.92 59.15L114.6 59.75L113.96 59.97C110.48 61.18 106.25 61.92 101.72 62.12L98.61 62.25L100.12 59.52C102.75 54.76 111.75 38.33 117.36 26.56C122.59 15.58 120.84 2.77002 120.52 0.79002H114.38C114.51 1.29002 114.64 1.77002 114.76 2.28002L114.79 2.41002C114.91 3.02002 117.59 17.07 110.15 31.25C105.89 39.37 98.83 52.75 94.54 60.87L93.98 61.92L92.8 61.79C89.42 61.41 86.12 60.75 82.97 59.82L80.92 59.21L81.92 57.32C85.93 49.73 94.08 34.28 98.8 25.29C103.97 15.43 102.29 5.33002 102.22 4.91002C101.89 3.45002 101.48 2.08002 101 0.77002H86.79C89.5 3.66002 92.48 5.81002 96.08 7.47002L97.03 7.91002L97.09 8.95002C97.28 11.95 96.7 15.17 95.27 19.06L94.65 20.76L92.97 20.09C86.2 17.37 80.86 13.57 76.16 8.15002C74.16 5.84002 72.4 3.37002 70.9 0.78002H64.21C66.13 4.70002 68.56 8.39002 71.48 11.77C76.63 17.72 83.17 22.46 90.4 25.48L92.14 26.21L91.28 27.89C90.13 30.14 88.76 32.7 86.84 36.19L86.07 37.58L84.61 36.94C75.9 33.15 68.01 27.35 61.78 20.16C56.67 14.26 52.85 7.69002 50.26 0.77002H40.46C36.69 11.78 38.56 25.05 45.75 36.58L45.79 36.61Z"
+              fill="#222222" />
+            <path
+              d="M57.7002 259.64C57.7202 257.24 58.1102 253.88 58.8602 249.44L59.0402 248.36L60.0902 248.05C63.3802 247.08 66.7302 245.89 70.0402 244.5L73.0802 243.23L72.4302 246.46C71.9002 249.13 71.4602 251.54 71.1402 253.61C70.8302 255.81 70.6102 257.98 70.4802 260.03V261.73H70.3902C70.1102 268.28 70.6102 274.67 71.8502 280.79H77.8302C75.2302 267.71 75.3302 257.17 78.1602 246.74L78.3602 246.05C78.8802 244.21 79.6202 242.06 80.5202 239.8L80.7402 239.23L81.2702 238.93C88.0302 235.03 94.2902 230.34 99.8602 224.99L102.36 227.43C98.8502 231.26 95.1402 237.61 92.4302 244.41C92.3102 244.72 91.9902 245.54 91.9502 245.64C88.2402 255.8 87.8202 265.79 90.5402 279.01C90.6602 279.61 90.8002 280.2 90.9402 280.79H113.28C113.28 280.59 113.25 280.39 113.24 280.19C112.84 269.86 114.98 259.49 119.41 250.22L119.5 250.04C119.86 249.35 128.18 233.7 143.99 226.04C148.8 223.71 154.5 221.14 159.98 218.74V203.88C155.65 203.11 151.48 202.79 147.44 202.96L146.69 202.99L146.15 202.47C143.99 200.37 141.82 198.26 139.67 196.18L139.51 196.02C138.87 195.39 138.17 194.71 137.45 193.99L135.01 191.57L138.4 191.03C143.6 190.2 150.71 189.55 159.97 190.92V185C150.23 183.74 140.74 184.33 131.62 186.81L130.3 187.21L125.41 182.55L125.7 181.53C126.21 179.76 126.7 177.85 127.19 175.69L127.43 174.66L128.45 174.39C132.86 173.21 137.45 172.38 142.09 171.95C147.98 171.4 153.96 171.45 159.97 172.11V76.9701C152.16 83.5901 143.08 88.9401 132.88 92.8701C121.95 97.0901 110.91 99.1901 99.5702 99.1901C90.5902 99.1901 81.4002 97.8701 71.9402 95.2301C51.0702 89.4201 30.7702 73.3001 18.9702 53.1501C10.0802 37.9201 6.05023 21.7101 7.35023 6.2601C7.50023 4.4301 7.74023 2.6301 8.05023 0.850098C3.53023 1.3201 0.000234375 5.1501 0.000234375 9.8001V65.9801C2.07023 65.3201 4.18023 64.7301 6.32023 64.2001C8.62023 63.5101 11.9502 62.8801 16.4102 62.3001L17.4902 62.1601L18.0902 63.0701C19.9902 65.9301 22.1202 68.7801 24.4202 71.5201L26.5302 74.0501L23.2502 74.3901C20.5302 74.6701 18.1002 74.9701 16.0402 75.2701C13.8302 75.6301 11.6702 76.0601 9.66023 76.5501L9.23023 76.6501C6.05023 77.4401 2.97023 78.4101 -0.00976562 79.5401V85.8001C8.51023 82.0801 16.3802 80.2401 24.6802 79.9501L25.3002 79.9301H25.3202C27.2502 79.8901 29.5402 79.9701 32.0102 80.1501L32.6202 80.2001L33.0702 80.6101C38.7902 85.9101 45.1302 90.5001 51.8902 94.2501L50.3002 97.3601C45.6002 95.1401 38.4402 93.4701 31.1502 92.8901C30.8202 92.8701 29.9302 92.8001 29.8302 92.8001C19.8002 92.2901 10.7402 94.4701 0.0202344 100V124.54C1.04023 124.12 2.08023 123.72 3.13023 123.36C12.8802 119.93 23.4202 118.9 33.5802 120.39L33.7802 120.42C34.5502 120.56 51.9602 123.88 63.9602 136.73C70.4402 143.66 78.4502 153.03 84.0302 159.67L84.4702 160.19L84.4402 160.87C84.2902 164.55 83.4302 168.76 81.9502 173.05L80.9302 176L78.9402 173.6C75.4802 169.42 63.4902 155.02 54.5902 145.48C45.7602 136.03 32.1002 133.16 31.5202 133.04C23.5302 131.89 15.1502 132.71 7.39023 135.45C4.85023 136.35 2.39023 137.46 0.0302344 138.74V145.6C3.04023 143.69 6.27023 142.1 9.66023 140.91C16.6902 138.43 23.4902 137.83 31.0502 139L31.1802 139.02C31.8002 139.13 45.8502 141.79 56.3302 153.9C62.3302 160.84 72.1902 172.31 78.1802 179.27L78.9602 180.17L78.4002 181.22C76.8102 184.22 74.9902 187.06 72.9702 189.65L71.6602 191.34L70.2702 189.72C64.6702 183.21 53.2902 169.96 46.6502 162.28C39.3702 153.86 29.3602 151.72 28.9402 151.63C23.6002 150.82 18.9402 151.23 13.9402 152.99C9.56023 154.53 5.60023 156.89 2.18023 159.99L1.49023 160.61L0.590234 160.39C0.400234 160.35 0.230234 160.28 0.0502344 160.24V166.28C5.99023 167.47 12.2202 167.04 18.1502 164.95C22.4102 163.45 25.8802 161.33 29.0702 158.27L29.8302 157.55L30.8302 157.87C33.6902 158.8 36.4702 160.51 39.5702 163.26L40.9202 164.46L39.6802 165.77C34.6702 171.07 29.1802 174.65 22.4102 177.04C17.2502 178.86 11.9302 179.76 6.63023 179.76C4.43023 179.76 2.23023 179.59 0.0502344 179.28V185.12C7.89023 186.23 16.0902 185.54 24.0602 182.73C31.4802 180.12 38.2902 175.77 43.7502 170.14L45.0702 168.78L46.3202 170.2C47.9902 172.09 49.8702 174.3 52.4102 177.37L53.4302 178.6L52.3002 179.73C45.5902 186.44 37.2902 191.66 28.3202 194.82C21.4002 197.26 14.2402 198.47 7.11023 198.47C4.75023 198.47 2.40023 198.34 0.0602344 198.07V205.25C8.85023 214.43 23.0902 218.45 37.7402 215.75C55.8602 212.4 66.9702 206.06 77.3502 193.14L77.6202 192.83C77.7602 192.67 88.8502 180.3 90.1902 162.28C91.0302 151.03 90.0002 141.51 87.0602 133.19L86.8102 132.48L87.1502 131.81C88.4702 129.22 89.7902 126.62 91.1002 124.05L91.3502 123.56C91.7602 122.76 92.2002 121.9 92.6802 120.99L94.2802 117.95L95.8002 121.03C99.6502 128.82 104.58 141.67 102.98 163.23C101.37 184.94 88.8202 199.54 87.2302 201.32C74.8902 216.61 61.2302 224.44 40.0802 228.35C36.3302 229.04 32.5902 229.38 28.9302 229.38C18.3402 229.38 8.33023 226.58 0.0702344 221.52V228.36C0.420234 228.54 0.760234 228.73 1.11023 228.91C12.6202 234.6 26.5302 236.39 41.3402 234.07C61.2502 230.16 80.5202 219.88 91.6402 205.14C103.32 189.67 109.05 173.34 109.18 155.2C109.29 139.43 105.47 125.33 97.8402 113.3L97.0702 112.16L100.08 106.11L101.14 106.09C102.99 106.05 104.95 105.95 107.16 105.79L108.21 105.71L108.77 106.6C111.21 110.47 113.35 114.61 115.13 118.91C119.78 130.08 122.08 142.32 121.99 155.28C121.84 176.27 115.26 195.1 101.86 212.85C88.8102 230.14 66.3702 243.12 43.3002 246.72C38.4402 247.48 33.6502 247.85 28.9602 247.85C18.6702 247.85 8.90023 246.03 0.0502344 242.45V271.77C0.0502344 276.74 4.08024 280.77 9.05023 280.77H58.8702C57.7002 273.96 57.3202 266.87 57.7402 259.62L57.7002 259.64ZM63.0802 125.4L62.1502 127.2L60.5102 126.02C58.1002 124.29 55.4902 122.71 52.7502 121.31L51.1802 120.51L51.9902 118.95C54.2702 114.54 55.7502 111.6 57.0902 108.94C57.6102 107.9 58.1902 106.67 58.7802 105.38C59.5502 103.73 60.3402 102.02 61.1402 100.47L61.8802 99.0401L63.3702 99.6601C65.6502 100.61 69.0902 101.95 72.6502 102.64L74.9502 103.09L73.8702 105.17C72.8702 107.09 71.9002 108.75 70.9602 110.36C70.0802 111.88 69.2402 113.32 68.5402 114.71C67.1302 117.51 65.5602 120.62 63.0902 125.4H63.0802ZM92.6202 108.41C90.6202 112.27 88.2602 117.03 86.3602 120.86L84.9602 123.69C82.8202 127.99 80.3902 132.87 77.1402 139.14L75.9702 141.4L68.9002 133.42C68.5102 133 68.1002 132.57 67.6802 132.14L66.8002 131.24L67.3802 130.12C69.8102 125.38 71.7602 121.45 73.4902 117.98C75.4102 114.12 77.4002 110.13 79.7602 105.59L80.3502 104.46L81.6102 104.68C84.8302 105.23 88.0602 105.63 91.2002 105.86L93.8502 106.05L92.6302 108.41H92.6202ZM118.62 199.69C120.1 196.78 121.43 193.81 122.58 190.87L123.55 188.4L125.44 190.27C128.53 193.32 132.39 196.99 135.48 199.93L137.77 202.11C141.23 205.41 145.15 209.15 150.22 214.14L152.04 215.93L142.32 220.32C141.8 220.57 141.27 220.83 140.73 221.11L139.61 221.69L138.71 220.81C134.96 217.15 131.8 214.14 129.01 211.47L128.92 211.38C125.96 208.56 122.6 205.35 118.94 201.73L118.03 200.83L118.61 199.69H118.62ZM108.44 215.62C110.02 213.72 112.31 210.83 114.03 207.64L115.14 205.58L116.8 207.23C118.34 208.75 119.64 210.17 120.9 211.54C122.09 212.83 123.22 214.06 124.34 215.14L124.47 215.27C126.7 217.42 129.18 219.81 132.94 223.51L134.38 224.93L132.77 226.15C130.41 227.94 128.12 229.97 125.98 232.17L124.75 233.43L123.5 232.2C119.98 228.74 117.61 226.45 115.47 224.39C114.61 223.56 113.6 222.65 112.55 221.7C111.2 220.48 109.8 219.22 108.56 217.99L107.41 216.86L108.44 215.62Z"
+              fill="#222222" />
+            <path
+              d="M262.98 175.85L252.89 169.35C266.99 147.46 266.13 122.58 259.38 108.73L270.17 103.47C278.63 120.8 279.69 149.91 262.99 175.84L262.98 175.85Z"
+              fill="#222222" />
+            <path
+              d="M236.99 279.82C234.45 258.68 232.7 237.52 239.18 211.18L250.83 214.05C244.84 238.43 246.5 258.4 248.9 278.39L236.99 279.82Z"
+              fill="#222222" />
+            <path
+              d="M251.79 155.1C249.85 155.95 247.8 156.72 245.73 157.35C240.61 158.9 233.46 160.08 228.5 156.94C220.13 151.63 218.18 134.08 223.02 107.52L210.23 105.19C204.12 138.71 207.82 159.23 221.54 167.92C226.04 170.77 231.11 171.91 236.32 171.91C240.32 171.91 244.39 171.24 248.34 170.14L251.78 155.1H251.79Z"
+              fill="#222222" />
+          </g>
+          <defs>
+            <clipPath id="nlf">
+              <rect width="276.15" height="280.8" fill="white" />
+            </clipPath>
+          </defs>
+        </svg></span>
+      <span class="nav-logo-mark"><svg width="160" height="280" viewBox="0 0 160 280" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path
+            d="M130.89 255.14C127.43 262.43 125.74 270.68 126.06 278.91C126.07 279.27 126.11 279.64 126.14 280H132.07C132.03 279.45 131.98 278.91 131.96 278.36C131.67 270.91 133.1 264.24 136.46 257.36L136.52 257.24C136.81 256.69 143.5 244.05 158.17 237.62C158.76 237.36 159.38 237.09 160.01 236.81V231.96C156.37 233.59 152.78 235.24 149.6 236.78C137.96 242.42 131.18 254.62 130.9 255.14H130.89Z"
+            fill="#222222" />
+          <path
+            d="M147.89 263.14C145.53 268 144.56 272.57 144.76 277.87C144.79 278.58 144.84 279.29 144.91 280H150.99C153.51 280 155.79 278.96 157.42 277.29C157.24 272.82 156.24 268.9 154.27 264.98L153.8 264.04L154.4 263.18C155.76 261.26 157.56 259.52 159.98 257.83V251.06C152.01 255.77 148.06 262.8 147.87 263.13L147.89 263.14Z"
+            fill="#222222" />
+          <path
+            d="M45.79 35.8102C55.54 51.4502 65.51 59.4602 81.34 64.3902L81.72 64.5202C81.92 64.6002 97.48 70.3902 114.75 65.0302C125.53 61.6802 134.01 57.2402 140.67 51.4602L141.24 50.9702L141.99 51.0402C145.07 51.3402 148.15 51.6402 151.2 51.9302C152.09 52.0202 153.06 52.1202 154.08 52.2302L157.5 52.6002L155.19 55.1502C149.35 61.5802 139.2 70.8802 118.55 77.2802C111.68 79.4102 105.09 80.1502 99.26 80.1502C87.47 80.1502 78.83 77.1302 77.33 76.5702C58.58 70.6902 46.29 60.8502 34.91 42.6002C26.48 29.0702 23.97 13.5502 27.22 0.000214843H21.11C20.65 2.13021 20.31 4.31021 20.12 6.54022C19.04 19.3402 22.48 32.9402 30.05 45.8602C40.23 63.2402 57.61 77.1202 75.39 82.0702C94.06 87.2702 111.36 86.6202 128.28 80.1002C141.25 75.1002 151.89 67.7302 159.99 58.1702V47.0602C157.2 46.8102 154.36 46.5602 151.87 46.3502L148.76 46.0802C144 45.6702 138.61 45.2002 131.52 44.4702L128.98 44.2102L133.82 34.7102C134.07 34.2002 134.32 33.6502 134.57 33.1002L135.08 31.9502L136.34 32.0702C141.58 32.5902 145.95 32.9702 149.81 33.3002C153.07 33.5802 156.38 33.8702 159.99 34.2202V28.7302C158.61 28.5502 157.31 28.3502 156.04 28.1602C154.3 27.8902 152.65 27.6402 151.1 27.5002C147.97 27.2102 144.5 26.8902 139.15 26.3402L137.14 26.1302L137.63 24.1702C138.36 21.2902 138.87 18.2802 139.17 15.2202L139.34 13.4702L141.09 13.6502C146.02 14.1502 149.31 14.4602 152.27 14.7302C153.43 14.8402 154.79 14.9202 156.2 15.0002C157.45 15.0802 158.72 15.1602 159.97 15.2602V8.98021C159.97 4.01021 155.94 -0.0197852 150.97 -0.0197852H133.45C134.11 5.62021 134.81 18.9102 128.92 31.2702C124.84 39.8402 119.06 50.7202 114.92 58.3502L114.6 58.9502L113.96 59.1702C110.48 60.3802 106.25 61.1202 101.72 61.3202L98.61 61.4502L100.12 58.7202C102.75 53.9602 111.75 37.5302 117.36 25.7602C122.59 14.7802 120.84 1.97021 120.52 -0.00978516H114.38C114.51 0.490215 114.64 0.970215 114.76 1.48021L114.79 1.61021C114.91 2.22021 117.59 16.2702 110.15 30.4502C105.89 38.5702 98.83 51.9502 94.54 60.0702L93.98 61.1202L92.8 60.9902C89.42 60.6102 86.12 59.9502 82.97 59.0202L80.92 58.4102L81.92 56.5202C85.93 48.9302 94.08 33.4802 98.8 24.4902C103.97 14.6302 102.29 4.53022 102.22 4.11022C101.89 2.65022 101.48 1.28021 101 -0.0297852H86.79C89.5 2.86021 92.48 5.01022 96.08 6.67022L97.03 7.11022L97.09 8.15021C97.28 11.1502 96.7 14.3702 95.27 18.2602L94.65 19.9602L92.97 19.2902C86.2 16.5702 80.86 12.7702 76.16 7.35021C74.16 5.04022 72.4 2.57021 70.9 -0.0197852H64.21C66.13 3.90021 68.56 7.59021 71.48 10.9702C76.63 16.9202 83.17 21.6602 90.4 24.6802L92.14 25.4102L91.28 27.0902C90.13 29.3402 88.76 31.9002 86.84 35.3902L86.07 36.7802L84.61 36.1402C75.9 32.3502 68.01 26.5502 61.78 19.3602C56.67 13.4602 52.85 6.89021 50.26 -0.0297852H40.46C36.69 10.9802 38.56 24.2502 45.75 35.7802L45.79 35.8102Z"
+            fill="#222222" />
+          <path
+            d="M57.7002 258.85C57.7202 256.45 58.1102 253.09 58.8602 248.65L59.0402 247.57L60.0902 247.26C63.3802 246.29 66.7302 245.1 70.0402 243.71L73.0802 242.44L72.4302 245.67C71.9002 248.34 71.4602 250.75 71.1402 252.82C70.8302 255.02 70.6102 257.19 70.4802 259.24V260.94H70.3902C70.1102 267.49 70.6102 273.88 71.8502 280H77.8302C75.2302 266.92 75.3302 256.38 78.1602 245.95L78.3602 245.26C78.8802 243.42 79.6202 241.27 80.5202 239.01L80.7402 238.44L81.2702 238.14C88.0302 234.24 94.2902 229.55 99.8602 224.2L102.36 226.64C98.8502 230.47 95.1402 236.82 92.4302 243.62C92.3102 243.93 91.9902 244.75 91.9502 244.85C88.2402 255.01 87.8202 265 90.5402 278.22C90.6602 278.82 90.8002 279.41 90.9402 280H113.28C113.28 279.8 113.25 279.6 113.24 279.4C112.84 269.07 114.98 258.7 119.41 249.43L119.5 249.25C119.86 248.56 128.18 232.91 143.99 225.25C148.8 222.92 154.5 220.35 159.98 217.95V203.09C155.65 202.32 151.48 202 147.44 202.17L146.69 202.2L146.15 201.68C143.99 199.58 141.82 197.47 139.67 195.39L139.51 195.23C138.87 194.6 138.17 193.92 137.45 193.2L135.01 190.78L138.4 190.24C143.6 189.41 150.71 188.76 159.97 190.13V184.21C150.23 182.95 140.74 183.54 131.62 186.02L130.3 186.42L125.41 181.76L125.7 180.74C126.21 178.97 126.7 177.06 127.19 174.9L127.43 173.87L128.45 173.6C132.86 172.42 137.45 171.59 142.09 171.16C147.98 170.61 153.96 170.66 159.97 171.32V76.1801C152.16 82.8001 143.08 88.1501 132.88 92.0801C121.95 96.3001 110.91 98.4001 99.5702 98.4001C90.5902 98.4001 81.4002 97.0801 71.9402 94.4401C51.0702 88.6301 30.7702 72.5101 18.9702 52.3601C10.0802 37.1201 6.05023 20.9101 7.35023 5.47006C7.50023 3.64006 7.74023 1.84006 8.05023 0.0600586C3.53023 0.530059 0.000234375 4.35006 0.000234375 9.00006V65.1801C2.07023 64.5201 4.18023 63.9301 6.32023 63.4001C8.62023 62.7101 11.9502 62.0801 16.4102 61.5001L17.4902 61.3601L18.0902 62.2701C19.9902 65.1301 22.1202 67.9801 24.4202 70.7201L26.5302 73.2501L23.2502 73.5901C20.5302 73.8701 18.1002 74.1701 16.0402 74.4701C13.8302 74.8301 11.6702 75.2601 9.66023 75.7501L9.23023 75.8501C6.05023 76.6401 2.97023 77.6101 -0.00976562 78.7401V85.0001C8.51023 81.2801 16.3802 79.4401 24.6802 79.1501L25.3002 79.1301H25.3202C27.2502 79.0901 29.5402 79.1701 32.0102 79.3501L32.6202 79.4001L33.0702 79.8101C38.7902 85.1101 45.1302 89.7001 51.8902 93.4501L50.3002 96.5601C45.6002 94.3401 38.4402 92.6701 31.1502 92.0901C30.8202 92.0701 29.9302 92.0001 29.8302 92.0001C19.8002 91.4901 10.7402 93.6701 0.0202344 99.2001V123.74C1.04023 123.32 2.08023 122.92 3.13023 122.56C12.8802 119.13 23.4202 118.1 33.5802 119.59L33.7802 119.62C34.5502 119.76 51.9602 123.08 63.9602 135.93C70.4402 142.86 78.4502 152.23 84.0302 158.87L84.4702 159.39L84.4402 160.07C84.2902 163.75 83.4302 167.96 81.9502 172.25L80.9302 175.2L78.9402 172.8C75.4802 168.62 63.4902 154.22 54.5902 144.68C45.7602 135.23 32.1002 132.36 31.5202 132.24C23.5302 131.09 15.1502 131.91 7.39023 134.65C4.85023 135.55 2.39023 136.66 0.0302344 137.94V144.8C3.04023 142.89 6.27023 141.3 9.66023 140.11C16.6902 137.63 23.4902 137.03 31.0502 138.2L31.1802 138.22C31.8002 138.33 45.8502 140.99 56.3302 153.1C62.3302 160.04 72.1902 171.51 78.1802 178.47L78.9602 179.37L78.4002 180.42C76.8102 183.42 74.9902 186.26 72.9702 188.85L71.6602 190.54L70.2702 188.92C64.6702 182.41 53.2902 169.16 46.6502 161.48C39.3702 153.06 29.3602 150.92 28.9402 150.83C23.6002 150.02 18.9402 150.43 13.9402 152.19C9.56023 153.73 5.60023 156.09 2.18023 159.19L1.49023 159.81L0.590234 159.59C0.400234 159.55 0.230234 159.48 0.0502344 159.44V165.48C5.99023 166.67 12.2202 166.24 18.1502 164.15C22.4102 162.65 25.8802 160.53 29.0702 157.47L29.8302 156.75L30.8302 157.07C33.6902 158 36.4702 159.71 39.5702 162.46L40.9202 163.66L39.6802 164.97C34.6702 170.27 29.1802 173.85 22.4102 176.24C17.2502 178.06 11.9302 178.96 6.63023 178.96C4.43023 178.96 2.23023 178.79 0.0502344 178.48V184.32C7.89023 185.43 16.0902 184.74 24.0602 181.93C31.4802 179.32 38.2902 174.97 43.7502 169.34L45.0702 167.98L46.3202 169.4C47.9902 171.29 49.8702 173.5 52.4102 176.57L53.4302 177.8L52.3002 178.93C45.5902 185.64 37.2902 190.86 28.3202 194.02C21.4002 196.46 14.2402 197.67 7.11023 197.67C4.75023 197.67 2.40023 197.54 0.0602344 197.27V204.45C8.85023 213.63 23.0902 217.65 37.7402 214.95C55.8602 211.6 66.9702 205.26 77.3502 192.34L77.6202 192.03C77.7602 191.87 88.8502 179.5 90.1902 161.48C91.0302 150.23 90.0002 140.71 87.0602 132.39L86.8102 131.68L87.1502 131.01C88.4702 128.42 89.7902 125.82 91.1002 123.25L91.3502 122.76C91.7602 121.96 92.2002 121.1 92.6802 120.19L94.2802 117.15L95.8002 120.23C99.6502 128.02 104.58 140.87 102.98 162.43C101.37 184.14 88.8202 198.74 87.2302 200.52C74.8902 215.81 61.2302 223.64 40.0802 227.55C36.3302 228.24 32.5902 228.58 28.9302 228.58C18.3402 228.58 8.33023 225.78 0.0702344 220.72V227.56C0.420234 227.74 0.760234 227.93 1.11023 228.11C12.6202 233.8 26.5302 235.59 41.3402 233.27C61.2502 230.16 80.5202 219.08 91.6402 204.34C103.32 188.87 109.05 172.54 109.18 154.4C109.29 138.63 105.47 124.53 97.8402 112.5L97.0702 111.36L100.08 105.31L101.14 105.29C102.99 105.25 104.95 105.15 107.16 104.99L108.21 104.91L108.77 105.8C111.21 109.67 113.35 113.81 115.13 118.11C119.78 129.28 122.08 141.52 121.99 154.48C121.84 175.47 115.26 194.3 101.86 212.05C88.8102 229.34 66.3702 242.32 43.3002 245.92C38.4402 246.68 33.6502 247.05 28.9602 247.05C18.6702 247.05 8.90023 245.23 0.0502344 241.65V270.97C0.0502344 275.94 4.08024 279.97 9.05023 279.97H58.8702C57.7002 273.16 57.3202 266.07 57.7402 258.82L57.7002 258.85ZM63.0802 124.6L62.1502 126.4L60.5102 125.22C58.1002 123.49 55.4902 121.91 52.7502 120.51L51.1802 119.71L51.9902 118.15C54.2702 113.74 55.7502 110.8 57.0902 108.14C57.6102 107.1 58.1902 105.87 58.7802 104.58C59.5502 102.93 60.3402 101.22 61.1402 99.6701L61.8802 98.2401L63.3702 98.8601C65.6502 99.8101 69.0902 101.15 72.6502 101.84L74.9502 102.29L73.8702 104.37C72.8702 106.29 71.9002 107.95 70.9602 109.56C70.0802 111.08 69.2402 112.52 68.5402 113.91C67.1302 116.71 65.5602 119.82 63.0902 124.6H63.0802ZM92.6202 107.61C90.6202 111.47 88.2602 116.23 86.3602 120.06L84.9602 122.89C82.8202 127.19 80.3902 132.07 77.1402 138.34L75.9702 140.6L68.9002 132.62C68.5102 132.2 68.1002 131.77 67.6802 131.34L66.8002 130.44L67.3802 129.32C69.8102 124.58 71.7602 120.65 73.4902 117.18C75.4102 113.32 77.4002 109.33 79.7602 104.79L80.3502 103.66L81.6102 103.88C84.8302 104.43 88.0602 104.83 91.2002 105.06L93.8502 105.25L92.6302 107.61H92.6202ZM118.62 198.9C120.1 195.99 121.43 193.02 122.58 190.08L123.55 187.61L125.44 189.48C128.53 192.53 132.39 196.2 135.48 199.14L137.77 201.32C141.23 204.62 145.15 208.36 150.22 213.35L152.04 215.14L142.32 219.53C141.8 219.78 141.27 220.04 140.73 220.32L139.61 220.9L138.71 220.02C134.96 216.36 131.8 213.35 129.01 210.68L128.92 210.59C125.96 207.77 122.6 204.56 118.94 200.94L118.03 200.04L118.61 198.9H118.62ZM108.44 214.83C110.02 212.93 112.31 210.04 114.03 206.85L115.14 204.79L116.8 206.44C118.34 207.96 119.64 209.38 120.9 210.75C122.09 212.04 123.22 213.27 124.34 214.35L124.47 214.48C126.7 216.63 129.18 219.02 132.94 222.72L134.38 224.14L132.77 225.36C130.41 227.15 128.12 229.18 125.98 231.38L124.75 232.64L123.5 231.41C119.98 227.95 117.61 225.66 115.47 223.6C114.61 222.77 113.6 221.86 112.55 220.91C111.2 219.69 109.8 218.43 108.56 217.2L107.41 216.07L108.44 214.83Z"
+            fill="#222222" />
+        </svg></span>
+    </a>
+    <nav class="nav-center"><a href="#home" class="active hov">Home</a><a href="#about" class="hov">About</a><a
+        href="#menu" class="hov">Menu</a><a href="#reservation" class="hov">Reservation</a></nav>
+    <span class="nav-cta-wrap"><a href="#reservation" class="nav-cta hov">RESERVE A TABLE</a></span>
+    <div class="nav-hamburger" id="navHamburger" onclick="toggleMobileNav()"><span></span><span></span><span></span>
+    </div>
+  </nav>
+  <div class="nav-drawer" id="navDrawer">
+    <a href="#home" class="active">Home</a>
+    <a href="#about">About</a>
+    <a href="#menu">Menu</a>
+    <a href="#reservation">Reservation</a>
+  </div>
+
+  <section id="home" class="hero">
+    <div class="hero-sticky-track">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-line"></span>
+          <span>Bengaluru • Japanese Cuisine</span>
+        </div>
+        <div class="glitch-hed-wrapper" id="heroInteractionTarget">
+          <h1 class="glitch-hed" id="heroHeadline">
+            <span class="hed-layer en active">The<br><span class="red-text">Fifth</span><br>Flavor.</span>
+            <span class="hed-layer jp">第<br><span class="red-text">五</span><br>の味.</span>
+          </h1>
+        </div>
+        <p class="hero-sub">
+          A modern Japanese kitchen rooted in the art of umami where every dish carries the quiet precision of craft.
+        </p>
+  
+        <div class="hero-cta-group">
+          <a href="#reservation" class="nav-cta hov">Reserve a table</a>
+          <a href="#menu" class="fc-link hov">Explore menu</a>
+        </div>
+      </div>
+  
+      <div class="hero-right">
+        <div class="hero-visual-container">
+          <canvas id="heroCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Japanese Precision: Sequence + Typewriter + Glitch -->
+  <section id="japanese-precision" class="precision-section">
+    <div id="about" style="position: absolute; top: -100px;"></div> <!-- Anchor for About nav link -->
+    <div class="precision-track">
+      <div class="precision-sticky">
+        <div class="precision-visual-container" style="position: relative; width: 100%; height: 100%;">
+          <canvas id="precisionCanvas"></canvas>
+          <div class="marquee" style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 10; background: var(--red); color: #fff; padding: 13px 0; border: none;">
+            <div class="marquee-inner"><span class="marquee-item">食<span class="marquee-sep"></span></span><span
+                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
+                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
+                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
+                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span
+                class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span
+                  class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span
+                class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span
+                  class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span
+                class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span
+                  class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span
+                class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span
+                  class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span
+                class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span
+                  class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span
+                class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span
+                  class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span
+                class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span
+                  class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span
+                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
+                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
+                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
+                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div>
+          </div>
+        </div>
+        <div class="precision-overlay">
+          <div class="precision-content">
+            <div class="precision-glitch-trigger">
+              <h2 class="glitch-hed" data-glitch-jp="精度" id="precisionHeadline">
+                <span class="hed-layer en active">Japanese <span class="red-text">Precision</span></span>
+                <span class="hed-layer jp">精度</span>
+              </h2>
+            </div>
+            <p class="precision-typewriter" id="precisionTypewriter"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEW CHEF PARALLAX SLIDER SECTION -->
+  <section id="about">
+    <div class="parallax-container">
+      <!-- Title overlay on top of image — glitch heading -->
+      <div class="glitch-hed-wrapper chef-title-overlay">
+        <h2 class="glitch-hed chef-title-hed" data-glitch-jp="悠の職人">
+          <span class="hed-layer en active">The <span class="red-text">Artisans</span></span>
+          <span class="hed-layer en cream-mask" aria-hidden="true">The <span class="red-text">Artisans</span></span>
+          <span class="hed-layer jp">悠の職人</span>
+        </h2>
+      </div>
+
+      <ul class="project-list">
+        <!-- Virtualized elements will be dynamically generated here -->
+      </ul>
+
+      <div class="minimap">
+        <div class="minimap-wrapper">
+          <div class="minimap-img-preview">
+            <!-- Virtualized elements will be dynamically generated here -->
+          </div>
+          <div class="minimap-info-list">
+            <!-- Virtualized elements will be dynamically generated here -->
+          </div>
+        </div>
+      </div>
+      
+      <!-- Bottom center scroll indicator -->
+      <div class="chef-scroll-indicator">
+        <span>scroll</span>
+        <div class="chef-scroll-indicator-line"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Removed editorial divider -->
+  </div>
+
+
+  <section id="about-gallery" class="gallery-reveal">
+    <div class="gallery-header r">
+      <span class="gallery-label">The interior</span>
+      <h2 class="glitch-hed" data-glitch-jp="空間の真髄">
+          <span class="hed-layer en active">The <span class="red-text">Space</span> Within</span>
+          <span class="hed-layer jp">空間の真髄</span>
+      </h2>
+      <p class="gallery-subtitle" data-scroll-swipe>
+        Kyoto's minimal restraint meets the warmth of local teak, creating an atmosphere of quiet luxury.
+      </p>
+    </div>
+
+    <div class="gallery-collapsible-wrapper collapsed" id="galleryWrapper">
+      <div class="gallery-masonry">
+        <!-- Main Collection (30 slots) -->
+        <div class="gallery-item"><img src="images/yui/interior01.jpg" alt="Rope Booth Interior" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior02.jpg" alt="YUI Dining Atmosphere" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior03.jpg" alt="Minimalist Teak Design" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior04.jpg" alt="Friends Dining at YUI" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior05.jpg" alt="Wabi-sabi Textures" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior06.jpg" alt="Lively Counter Dining" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior07.jpg" alt="Sake Pour Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior08.jpg" alt="Omakase Table Setting" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior09.jpg" alt="Chef at Work" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior10.jpg" alt="Sake Service" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior11.jpg" alt="City View Dining" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior12.jpg" alt="Sophisticated Interaction" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior13.jpg" alt="YUI Exterior Dusk" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior14.jpg" alt="Ceramic Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior16.jpg" alt="Atmospheric Wide Shot" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior17.jpg" alt="Carved Logo Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/gallery-11.jpg" alt="Chef Interaction" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/Main%20Resto%20Image.jpg" alt="Traditional Noren" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior01.jpg" alt="Toast at the Counter" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior02.jpg" alt="Wabi-sabi Textures" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        
+        <!-- Repeats to fill to 30 (Scattered) -->
+        <div class="gallery-item"><img src="images/yui/interior03.jpg" alt="YUI Dining Atmosphere" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior04.jpg" alt="Omakase Table Setting" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior05.jpg" alt="Sake Service" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior06.jpg" alt="Ceramic Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior07.jpg" alt="Minimalist Teak Design" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior08.jpg" alt="Friends Dining at YUI" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior09.jpg" alt="Carved Logo Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior10.jpg" alt="Traditional Noren" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior11.jpg" alt="Sophisticated Interaction" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+        <div class="gallery-item"><img src="images/yui/interior12.jpg" alt="Wabi-sabi Textures" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
+      </div>
+
+      <div class="gallery-mobile-fade">
+        <button class="see-more-btn" onclick="expandGallery()">
+          See More
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </div>
+    </div>
+  </section>
+  </section>
+
+  <!-- Removed editorial divider -->
+  </div>
+
+
+<section id="menu" class="menu-precision-section">
+    <div class="precision-track">
+      <div class="precision-sticky">
+        <div class="precision-visual-container" style="position: relative; width: 100%; height: 100%;">
+          <canvas id="menuCanvas" style="background: #fff;"></canvas>
+          <div id="menuMarquee" class="marquee" style="background: var(--red); color: #fff; padding: 13px 0; border: none; position: absolute; bottom: 0; left: 0; width: 100%; z-index: 10;">
+            <div class="marquee-inner"><span class="marquee-item">食<span class="marquee-sep"></span></span><span
+                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
+                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
+                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
+                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span
+                class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span
+                  class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span
+                class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span
+                  class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span
+                class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span
+                  class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span
+                class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span
+                  class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span
+                class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span
+                  class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span
+                class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span
+                  class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span
+                class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span
+                  class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span
+                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
+                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
+                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
+                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
+                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div>
+          </div>
+        </div>
+        <div class="precision-overlay">
+          <div class="precision-content">
+            <span class="menu-kicker">Cuisine & experience</span>
+            <div class="precision-glitch-trigger">
+              <h1 class="glitch-hed" data-glitch-jp="メニュー" id="menuHeadline">
+                <span class="hed-layer en active">Menu</span>
+                <span class="hed-layer jp">メニュー</span>
+              </h1>
+            </div>
+            <p class="precision-typewriter" id="menuTypewriter"></p>
+          </div>
+        </div>
+      </div> <!-- End precision-sticky -->
+    </div>
+  </section>
+
+<div class="ms" style="background:#FFFFFF;--sbg:#FFFFFF">
+<div class="ms-vis r d1">
+<img alt="Tempura platter" src="images/yui/menu-tempura-platter-1.jpg" loading="lazy"/>
+<span class="ms-vis-lbl">Small plates & starters</span>
+<div class="ms-wm">前菜</div>
+</div>
+<div class="ms-content">
+<p class="ms-eyebrow r">Small plates &amp; starters</p>
+<h2 class="ms-hed r d2">Appetizers</h2>
+<div class="mi r"><div><div class="mi-name">Chicken Karaage</div><div class="mi-jp">チキン唐揚げ</div><div class="mi-desc">Japanese fried chicken with lemon &amp; yuzu mayo</div></div><div class="mi-price">₹345</div></div><div class="mi r d1"><div><div class="mi-name">Tofu Katsu</div><div class="mi-jp">豆腐カツ</div><div class="mi-desc">Crispy tofu cutlet with katsu sauce</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹315</div></div><div class="mi r d2"><div><div class="mi-name">Veg Tempura</div><div class="mi-jp">野菜天ぷら</div><div class="mi-desc">Mixed vegetables lightly battered and fried</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹345</div></div><div class="mi r d3"><div><div class="mi-name">Chicken Katsu</div><div class="mi-jp">チキンカツ</div><div class="mi-desc">Breaded chicken cutlet with katsu sauce</div></div><div class="mi-price">₹345</div></div><div class="mi r d4"><div><div class="mi-name">Cottage Cheese Katsu</div><div class="mi-jp">カッテージチーズカツ</div><div class="mi-desc">Fried cottage cheese with spicy glaze</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹315</div></div>
+</div>
+</div>
+<div class="ms alt" style="background:#FFFFFF;--sbg:#FFFFFF">
+<div class="ms-vis r d2">
+<img alt="Nigiri platter" src="images/yui/menu-nigiri-platter-1.jpg" loading="lazy"/>
+<span class="ms-vis-lbl">Hand-pressed rice</span>
+<div class="ms-wm">握り</div>
+</div>
+<div class="ms-content">
+<p class="ms-eyebrow r">Hand-pressed rice</p>
+<h2 class="ms-hed r d1">Nigiri</h2>
+<p class="ms-note r d1">2 pieces per order</p>
+<div class="mi r"><div><div class="mi-name">Salmon Nigiri</div><div class="mi-jp">サーモン握り</div><div class="mi-desc">Slices of fresh salmon over seasoned sushi rice</div></div><div class="mi-price">₹345</div></div><div class="mi r d1"><div><div class="mi-name">Prawn Nigiri</div><div class="mi-jp">海老握り</div><div class="mi-desc">Cooked prawn on vinegared rice</div></div><div class="mi-price">₹345</div></div><div class="mi r d2"><div><div class="mi-name">Avocado Nigiri</div><div class="mi-jp">アボカド握り</div><div class="mi-desc">Creamy avocado over sushi rice</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹315</div></div>
+</div>
+</div>
+<div class="ms" style="background:#FFFFFF;--sbg:#FFFFFF">
+<div class="ms-vis r d1">
+<img alt="Sushi rolls" src="images/yui/menu-sushi-rolls-3.jpg" loading="lazy"/>
+<span class="ms-vis-lbl">Rolled & sliced</span>
+<div class="ms-wm">寿司</div>
+</div>
+<div class="ms-content">
+<p class="ms-eyebrow r">Rolled &amp; sliced</p>
+<h2 class="ms-hed r d2">Sushi</h2>
+<p class="ms-note r d1">4 pieces · 8 pieces</p>
+<div class="mi r"><div><div class="mi-name">Chicken Katsu Roll</div><div class="mi-jp">チキンカツロール</div><div class="mi-desc">Crispy chicken with cucumber and spicy mayo</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d1"><div><div class="mi-name">Teriyaki Chicken Roll</div><div class="mi-jp">照り焼きチキンロール</div><div class="mi-desc">Teriyaki-glazed chicken with avocado</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d2"><div><div class="mi-name">California Roll</div><div class="mi-jp">カリフォルニアロール</div><div class="mi-desc">Crab stick, avocado, cucumber, mayo</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d3"><div><div class="mi-name">Salmon Roll</div><div class="mi-jp">サーモンロール</div><div class="mi-desc">Fresh salmon with cream cheese and cucumber</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d4"><div><div class="mi-name">Prawn Tempura Roll</div><div class="mi-jp">海老天ぷらロール</div><div class="mi-desc">Crispy prawn tempura with yuzu mayo</div></div><div class="mi-price">₹375 · ₹675</div></div>
+</div>
+</div>
+<div class="ms alt" style="background:#FFFFFF;--sbg:#FFFFFF">
+<div class="ms-vis r d2">
+<img alt="Ramen bowl" src="images/yui/menu-ramen-bowl-2.jpg" loading="lazy"/>
+<span class="ms-vis-lbl">Slow-cooked broth</span>
+<div class="ms-wm">拉麺</div>
+</div>
+<div class="ms-content">
+<p class="ms-eyebrow r">Slow-cooked broth</p>
+<h2 class="ms-hed r d1">Ramen</h2>
+<div class="mi r"><div><div class="mi-name">Teriyaki Chicken Ramen</div><div class="mi-jp">照り焼きチキンラーメン</div><div class="mi-desc">Rich soy broth with teriyaki chicken and noodles</div></div><div class="mi-price">₹445</div></div><div class="mi r d1"><div><div class="mi-name">Chicken Karaage Ramen</div><div class="mi-jp">チキン唐揚げラーメン</div><div class="mi-desc">Crispy fried chicken in tonkotsu-style broth</div></div><div class="mi-price">₹445</div></div><div class="mi r d2"><div><div class="mi-name">Chicken Katsu Ramen</div><div class="mi-jp">チキンカツラーメン</div><div class="mi-desc">Breaded cutlet in rich umami broth</div></div><div class="mi-price">₹445</div></div><div class="mi r d3"><div><div class="mi-name">Tofu Katsu Ramen</div><div class="mi-jp">豆腐カツラーメン</div><div class="mi-desc">Panko-fried tofu in spicy soy ramen</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div><div class="mi r d4"><div><div class="mi-name">Cottage Cheese Ramen</div><div class="mi-jp">カッテージチーズラーメン</div><div class="mi-desc">Paneer cubes in flavorful noodle soup</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div>
+</div>
+</div>
+
+<div class="ms" style="background:#FFFFFF;--sbg:#FFFFFF">
+<div class="ms-vis r d1">
+<img alt="Japanese curry katsu" src="images/yui/menu-japanese-curry-katsu-2.jpg" loading="lazy"/>
+<span class="ms-vis-lbl">Golden japanese curry</span>
+<div class="ms-wm">咖喱</div>
+</div>
+<div class="ms-content">
+<p class="ms-eyebrow r">Japanese golden curry</p>
+<h2 class="ms-hed r d2">Curry</h2>
+<p class="ms-note r d1">Served with sticky rice</p>
+<div class="mi r"><div><div class="mi-name">Chicken Katsu Curry</div><div class="mi-jp">チキンカツカレー</div><div class="mi-desc">Chicken cutlet in classic Japanese curry sauce</div></div><div class="mi-price">₹445</div></div><div class="mi r d1"><div><div class="mi-name">Chicken Karaage Curry</div><div class="mi-jp">チキン唐揚げカレー</div><div class="mi-desc">Crispy fried chicken with rich golden curry</div></div><div class="mi-price">₹445</div></div><div class="mi r d2"><div><div class="mi-name">Teriyaki Chicken Curry</div><div class="mi-jp">照り焼きチキンカレー</div><div class="mi-desc">Teriyaki chicken in savory golden curry</div></div><div class="mi-price">₹445</div></div><div class="mi r d3"><div><div class="mi-name">Tofu Katsu Curry</div><div class="mi-jp">豆腐カツカレー</div><div class="mi-desc">Tofu cutlet in creamy curry sauce</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div><div class="mi r d4"><div><div class="mi-name">Cottage Cheese Curry</div><div class="mi-jp">カッテージチーズカレー</div><div class="mi-desc">Grilled paneer in mildly spiced Japanese curry</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div>
+</div>
+</div>
+</section>
+  <section id="reservation" class="res-wrap">
+    <div class="res-left">
+      <div class="res-left-grain"></div>
+      <img src="images/yui/yui-logo-wordmark.svg" class="res-logo-bg" alt="Yui Logo">
+      
+      <div class="res-editorial-container">
+        <span class="eb-label">Make a Reservation</span>
+        <div class="glitch-hed-wrapper">
+          <h2 class="glitch-hed" data-glitch-jp="ご予約">
+            <span class="hed-layer en active">Host <span class="red-text">You.</span></span>
+            <span class="hed-layer jp">ご予約</span>
+          </h2>
+        </div>
+        
+        <p class="res-body">We would be glad to host you. Reserve your table at Yui and let us arrange an evening you'll carry home with you.</p>
+        
+        <div class="res-details">
+          <div class="rd">
+            <div class="rd-icon">
+              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            </div>
+            <div>
+              <div class="rd-lbl">Address</div>
+              <div class="rd-val">No. 17, 3rd Cross, Greenleaf Layout<br>Sector 5, Bengaluru • 560114</div>
+            </div>
+          </div>
+          
+          <div class="rd">
+            <div class="rd-icon">
+              <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+            </div>
+            <div>
+              <div class="rd-lbl">Phone</div>
+              <div class="rd-val">+91 89517 65556</div>
+            </div>
+          </div>
+          
+          <div class="rd">
+            <div class="rd-icon">
+              <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+            </div>
+            <div>
+              <div class="rd-lbl">Hours</div>
+              <div class="rd-val">Tue • Sun: 12pm • 3pm · 7pm • 11pm<br>Mondays closed</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="res-kanji">結</div>
+    </div>
+    <div class="res-right">
+      <h2 class="cf-title r">Reserve your visit</h2>
+      <p class="cf-sub r d1">Fill in the details and we will confirm within 4 hours.</p>
+      <form id="reservationForm" autocomplete="off" novalidate>
+        <!-- Toast replaced by statusModal popup -->
+        <div class="fg r d1">
+          <label class="fl" for="res-name">Full Name</label>
+          <input class="fi" id="res-name" name="name" type="text" placeholder="Arjun Mehta" required />
+        </div>
+        <div class="fg r d2">
+          <label class="fl" for="res-phone">Phone Number</label>
+          <input class="fi" id="res-phone" name="phone" type="tel" placeholder="+91 98765 43210" required />
+        </div>
+        <div class="f2">
+          <div class="fg r d3 custom-date-picker" id="datePickerContainer">
+            <label class="fl" for="res-date">Date</label>
+            <div class="fi hov date-trigger" id="dateTrigger" onclick="toggleDateDropdown()">Select Date</div>
+            <div class="date-dropdown" id="dateDropdown" onclick="event.stopPropagation()"></div>
+            <input type="hidden" name="date" id="res-date" required />
+          </div>
+          <div class="fg r d3 custom-time-picker" id="timePickerContainer">
+            <label class="fl" for="res-time">Time</label>
+            <div class="time-trigger fi hov" id="timeTrigger" onclick="toggleTimeDropdown()">19:00</div>
+            <div class="time-dropdown" id="timeDropdown" onclick="event.stopPropagation()">
+              <div class="time-dropdown-inner" id="timeDropdownInner"></div>
+            </div>
+            <input type="hidden" name="time" id="res-time" value="19:00" required />
+          </div>
+        </div>
+        <div class="fg r d4">
+          <label class="fl">Party Size</label>
+          <div class="chips" id="partySizeChips">
+            <button type="button" class="chip on hov" data-value="2" onclick="pickSize(this)">2</button>
+            <button type="button" class="chip hov" data-value="4" onclick="pickSize(this)">4</button>
+            <button type="button" class="chip hov" data-value="6" onclick="pickSize(this)">6</button>
+            <button type="button" class="chip hov" data-value="8" onclick="pickSize(this)">8+</button>
+          </div>
+          <input type="hidden" name="partySize" id="res-partySize" value="2" />
+        </div>
+        <div class="fg r d4">
+          <label class="fl">Occasion <span
+              style="font-weight:400;letter-spacing:.08em;text-transform:none;opacity:.5">(optional)</span></label>
+          <div class="chips" id="occasionChips">
+            <button type="button" class="chip hov" data-value="Birthday" onclick="pickOccasion(this)">Birthday</button>
+            <button type="button" class="chip hov" data-value="Anniversary"
+              onclick="pickOccasion(this)">Anniversary</button>
+            <button type="button" class="chip hov" data-value="Business" onclick="pickOccasion(this)">Business</button>
+            <button type="button" class="chip hov" data-value="Casual dining" onclick="pickOccasion(this)">Casual
+              dining</button>
+          </div>
+          <input type="hidden" name="occasion" id="res-occasion" value="" />
+        </div>
+        <div class="fg r d4">
+          <label class="fl" for="res-note">Note <span
+              style="font-weight:400;letter-spacing:.08em;text-transform:none;opacity:.5">(optional)</span></label>
+          <textarea class="fi-textarea" id="res-note" name="note" placeholder="Any special requests"
+            rows="3"></textarea>
+        </div>
+        <button type="submit" class="cf-submit hov r" id="submitBtn" style="margin-top:28px">
+          <span class="btn-label">Confirm reservation</span>
+          <span class="spinner"></span>
+          <svg viewBox="0 0 15 15" fill="none">
+            <path d="M1 7.5h13M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </section>
+  <footer class="footer">
+    <div class="footer-grain"></div>
+    <div class="footer-body">
+      <div>
+        <div class="fl-logo">
+          <img src="images/yui/yui-logo-wordmark.svg" alt="Yui" class="fl-logo-img" style="width: 120px; height: auto; filter: brightness(0) invert(0.9) sepia(0.15) saturate(0.5) hue-rotate(10deg);">
+          <!-- Original inline SVG removed, replaced with external SVG -->
+          <svg width="0" height="0" viewBox="0 0 277 281" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:none;">
+            <g clip-path="url(#clip0_289_2)">
+              <path d="M220.16 0C226.76 5.6 237.01 16.68 242.31 25.28L236.01 37.07C231.35 28.7 218.66 13.91 212.26 8.81L220.16 0.01V0ZM216.16 61.1C237.06 50.3 254.96 25.2 261.96 1.2L272.36 4.6C266.46 30.1 244.36 59.6 222.16 71.7L216.16 61.1Z" fill="#EEE2D4"/>
+              <path d="M130.89 255.94C127.43 263.23 125.74 271.48 126.06 279.71C126.07 280.07 126.11 280.44 126.14 280.8H132.07C132.03 280.25 131.98 279.71 131.96 279.16C131.67 271.71 133.1 265.04 136.46 258.16L136.52 258.04C136.81 257.49 143.5 244.85 158.17 238.42C158.76 238.16 159.38 237.89 160.01 237.61V232.76C156.37 234.39 152.78 236.04 149.6 237.58C137.96 243.22 131.18 255.42 130.9 255.94H130.89Z" fill="#EEE2D4"/>
+              <path d="M147.89 263.93C145.53 268.79 144.56 273.36 144.76 278.66C144.79 279.37 144.84 280.08 144.91 280.79H150.99C153.51 280.79 155.79 279.75 157.42 278.08C157.24 273.61 156.24 269.69 154.27 265.77L153.8 264.83L154.4 263.97C155.76 262.05 157.56 260.31 159.98 258.62V251.85C152.01 256.56 148.06 263.59 147.87 263.92L147.89 263.93Z" fill="#EEE2D4"/>
+              <path d="M45.79 36.61C55.54 52.25 65.51 60.26 81.34 65.19L81.72 65.32C81.92 65.4 97.48 71.19 114.75 65.83C125.53 62.48 134.01 58.04 140.67 52.26L141.24 51.77L141.99 51.84C145.07 52.14 148.15 52.44 151.2 52.73C152.09 52.82 153.06 52.92 154.08 53.03L157.5 53.4L155.19 55.95C149.35 62.38 139.2 71.68 118.55 78.08C111.68 80.21 105.09 80.95 99.26 80.95C87.47 80.95 78.83 77.93 77.33 77.37C58.58 71.49 46.29 61.65 34.91 43.4C26.48 29.86 23.97 14.34 27.22 0.80002H21.11C20.65 2.93002 20.31 5.11002 20.12 7.34002C19.04 20.14 22.48 33.74 30.05 46.66C40.23 64.04 57.61 77.92 75.39 82.87C94.06 88.07 111.36 87.42 128.28 80.9C141.25 75.9 151.89 68.53 159.99 58.97V47.86C157.2 47.61 154.36 47.36 151.87 47.15L148.76 46.88C144 46.47 138.61 46 131.52 45.27L128.98 45.01L133.82 35.51C134.07 35 134.32 34.45 134.57 33.9L135.08 32.75L136.34 32.87C141.58 33.39 145.95 33.77 149.81 34.1C153.07 34.38 156.38 34.67 159.99 35.02V29.53C158.61 29.35 157.31 29.15 156.04 28.96C154.3 28.69 152.65 28.44 151.1 28.3C147.97 28.01 144.5 27.69 139.15 27.14L137.14 26.93L137.63 24.97C138.36 22.09 138.87 19.08 139.17 16.02L139.34 14.27L141.09 14.45C146.02 14.95 149.31 15.26 152.27 15.53C153.43 15.64 154.79 15.72 156.2 15.8C157.45 15.88 158.72 15.96 159.97 16.06V9.78002C159.97 4.81002 155.94 0.78002 150.97 0.78002H133.45C134.11 6.42002 134.81 19.71 128.92 32.07C124.84 40.64 119.06 51.52 114.92 59.15L114.6 59.75L113.96 59.97C110.48 61.18 106.25 61.92 101.72 62.12L98.61 62.25L100.12 59.52C102.75 54.76 111.75 38.33 117.36 26.56C122.59 15.58 120.84 2.77002 120.52 0.79002H114.38C114.51 1.29002 114.64 1.77002 114.76 2.28002L114.79 2.41002C114.91 3.02002 117.59 17.07 110.15 31.25C105.89 39.37 98.83 52.75 94.54 60.87L93.98 61.92L92.8 61.79C89.42 61.41 86.12 60.75 82.97 59.82L80.92 59.21L81.92 57.32C85.93 49.73 94.08 34.28 98.8 25.29C103.97 15.43 102.29 5.33002 102.22 4.91002C101.89 3.45002 101.48 2.08002 101 0.77002H86.79C89.5 3.66002 92.48 5.81002 96.08 7.47002L97.03 7.91002L97.09 8.95002C97.28 11.95 96.7 15.17 95.27 19.06L94.65 20.76L92.97 20.09C86.2 17.37 80.86 13.57 76.16 8.15002C74.16 5.84002 72.4 3.37002 70.9 0.78002H64.21C66.13 4.70002 68.56 8.39002 71.48 11.77C76.63 17.72 83.17 21.6602 90.4 25.48L92.14 26.21L91.28 27.89C90.13 30.14 88.76 32.7 86.84 36.19L86.07 37.58L84.61 36.94C75.9 33.15 68.01 27.35 61.78 20.16C56.67 14.26 52.85 7.69002 50.26 0.77002H40.46C36.69 11.78 38.56 25.05 45.75 36.58L45.79 36.61Z" fill="#EEE2D4"/>
+              <path d="M57.7002 259.64C57.7202 257.24 58.1102 253.88 58.8602 249.44L59.0402 248.36L60.0902 248.05C63.3802 247.08 66.7302 245.89 70.0402 244.5L73.0802 243.23L72.4302 246.46C71.9002 249.13 71.4602 251.54 71.1402 253.61C70.8302 255.81 70.6102 257.98 70.4802 260.03V261.73H70.3902C70.1102 268.28 70.6102 274.67 71.8502 280.79H77.8302C75.2302 267.71 75.3302 257.17 78.1602 246.74L78.3602 246.05C78.8802 244.21 79.6202 242.06 80.5202 239.8L80.7402 239.23L81.2702 238.93C88.0302 235.03 94.2902 230.34 99.8602 224.99L102.36 227.43C98.8502 231.26 95.1402 237.61 92.4302 244.41C92.3102 244.72 91.9902 245.54 91.9502 245.64C88.2402 255.8 87.8202 265.79 90.5402 279.01C90.6602 279.61 90.8002 280.2 90.9402 280.79H113.28C113.28 280.59 113.25 280.39 113.24 280.19C112.84 269.86 114.98 259.49 119.41 250.22L119.5 250.04C119.86 249.35 128.18 233.7 143.99 226.04C148.8 223.71 154.5 221.14 159.98 218.74V203.88C155.65 203.11 151.48 202.79 147.44 202.96L146.69 202.99L146.15 202.47C143.99 200.37 141.82 198.26 139.67 196.18L139.51 196.02C138.87 195.39 138.17 194.71 137.45 193.99L135.01 191.57L138.4 191.03C143.6 190.2 150.71 189.55 159.97 190.92V185C150.23 183.74 140.74 184.33 131.62 186.81L130.3 187.21L125.41 182.55L125.7 181.53C126.21 179.76 126.7 177.85 127.19 175.69L127.43 174.66L128.45 174.39C132.86 173.21 137.45 172.38 142.09 171.95C147.98 171.4 153.96 171.45 159.97 172.11V76.9701C152.16 83.5901 143.08 88.9401 132.88 92.8701C121.95 97.0901 110.91 99.1901 99.5702 99.1901C90.5902 99.1901 81.4002 97.8701 71.9402 95.2301C51.0702 89.4201 30.7702 73.3001 18.9702 53.1501C10.0802 37.9201 6.05023 21.7101 7.35023 6.2601C7.50023 4.4301 7.74023 2.6301 8.05023 0.850098C3.53023 1.3201 0.000234375 5.1501 0.000234375 9.8001V65.9801C2.07023 65.3201 4.18023 64.7301 6.32023 64.2001C8.62023 63.5101 11.9502 62.8801 16.4102 62.3001L17.4902 62.1601L18.0902 63.0701C19.9902 65.9301 22.1202 68.7801 24.4202 71.5201L26.5302 74.0501L23.2502 74.3901C20.5302 74.6701 18.1002 74.9701 16.0402 75.2701C13.8302 75.6301 11.6702 76.0601 9.66023 76.5501L9.23023 76.6501C6.05023 77.4401 2.97023 78.4101 -0.00976562 79.5401V85.8001C8.51023 82.0801 16.3802 80.2401 24.6802 79.9501L25.3002 79.9301H25.3202C27.2502 79.8901 29.5402 79.9701 32.0102 80.1501L32.6202 80.2001L33.0702 80.6101C38.7902 85.9101 45.1302 90.5001 51.8902 94.2501L50.3002 97.3601C45.6002 95.1401 38.4402 93.4701 31.1502 92.8901C30.8202 92.8701 29.9302 92.8001 29.8302 92.8001C19.8002 92.2901 10.7402 94.4701 0.0202344 100V124.54C1.04023 124.12 2.08023 123.72 3.13023 123.36C12.8802 119.93 23.4202 118.9 33.5802 120.39L33.7802 120.42C34.5502 120.56 51.9602 123.88 63.9602 136.73C70.4402 143.66 78.4502 153.03 84.0302 159.67L84.4702 160.19L84.4402 160.87C84.2902 164.55 83.4302 168.76 81.9502 173.05L80.9302 176L78.9402 173.6C75.4802 169.42 63.4902 155.02 54.5902 145.48C45.7602 136.03 32.1002 133.16 31.5202 133.04C23.5302 131.89 15.1502 132.71 7.39023 135.45C4.85023 136.35 2.39023 137.46 0.0302344 138.74V145.6C3.04023 143.69 6.27023 142.1 9.66023 140.91C16.6902 138.43 23.4902 137.83 31.0502 139L31.1802 139.02C31.8002 139.13 45.8502 141.79 56.3302 153.9C62.3302 160.84 72.1902 172.31 78.1802 179.27L78.9602 180.17L78.4002 181.22C76.8102 184.22 74.9902 187.06 72.9702 189.65L71.6602 191.34L70.2702 189.72C64.6702 183.21 53.2902 169.96 46.6502 162.28C39.3702 153.86 29.3602 151.72 28.9402 151.63C23.6002 150.82 18.9402 151.23 13.9402 152.99C9.56023 154.53 5.60023 156.89 2.18023 159.99L1.49023 160.61L0.590234 160.39C0.400234 160.35 0.230234 160.28 0.0502344 160.24V166.28C5.99023 167.47 12.2202 167.04 18.1502 164.95C22.4102 163.45 25.8802 161.33 29.0702 158.27L29.8302 156.75L30.8302 157.87C33.6902 158.8 36.4702 160.51 39.5702 163.26L40.9202 164.46L39.6802 165.77C34.6702 171.07 29.1802 174.65 22.4102 177.04C17.2502 178.86 11.9302 179.76 6.63023 179.76C4.43023 179.76 2.23023 179.59 0.0502344 179.28V185.12C7.89023 186.23 16.0902 184.74 24.0602 182.73C31.4802 180.12 38.2902 175.77 43.7502 170.14L45.0702 168.78L46.3202 170.2C47.9902 172.09 49.8702 173.5 52.4102 177.37L53.4302 178.6L52.3002 179.73C45.5902 186.44 37.2902 191.66 28.3202 194.82C21.4002 197.26 14.2402 198.47 7.11023 198.47C4.75023 197.67 2.40023 197.54 0.0602344 198.07V205.25C8.85023 214.43 23.0902 218.45 37.7402 215.75C55.8602 212.4 66.9702 206.06 77.3502 193.14L77.6202 192.83C77.7602 192.67 88.8502 180.3 90.1902 162.28C91.0302 151.03 90.0002 141.51 87.0602 133.19L86.8102 132.48L87.1502 131.81C88.4702 129.22 89.7902 126.62 91.1002 124.05L91.3502 123.56C91.7602 122.76 92.2002 121.1 92.6802 120.99L94.2802 117.95L95.8002 121.03C99.6502 128.02 104.58 141.67 102.98 163.23C101.37 184.94 88.8202 199.54 87.2302 201.32C74.8902 216.61 61.2302 224.44 40.0802 228.35C36.3302 229.04 32.5902 229.38 28.9302 229.38C18.3402 229.38 8.33023 226.58 0.0702344 221.52V228.36C0.420234 228.54 0.760234 228.73 1.11023 228.91C12.6202 234.6 26.5302 236.39 41.3402 234.07C61.2502 230.96 80.5202 219.88 91.6402 205.14C103.32 189.67 109.05 173.34 109.18 155.2C109.29 139.43 105.47 125.33 97.8402 113.3L97.0702 112.16L100.08 106.11L101.14 106.09C102.99 106.05 104.95 105.95 107.16 105.79L108.21 105.71L108.77 106.6C111.21 110.47 113.35 114.61 115.13 118.91C119.78 130.08 122.08 142.32 121.99 155.28C121.84 176.27 115.26 195.1 101.86 212.85C88.8102 229.34 66.3702 243.12 43.3002 246.72C38.4402 247.48 33.6502 247.85 28.9602 247.85C18.6702 247.85 8.90023 246.03 0.0502344 242.45V271.77C0.0502344 276.74 4.08024 280.77 9.05023 280.77H58.8702C57.7002 273.96 57.3202 266.87 57.7402 259.62L57.7002 259.64ZM63.0802 125.4L62.1502 127.2L60.5102 126.02C58.1002 124.29 55.4902 122.71 52.7502 121.31L51.1802 120.51L51.9902 118.95C54.2702 114.54 55.7502 111.6 57.0902 108.94C57.6102 107.9 58.1902 106.67 58.7802 105.38C59.5502 103.73 60.3402 102.02 61.1402 100.47L61.8802 99.0401L63.3702 99.6601C65.6502 100.61 69.0902 101.95 72.6502 102.64L74.9502 103.09L73.8702 105.17C72.8702 107.09 71.9002 108.75 70.9602 110.36C70.0802 111.88 69.2402 113.32 68.5402 114.71C67.1302 117.51 65.5602 120.62 63.0902 125.4H63.0802ZM92.6202 108.41C90.6202 112.27 88.2602 117.03 86.3602 120.86L84.9602 123.69C82.8202 127.99 80.3902 132.87 77.1402 139.14L75.9702 141.4L68.9002 133.42C68.5102 133 68.1002 132.57 67.6802 132.14L66.8002 131.24L67.3802 130.12C69.8102 125.38 71.7602 121.45 73.4902 117.98C75.4102 114.12 77.4002 109.13 79.7602 105.59L80.3502 104.46L81.6102 104.68C84.8302 105.23 88.0602 105.63 91.2002 105.86L93.8502 106.05L92.6302 108.41H92.6202ZM118.62 199.69C120.1 196.78 121.43 193.81 122.58 190.87L123.55 188.4L125.44 190.27C128.53 193.32 132.39 196.99 135.48 199.93L137.77 202.11C141.23 205.41 145.15 209.15 150.22 214.14L152.04 215.93L142.32 220.32C141.8 220.57 141.27 220.83 140.73 221.11L139.61 221.69L138.71 220.81C134.96 217.15 131.8 214.14 129.01 211.47L128.92 211.38C125.96 208.56 122.6 205.35 118.94 201.73L118.03 200.83L118.61 199.69H118.62ZM108.44 215.62C110.02 213.72 112.31 210.83 114.03 207.64L115.14 205.58L116.8 207.23C118.34 208.75 119.64 210.17 120.9 211.54C122.09 212.83 123.22 214.06 124.34 215.14L124.47 215.27C126.7 217.42 129.18 219.81 132.94 223.51L134.38 224.93L132.77 226.15C130.41 227.94 128.12 229.97 125.98 232.17L124.75 233.43L123.5 232.2C119.98 228.74 117.61 225.66 115.47 224.39C114.61 223.56 113.6 222.65 112.55 221.7C111.2 220.48 109.8 219.22 108.56 217.99L107.41 216.86L108.44 215.62Z" fill="#EEE2D4"/>
+          </svg>
+        </div>
+        <p class="fl-tag">Modern Japanese cuisine rooted in the art of umami crafted with patience, served with care.
+        </p>
+        <div class="fl-socials">
+          <a href="#" class="fl-soc hov" aria-label="Instagram"><svg viewBox="0 0 24 24">
+              <path
+                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+            </svg></a>
+          <a href="#" class="fl-soc hov" aria-label="Facebook"><svg viewBox="0 0 24 24">
+              <path
+                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg></a>
+          <a href="#" class="fl-soc hov" aria-label="LinkedIn"><svg viewBox="0 0 24 24">
+              <path
+                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+            </svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="fc-title">Navigate</p>
+        <ul class="fc-links">
+          <li><a href="#home" class="fc-link hov">Home</a></li>
+          <li><a href="#menu" class="fc-link hov">Menu</a></li>
+          <li><a href="#about" class="fc-link hov">About</a></li>
+          <li><a href="#reservation" class="fc-link hov">Reservation</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="fc-title">Menu</p>
+        <ul class="fc-links">
+          <li><a href="#menu" class="fc-link hov">Appetizers</a></li>
+          <li><a href="#menu" class="fc-link hov">Nigiri</a></li>
+          <li><a href="#menu" class="fc-link hov">Sushi Rolls</a></li>
+          <li><a href="#menu" class="fc-link hov">Ramen</a></li>
+          <li><a href="#menu" class="fc-link hov">Japanese Curry</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="fc-title">Visit</p>
+        <ul class="fc-links">
+          <li><a href="#" class="fc-link">No. 17, 3rd Cross<br>Greenleaf Layout<br>Bengaluru • 560114</a></li>
+          <li><a href="tel:+918951765556" class="fc-link hov" style="margin-top:10px;display:block">+91 89517 65556</a>
+          </li>
+          <li><a href="#" class="fc-link">Tue • Sun • 12pm • 11pm</a></li>
+          <li><a href="#" class="fc-link">Mondays closed</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="f-copy">© 2025 Yui Restaurant. All rights reserved.</p>
+      <div class="f-city"><span class="f-city-dot"></span> Bengaluru, Karnataka</div>
+    </div>
+  </footer>
+  <script>
+
+    // Cursor
+    const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
+    const trails = ['ct1', 'ct2', 'ct3'].map(id => document.getElementById(id)).filter(Boolean);
+    let mx = 0, my = 0, rx = 0, ry = 0, tx = [0, 0, 0], ty = [0, 0, 0], px = 0, py = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; dot.style.left = mx + 'px'; dot.style.top = my + 'px' });
+    (function ac() {
+      rx += (mx - rx) * .1; ry += (my - ry) * .1;
+      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+      const spd = Math.sqrt((mx - px) ** 2 + (my - py) ** 2);
+      trails.forEach((t, i) => {
+        const lag = .055 - .012 * i;
+        tx[i] += (mx - tx[i]) * lag; ty[i] += (my - ty[i]) * lag;
+        const dx = tx[i] - mx, dy = ty[i] - my, ang = Math.atan2(dy, dx) * 180 / Math.PI + 90, h = Math.min(spd * 1.4, 26);
+        t.style.cssText = `left:${tx[i]}px;top:${ty[i]}px;height:${h}px;opacity:${spd > 3 ? (.28 - .07 * i) : 0};transform:translate(-50%,-50%) rotate(${ang}deg);background:linear-gradient(to bottom,rgba(8,110,196,${.45 - .1 * i}),transparent)`;
+      });
+      px = mx; py = my; requestAnimationFrame(ac);
+    })();
+    document.querySelectorAll('.hov,a,button,input').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('on-link'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('on-link'));
+    });
+    // Nav scroll
+    const nav = document.getElementById('nav');
+    if (nav) window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50), { passive: true });
+    // Reveal
+    const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('up') }), { threshold: .08, rootMargin: '0px 0px -24px 0px' });
+    document.querySelectorAll('.r').forEach(el => obs.observe(el));
+
+
+    // Hero reveal mask
+    (function () {
+      const panel = document.getElementById('heroRight');
+      const overlay = document.getElementById('heroOverlay');
+      const circle = document.getElementById('heroCircle');
+      const illusImg = panel.querySelector('.hero-illus img');
+      if (!panel) return;
+      let ocx = 50, ocy = 50, ocr = 0, tcx = 50, tcy = 50, hover = false;
+      const R = 210;
+      panel.addEventListener('mouseenter', () => hover = true);
+      panel.addEventListener('mouseleave', () => { hover = false; tcx = 50; tcy = 50 });
+      panel.addEventListener('mousemove', e => {
+        const r = panel.getBoundingClientRect();
+        tcx = (e.clientX - r.left) / r.width * 100;
+        tcy = (e.clientY - r.top) / r.height * 100;
+      });
+      (function anim() {
+        ocx += (tcx - ocx) * .13;
+        ocy += (tcy - ocy) * .13;
+        var goalR = hover ? R : 0;
+        ocr += (goalR - ocr) * .12;
+        var r = Math.max(0, ocr);
+
+        // Clip the ILLUSTRATION — reveals artwork inside the circle
+        // Outside = solid #2F6EBE background; inside = illustration shows
+        var cp = 'circle(' + r + 'px at ' + ocx + '% ' + ocy + '%)';
+        if (illusImg) {
+          illusImg.style.clipPath = cp;
+          illusImg.style.webkitClipPath = cp;
+        }
+
+        // Crisp red ring tracks the reveal circle exactly
+        circle.style.left = ocx + '%';
+        circle.style.top = ocy + '%';
+        circle.style.opacity = (r > 2) ? '1' : '0';
+        circle.style.width = (r * 2) + 'px';
+        circle.style.height = (r * 2) + 'px';
+        circle.style.marginLeft = (-r) + 'px';
+        circle.style.marginTop = (-r) + 'px';
+
+        requestAnimationFrame(anim);
+      })();
+    })();
+
+    // Testimonial infinite scroll
+    (function () {
+      const c1 = document.getElementById('wc1'), c2 = document.getElementById('wc2');
+      if (!c1 || !c2) return;
+      const i1 = document.getElementById('wc1i'), i2 = document.getElementById('wc2i');
+      c1.appendChild(i1.cloneNode(true)); c2.appendChild(i2.cloneNode(true));
+      let p1 = 0, p2 = 0;
+      const h1 = i1.scrollHeight, h2 = i2.scrollHeight;
+      (function tick() {
+        p1 += .36; p2 -= .36;
+        if (p1 >= h1) p1 = 0; if (p2 <= -h2) p2 = 0;
+        c1.style.transform = `translateY(-${p1}px)`;
+        c2.style.transform = `translateY(${p2}px)`;
+        requestAnimationFrame(tick);
+      })();
+    })();
+
+    // Mobile nav toggle
+    function toggleMobileNav() {
+      const drawer = document.getElementById('navDrawer');
+      const hamburger = document.getElementById('navHamburger');
+      drawer.classList.toggle('open');
+      hamburger.classList.toggle('active');
+    }
+  </script>
+    <!-- YUI ASSISTANT -->
+  <div class="yui-wrapper" id="yui-widget">
+    <div class="yui-panel" id="yui-chat-panel">
+      <!-- Header -->
+      <div class="yui-header">
+        <button class="yui-back" id="yui-btn-back" aria-label="Back">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </button>
+        <div class="yui-avatar">
+          <img src="images/yui/Main_Logo_Illustrations%202.svg" alt="Yui" style="width: 28px; height: auto; filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+        </div>
+        <div class="yui-header-info">
+          <div class="yui-name">yui <span class="yui-jp">結</span></div>
+          <div class="yui-status-area">
+            <div class="yui-status-text" id="yui-status-text">Yokoso ようこそ</div>
+            <div class="yui-status-indicator" id="yui-status-indicator">
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+        <button class="yui-close" id="yui-btn-close" aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="9" r="9" fill="rgba(0,0,0,0.06)"/>
+            <path d="M6 6L12 12M12 6L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+
+      <!-- Messages Pane / Empty State -->
+      <div class="yui-messages" id="yui-msg-container">
+        <div class="yui-empty-state">
+          <svg class="yui-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <div class="yui-instruction">Yokoso ようこそ</div>
+          <div class="yui-placeholder-text">Conversation will appear here</div>
+        </div>
+        
+        <!-- Typing indicator skeleton -->
+        <div class="yui-typing" id="yui-typing-indicator">
+          <div class="yui-dot"></div>
+          <div class="yui-dot"></div>
+          <div class="yui-dot"></div>
+        </div>
+      </div>
+
+      <!-- Action Area -->
+      <div class="yui-action-area">
+        <div class="yui-input-wrapper">
+          <input type="text" id="yui-input" class="yui-text-input" placeholder="Type a message..." autocomplete="off">
+          <button id="yui-btn-send" class="yui-btn-send" aria-label="Send message">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
+        <button class="yui-mic-large" id="yui-btn-mic-main">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+          </svg>
+        </button>
+        <div class="yui-powered">Powered by yui assistant</div>
+      </div>
+    </div>
+
+    <!-- Floating Launcher -->
+    <button class="yui-launcher" id="yui-btn-toggle" aria-label="Open Yui Assistant">
+      <div class="yui-listening-pulse"></div>
+      <img src="images/yui/ChatBot%20icon.svg" alt="Yui Chat Bot" class="yui-launcher-img">
+    </button>
+  </div>
+  <script>
+    (function() {
+      function initChatbot() {
+        try {
+          const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+            ? 'http://localhost:3000' 
+            : window.location.origin; 
+          const widget = document.getElementById('yui-widget');
+          const launcher = document.getElementById('yui-btn-toggle');
+          const panel = document.getElementById('yui-chat-panel');
+          const closeBtn = document.getElementById('yui-btn-close');
+          const micBtnMain = document.getElementById('yui-btn-mic-main');
+          const msgContainer = document.getElementById('yui-msg-container');
+          const typingIndicator = document.getElementById('yui-typing-indicator');
+          const statusText = document.getElementById('yui-status-text');
+          const sendInput = document.getElementById('yui-input');
+          const sendBtn = document.getElementById('yui-btn-send');
+          const backBtn = document.getElementById('yui-btn-back');
+
+          let isRecording = false;
+          let mediaRecorder;
+          let audioChunks = [];
+          let recordingTimeout;
+          let yuiState = 'idle'; // idle, listening, thinking, speaking
+          const MIC_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>`;
+          const STOP_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>`;
+          let isVoiceMode = false;
+          let chatHistory = [];
+          try {
+            chatHistory = JSON.parse(localStorage.getItem('yui_chat_history') || '[]');
+          } catch (e) {
+            console.error("YUI Chatbot: Failed to parse chat history:", e);
+          }
+          let yuiVoiceAudio = null;
+
+      // Voice Activity Detection (VAD) & Audio Feedback chimes
+      let audioContext = null;
+      let analyser = null;
+      let micSource = null;
+      let vadLoop = null;
+
+      const playChime = (type) => {
+        try {
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          
+          const now = ctx.currentTime;
+          
+          if (type === 'start') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, now); // C5
+            osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+            
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.12, now + 0.05);
+            gain.gain.setValueAtTime(0.12, now + 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+            
+            osc.start(now);
+            osc.stop(now + 0.3);
+          } else if (type === 'stop') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587.33, now); // D5
+            osc.frequency.setValueAtTime(440.00, now + 0.1); // A4
+            
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.10, now + 0.05);
+            gain.gain.setValueAtTime(0.10, now + 0.15);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            
+            osc.start(now);
+            osc.stop(now + 0.35);
+          }
+        } catch (err) {
+          console.warn("Could not play chime:", err);
+        }
+      };
+
+      const startSilenceDetection = (stream) => {
+        try {
+          audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          analyser = audioContext.createAnalyser();
+          micSource = audioContext.createMediaStreamSource(stream);
+          micSource.connect(analyser);
+          
+          analyser.fftSize = 512;
+          const bufferLength = analyser.frequencyBinCount;
+          const dataArray = new Uint8Array(bufferLength);
+          
+          let lastSoundTime = Date.now();
+          const threshold = 8; // volume threshold for silence detection (was 12)
+          
+          const checkVolume = () => {
+            if (!isRecording) return;
+            
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+              sum += dataArray[i];
+            }
+            const average = sum / bufferLength;
+            
+            if (average > threshold) {
+              lastSoundTime = Date.now();
+            } else {
+              const silenceDuration = Date.now() - lastSoundTime;
+              if (silenceDuration > 2200) { // was 1800ms
+                stopRecording();
+                return;
+              }
+            }
+            
+            vadLoop = requestAnimationFrame(checkVolume);
+          };
+          
+          vadLoop = requestAnimationFrame(checkVolume);
+        } catch (e) {
+          console.warn("Silence detection failed to start:", e);
+        }
+      };
+
+      const stopSilenceDetection = () => {
+        if (vadLoop) {
+          cancelAnimationFrame(vadLoop);
+          vadLoop = null;
+        }
+        if (audioContext) {
+          try {
+            audioContext.close();
+          } catch(e){}
+          audioContext = null;
+        }
+      };
+
+
+      const setYuiState = (state) => {
+        yuiState = state;
+        panel.classList.remove('listening', 'thinking', 'speaking', 'idle');
+        widget.classList.remove('listening', 'thinking', 'speaking', 'idle');
+        panel.classList.add(state);
+        widget.classList.add(state);
+
+        switch (state) {
+
+          case 'listening':
+            statusText.textContent = 'Listening...';
+            break;
+          case 'thinking':
+            statusText.textContent = 'Thinking...';
+            break;
+          case 'speaking':
+            statusText.textContent = 'Speaking...';
+            break;
+          default:
+            statusText.textContent = 'Yokoso ようこそ';
+        }
+      };
+
+      // Toggling
+      launcher.addEventListener('click', () => {
+        panel.classList.toggle('open');
+        if (panel.classList.contains('open')) {
+          launcher.style.transform = 'scale(0) rotate(-45deg)';
+          launcher.style.opacity = '0';
+        }
+      });
+
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.remove('open');
+        launcher.style.transform = 'scale(1) rotate(0deg)';
+        launcher.style.opacity = '1';
+        
+        // Stop speech if closing
+        if (yuiVoiceAudio) {
+          yuiVoiceAudio.pause();
+          setYuiState('idle');
+        }
+      });
+
+      backBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        panel.classList.remove('open');
+        launcher.style.transform = 'scale(1) rotate(0deg)';
+        launcher.style.opacity = '1';
+        
+        if (yuiVoiceAudio) {
+          yuiVoiceAudio.pause();
+          setYuiState('idle');
+        }
+      });
+
+      const addMessage = (text, type = 'bot', isAnimated = false) => {
+        panel.classList.add('has-messages');
+        const msg = document.createElement('div');
+        msg.className = `yui-msg ${type}`;
+        
+        if (isAnimated && type === 'bot') {
+          msg.textContent = '';
+          msgContainer.insertBefore(msg, typingIndicator);
+          let i = 0;
+          const charSpeed = 20; // ms per character
+          const typeNext = () => {
+            if (i < text.length) {
+              msg.textContent += text[i];
+              i++;
+              msgContainer.scrollTop = msgContainer.scrollHeight;
+              setTimeout(typeNext, charSpeed);
+            }
+          };
+          typeNext();
+        } else {
+          msg.textContent = text;
+          msgContainer.insertBefore(msg, typingIndicator);
+        }
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+      };
+
+      // Load existing history into UI
+      if (chatHistory.length > 0) {
+        panel.classList.add('has-messages');
+        chatHistory.forEach(m => {
+          if (m.role !== 'system') addMessage(m.content, m.role === 'user' ? 'user' : 'bot');
+        });
+      }
+
+      const speakYui = (text, onStartCallback) => {
+        if (yuiVoiceAudio) {
+          yuiVoiceAudio.pause();
+          yuiVoiceAudio.currentTime = 0;
+        }
+
+        const audioUrl = `${API_BASE}/api/speak?text=${encodeURIComponent(text)}`;
+        yuiVoiceAudio = new Audio(audioUrl);
+        
+        // Use 'playing' event to ensure typing starts exactly when sound starts
+        yuiVoiceAudio.onplaying = () => {
+          playChime('start'); // Play Ping chime when speaking begins
+          if (onStartCallback) onStartCallback();
+        };
+
+        setYuiState('speaking');
+        
+        yuiVoiceAudio.onended = () => {
+          playChime('stop'); // Play Pong chime when speaking finishes
+          if (yuiState === 'speaking') setYuiState('idle');
+        };
+
+        yuiVoiceAudio.play().catch(err => {
+          console.warn("Speech playback error:", err);
+          setYuiState('idle');
+          if (onStartCallback) onStartCallback(); // Fallback to start typing anyway
+        });
+      };
+
+      const handleSend = async () => {
+        const text = sendInput.value.trim();
+        if (!text) {
+          setYuiState('idle');
+          return;
+        }
+
+        setYuiState('thinking');
+        chatHistory.push({ role: 'user', content: text });
+        localStorage.setItem('yui_chat_history', JSON.stringify(chatHistory));
+        sendInput.value = '';
+        addMessage(text, 'user');
+
+        typingIndicator.style.display = 'flex';
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+
+        try {
+          const response = await fetch(`${API_BASE}/api/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              messages: chatHistory,
+              userName: localStorage.getItem('yui_user_name')
+            })
+          });
+
+          const data = await response.json();
+          typingIndicator.style.display = 'none';
+
+          if (data.reply) {
+            chatHistory.push({ role: 'assistant', content: data.reply });
+            
+            // If the bot learned a name, save it!
+            if (data.saveName) {
+              localStorage.setItem('yui_user_name', data.saveName);
+            }
+            
+            localStorage.setItem('yui_chat_history', JSON.stringify(chatHistory));
+            
+            if (isVoiceMode) {
+              // Voice mode: speak AND show text with animation
+              speakYui(data.reply, () => {
+                addMessage(data.reply, 'bot', true);
+              });
+            } else {
+              // Text mode: just show text with animation, no speech
+              addMessage(data.reply, 'bot', true);
+              setYuiState('idle');
+            }
+          } else {
+            const fallback = "Sumimasen, I'm having a bit of trouble thinking. Could you try again?";
+            addMessage(fallback, 'bot');
+            if (isVoiceMode) speakYui(fallback);
+            else setYuiState('idle');
+          }
+        } catch (err) {
+          console.error("Chat error:", err);
+          typingIndicator.style.display = 'none';
+          const errorMsg = "Oops! My connection to the kitchen is a bit unstable. Please try again soon!";
+          addMessage(errorMsg, 'bot');
+          if (isVoiceMode) speakYui(errorMsg);
+          else setYuiState('idle');
+        }
+      };
+
+      // Voice logic
+      micBtnMain.addEventListener('click', async () => {
+        if (!isRecording) {
+          // Interrupt active TTS voice output when starting a mic recording
+          if (yuiVoiceAudio) {
+            yuiVoiceAudio.pause();
+            yuiVoiceAudio.currentTime = 0;
+            if (yuiState === 'speaking') setYuiState('idle');
+          }
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = (event) => {
+              if (event.data.size > 0) audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstart = () => {
+              isRecording = true;
+              isVoiceMode = true;
+              micBtnMain.innerHTML = STOP_ICON;
+              setYuiState('listening');
+              playChime('start');
+              startSilenceDetection(stream);
+              
+              // Fallback Auto stop after 25s
+              recordingTimeout = setTimeout(() => {
+                if (isRecording) stopRecording();
+              }, 25000);
+            };
+
+            mediaRecorder.onstop = async () => {
+              isRecording = false;
+              micBtnMain.innerHTML = MIC_ICON;
+              setYuiState('thinking');
+              playChime('stop');
+              stopSilenceDetection();
+              
+              if (recordingTimeout) clearTimeout(recordingTimeout);
+
+              const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+              const formData = new FormData();
+              formData.append('audio', audioBlob, 'audio.wav');
+
+              try {
+                sendInput.placeholder = "Transcribing...";
+                const response = await fetch(`${API_BASE}/api/transcribe`, {
+                  method: 'POST',
+                  body: formData
+                });
+
+                const data = await response.json();
+                if (data.text) {
+                  sendInput.value = data.text;
+                  handleSend(); // Auto-send
+                } else {
+                  setYuiState('idle');
+                  isVoiceMode = false;
+                }
+              } catch (err) {
+                console.error("Transcription error:", err);
+                setYuiState('idle');
+                isVoiceMode = false;
+              } finally {
+                sendInput.placeholder = "Type a message...";
+              }
+              
+              stream.getTracks().forEach(track => track.stop());
+            };
+
+            mediaRecorder.start();
+          } catch (err) {
+            console.error("Mic access error:", err);
+            alert("Please allow microphone access.");
+            isRecording = false;
+            micBtnMain.innerHTML = MIC_ICON;
+            setYuiState('idle');
+          }
+        } else {
+          stopRecording();
+        }
+      });
+
+      const stopRecording = () => {
+        if (mediaRecorder && isRecording) {
+          mediaRecorder.stop();
+          stopSilenceDetection();
+        }
+      };
+
+
+      sendBtn.addEventListener('click', () => {
+        isVoiceMode = false; // Manual click means no auto-speak
+        handleSend();
+      });
+
+      sendInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          isVoiceMode = false; // Keyboard means no auto-speak
+          handleSend();
+        }
+      });
+
+      // About logo parallax
+      (function () {
+        const alPanel = document.getElementById('aboutLogoPanel');
+        const alInner = document.getElementById('aboutLogoInner');
+        if (!alPanel || !alInner) return;
+        alPanel.addEventListener('mousemove', e => {
+          const r = alPanel.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - .5;
+          const y = (e.clientY - r.top) / r.height - .5;
+          alInner.style.transform = `translate(${x * 12}px,${y * 10}px)`;
+        });
+        alPanel.addEventListener('mouseleave', () => {
+          alInner.style.transform = 'translate(0,0)';
+          alInner.style.transition = 'transform .8s cubic-bezier(.16,1,.3,1)';
+        });
+        alPanel.addEventListener('mouseenter', () => alInner.style.transition = 'none');
+      })();
+        } catch (err) {
+          console.error("YUI Chatbot: Error inside initChatbot:", err);
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initChatbot);
+      } else {
+        initChatbot();
+      }
+    })();
+
+    // Party size: always one selected (mandatory)
+    function pickSize(el) {
+      document.querySelectorAll('#partySizeChips .chip').forEach(c => c.classList.remove('on'));
+      el.classList.add('on');
+      document.getElementById('res-partySize').value = el.dataset.value;
+    }
+
+    // Date Picker State
+    let viewDate = new Date();
+    let selectedDate = null;
+
+    function renderCalendar() {
+      const container = document.getElementById('dateDropdown');
+      if (!container) return;
+
+      const year = viewDate.getFullYear();
+      const month = viewDate.getMonth();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let html = `
+    <div class="cal-head">
+      <div class="cal-title">${monthNames[month]} ${year}</div>
+      <div class="cal-nav">
+        <button type="button" class="cal-btn hov" onclick="changeMonth(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <button type="button" class="cal-btn hov" onclick="changeMonth(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-day-lbl">Su</div><div class="cal-day-lbl">Mo</div><div class="cal-day-lbl">Tu</div>
+      <div class="cal-day-lbl">We</div><div class="cal-day-lbl">Th</div><div class="cal-day-lbl">Fr</div><div class="cal-day-lbl">Sa</div>
+  `;
+
+      // Empty slots
+      for (let i = 0; i < firstDay; i++) {
+        html += `<div class="cal-day other-month"></div>`;
+      }
+
+      // Days
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cur = new Date(year, month, d);
+        const isPast = cur < today;
+        const isSelected = selectedDate && cur.getTime() === selectedDate.getTime();
+        const isToday = cur.getTime() === today.getTime();
+
+        let cls = 'cal-day hov';
+        if (isPast) cls += ' disabled';
+        if (isSelected) cls += ' selected';
+        if (isToday) cls += ' today';
+
+        html += `<div class="${cls}" onclick="${isPast ? '' : `selectDate(${d},${month},${year})`}">${d}</div>`;
+      }
+
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    function changeMonth(offset) {
+      viewDate.setMonth(viewDate.getMonth() + offset);
+      renderCalendar();
+    }
+
+    function toggleDateDropdown() {
+      document.getElementById('timePickerContainer').classList.remove('is-active');
+      document.getElementById('timeDropdown').classList.remove('show');
+
+      const cont = document.getElementById('datePickerContainer');
+      const drop = document.getElementById('dateDropdown');
+      cont.classList.toggle('is-active');
+      drop.classList.toggle('show');
+    }
+
+    function selectDate(d, m, y) {
+      selectedDate = new Date(y, m, d);
+      const val = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const display = selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+
+      document.getElementById('res-date').value = val;
+      document.getElementById('dateTrigger').textContent = display;
+
+      document.getElementById('dateDropdown').classList.remove('show');
+      document.getElementById('datePickerContainer').classList.remove('is-active');
+      renderCalendar();
+    }
+
+    // Custom Time Picker Logic
+    function generateTimeSlots() {
+      const dropdown = document.getElementById('timeDropdownInner');
+      if (!dropdown) return;
+      const start = 8;
+      const end = 22;
+      const slots = [];
+      for (let h = start; h <= end; h++) {
+        const hh = String(h).padStart(2, '0');
+        slots.push(`${hh}:00`);
+        if (h < end) slots.push(`${hh}:30`);
+      }
+      dropdown.innerHTML = slots.map(s => `<div class="time-slot" data-value="${s}" onclick="selectTime('${s}')">${s}</div>`).join('');
+    }
+    function toggleTimeDropdown() {
+      document.getElementById('datePickerContainer').classList.remove('is-active');
+      document.getElementById('dateDropdown').classList.remove('show');
+
+      const cont = document.getElementById('timePickerContainer');
+      const drop = document.getElementById('timeDropdown');
+      cont.classList.toggle('is-active');
+      drop.classList.toggle('show');
+    }
+    function selectTime(val) {
+      document.getElementById('res-time').value = val;
+      document.getElementById('timeTrigger').textContent = val;
+      document.getElementById('timeDropdown').classList.remove('show');
+      document.getElementById('timePickerContainer').classList.remove('is-active');
+      document.querySelectorAll('.time-slot').forEach(s => s.classList.toggle('active', s.dataset.value === val));
+    }
+    document.addEventListener('click', (e) => {
+      const timeCont = document.getElementById('timePickerContainer');
+      const dateCont = document.getElementById('datePickerContainer');
+      if (timeCont && !timeCont.contains(e.target)) {
+        document.getElementById('timeDropdown').classList.remove('show');
+        timeCont.classList.remove('is-active');
+      }
+      if (dateCont && !dateCont.contains(e.target)) {
+        document.getElementById('dateDropdown').classList.remove('show');
+        dateCont.classList.remove('is-active');
+      }
+    });
+
+    renderCalendar();
+    generateTimeSlots();
+    selectTime('19:00');
+
+    // Occasion: toggle (optional, deselect on second click)
+    function pickOccasion(el) {
+      if (el.classList.contains('on')) {
+        el.classList.remove('on');
+        document.getElementById('res-occasion').value = '';
+        return;
+      }
+      document.querySelectorAll('#occasionChips .chip').forEach(c => c.classList.remove('on'));
+      el.classList.add('on');
+      document.getElementById('res-occasion').value = el.dataset.value;
+    }
+
+    // ── API BASE URL — update this once your yui-api is deployed ─────────
+    const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:3000' 
+      : window.location.origin;
+
+    // Toast helper
+    function showToast(type, msg) {
+      const modal = document.getElementById('statusModal');
+      const title = document.getElementById('status-title');
+      const message = document.getElementById('status-message');
+      const errSvg = document.getElementById('status-svg-error');
+      const okSvg = document.getElementById('status-svg-success');
+      const ticket = modal.querySelector('.status-ticket');
+      
+      let finalMsg = msg;
+      if (type === 'error' && msg === 'Selected time is fully booked') {
+        finalMsg = 'Selected time is fully booked. Please try a different time.';
+      }
+
+      if (type === 'error') {
+        errSvg.style.display = '';
+        okSvg.style.display = 'none';
+        title.textContent = 'Oops!';
+        ticket.classList.add('is-error');
+        ticket.classList.remove('is-success');
+      } else {
+        errSvg.style.display = 'none';
+        okSvg.style.display = '';
+        title.textContent = 'Success';
+        ticket.classList.add('is-success');
+        ticket.classList.remove('is-error');
+      }
+
+      message.textContent = finalMsg;
+      modal.classList.add('open');
+    }
+
+    window.closeStatusModal = function() {
+      document.getElementById('statusModal').classList.remove('open');
+    };
+
+    // Form submission → real API call
+    document.getElementById('reservationForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const form = this;
+      const btn = document.getElementById('submitBtn');
+
+      // Use getElementById for reliable access (form.name collides with HTMLFormElement.name)
+      const nameVal = document.getElementById('res-name').value.trim();
+      const phoneVal = document.getElementById('res-phone').value.trim();
+      const dateVal = document.getElementById('res-date').value;
+      let timeVal = document.getElementById('res-time').value;
+
+      if (timeVal && timeVal.split(':').length === 2) {
+        timeVal = timeVal + ':00';
+      }
+
+      if (!nameVal || !phoneVal || !dateVal || !timeVal) {
+        if (!nameVal) document.getElementById('res-name').focus();
+        else if (!phoneVal) document.getElementById('res-phone').focus();
+        showToast('error', 'Please fill in all required fields.');
+        return;
+      }
+
+      const partySize = parseInt(document.getElementById('res-partySize').value, 10);
+      const occasion = document.getElementById('res-occasion').value;
+      const noteEl = document.getElementById('res-note');
+      const noteVal = noteEl ? noteEl.value.trim() : '';
+
+      const payload = { name: nameVal, phone: phoneVal, date: dateVal, time: timeVal, partySize, occasion, note: noteVal };
+
+      btn.disabled = true;
+      btn.classList.add('loading');
+
+      try {
+        const res = await fetch(API_BASE + '/api/reservations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const json = await res.json();
+
+        if (json.ok) {
+          // Populate and show the ticket modal
+          try {
+            document.getElementById('ticket-name').textContent = nameVal;
+            document.getElementById('ticket-date').textContent = new Date(dateVal + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('ticket-time').textContent = timeVal.substring(0, 5);
+            document.getElementById('ticket-size').textContent = partySize;
+            document.getElementById('ticket-note').textContent = noteVal || 'None';
+            document.getElementById('ticket-conf-code').textContent = 'YUK-' + Math.floor(10000 + Math.random() * 90000) + '-AIRA';
+            
+            const ticketOccasion = document.getElementById('ticket-occasion');
+            if (ticketOccasion) ticketOccasion.textContent = occasion || 'Dining';
+
+            document.getElementById('resModal').classList.add('open');
+          } catch (modalErr) {
+            console.error('Modal display error:', modalErr);
+            alert('Reservation confirmed! Check your phone for details.');
+          }
+          
+          form.reset();
+          const dt = document.getElementById('dateTrigger');
+          if (dt) dt.textContent = 'Select Date';
+          
+          document.querySelectorAll('#partySizeChips .chip').forEach(c => c.classList.remove('on'));
+          const defaultChip = document.querySelector('#partySizeChips .chip[data-value="2"]');
+          if (defaultChip) defaultChip.classList.add('on');
+          document.getElementById('res-partySize').value = '2';
+          document.querySelectorAll('#occasionChips .chip').forEach(c => c.classList.remove('on'));
+          document.getElementById('res-occasion').value = '';
+        } else {
+          showToast('error', json.message || 'Something went wrong. Please try again.');
+        }
+      } catch (err) {
+        console.error('Reservation submit error:', err);
+        showToast('error', 'Could not reach the server. Please check your connection and try again.');
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('loading');
+      }
+    });
+
+    // Modal Control
+    window.closeResModal = function() {
+      document.getElementById('resModal').classList.remove('open');
+    };
+
+    // Save ticket as image
+    window.saveTicket = function() {
+      const ticketEl = document.querySelector('#resModal .res-ticket');
+      if (!ticketEl) return;
+
+      // Temporarily hide the footer for a clean capture
+      const footer = ticketEl.querySelector('.res-ticket-footer');
+      if (footer) footer.style.display = 'none';
+
+      if (typeof html2canvas !== 'undefined') {
+        html2canvas(ticketEl, {
+          backgroundColor: '#F4F0E8',
+          scale: 2, // High-res
+          useCORS: true
+        }).then(canvas => {
+          if (footer) footer.style.display = '';
+          const link = document.createElement('a');
+          link.download = 'yui-reservation-' + (document.getElementById('ticket-conf-code')?.textContent || 'ticket') + '.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        }).catch(err => {
+          console.error('Save ticket error:', err);
+          if (footer) footer.style.display = '';
+          alert('Could not save ticket. Please take a screenshot instead.');
+        });
+      } else {
+        alert('Save feature is loading. Please try again in a moment.');
+      }
+    };
+  </script>
+
+  <!-- Gallery Reveal Animation — Sequential curtain drop -->
+  <script>
+  (function() {
+    'use strict';
+
+    const gallery = document.getElementById('about-gallery');
+    if (!gallery) return;
+
+    const panels = gallery.querySelectorAll('.gallery-item');
+    const header = gallery.querySelector('.gallery-header');
+    let ticking = false;
+
+    // Cache layout dimensions
+    let galleryTop = 0;
+    let galleryHeight = 0;
+    const panelData = [];
+
+    function getElementOffsetTop(el) {
+      let top = 0;
+      while (el) {
+        top += el.offsetTop;
+        el = el.offsetParent;
+      }
+      return top;
+    }
+
+    function cacheLayout() {
+      galleryTop = getElementOffsetTop(gallery);
+      galleryHeight = gallery.offsetHeight;
+      
+      panelData.length = 0;
+      panels.forEach((panel) => {
+        const offsetTop = panel.offsetTop;
+        const verticalStagger = offsetTop * 0.00018; 
+        const logicalRow = Math.floor(offsetTop / 250);
+        const direction = logicalRow % 2 === 0 ? 1 : -1;
+        panelData.push({
+          verticalStagger,
+          direction
+        });
+      });
+    }
+
+    function updateGallery() {
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      
+      const rectTop = galleryTop - scrollY;
+      const startTrigger = viewportHeight * 0.9;
+      
+      // Progress from 0 (not started) to 1 (fully revealed)
+      // Expanded window to handle sequential staggering of 36 items
+      let progress = (startTrigger - rectTop) / (galleryHeight * 0.85);
+      progress = Math.max(0, Math.min(1, progress));
+
+      // 1. Animate Header
+      if (header) {
+        header.style.opacity = Math.min(1, progress * 2);
+        header.style.transform = `translateY(${20 * (1 - progress)}px)`;
+      }
+
+      // 2. Animate Gallery Panels (Waterfall + Row Drift)
+      panels.forEach((panel, i) => {
+        const data = panelData[i];
+        if (!data) return;
+
+        let pProgress = (progress - data.verticalStagger) / (1 - data.verticalStagger);
+        pProgress = Math.max(0, Math.min(1, pProgress));
+
+        const easeProgress = 1 - Math.pow(1 - pProgress, 4);
+
+        const driftAmount = 25; // pixels of horizontal travel
+        const driftX = data.direction * driftAmount * (1 - easeProgress);
+
+        const bottomInset = 100 * (1 - easeProgress);
+        panel.style.clipPath = `inset(0 0 ${bottomInset}% 0)`;
+        panel.style.opacity = Math.min(1, pProgress * 3);
+        
+        // Multi-axis transform: Vertical Drop (40px) + Horizontal Drift + Scale
+        panel.style.transform = `translate3d(${driftX}px, ${40 * (1 - easeProgress)}px, 0) scale(${0.96 + (0.04 * easeProgress)})`;
+      });
+
+      ticking = false;
+    }
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(updateGallery);
+        ticking = true;
+      }
+    }
+
+    // Cache initial layout and setup resize listener
+    cacheLayout();
+    updateGallery();
+
+    window.addEventListener('resize', () => {
+      cacheLayout();
+      updateGallery();
+    });
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+  })();
+
+  function expandGallery() {
+    const wrapper = document.getElementById('galleryWrapper');
+    if (wrapper) {
+      wrapper.classList.remove('collapsed');
+      window.dispatchEvent(new Event('scroll'));
+    }
+  }
+  </script>
+
+  <!-- Glitch Effect — Heading Interaction -->
+  <script>
+  (function() {
+    const chars = "あいうえおかがきぎくぐけげこごさざしじすずせぜそぞただちぢっつづてでとどなにぬねのはばぱひびぴふぶぷへべぺほぼぽまみむめもやゆよらりるれろわをん";
+
+    function initGlitchEffect(headline) {
+      if (!headline) return;
+
+      const layerEn = headline.querySelector('.hed-layer.en');
+      const layerJp = headline.querySelector('.hed-layer.jp');
+      if (!layerEn || !layerJp) return;
+
+      const originalHTML = layerEn.innerHTML;
+      const japaneseHTML = layerJp.innerHTML;
+      
+      let frameRequest;
+      let currentLang = 'en';
+      let hoverTimeout;
+
+      // Helper to identify range of red text
+      function getRedTextRange(html) {
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const redSpan = temp.querySelector('.red-text');
+        if (!redSpan) return null;
+        
+        const fullText = temp.innerText.replace(/\n/g, " ").trim();
+        const redText = redSpan.innerText.trim();
+        const start = fullText.indexOf(redText);
+        if (start === -1) return null;
+        return { start, end: start + redText.length };
+      }
+
+      const enRedRange = getRedTextRange(originalHTML);
+      const jpRedRange = getRedTextRange(japaneseHTML);
+
+      function runSequence(isJp) {
+        if (frameRequest) cancelAnimationFrame(frameRequest);
+        
+        const targetLayer = isJp ? layerJp : layerEn;
+        const otherLayer = isJp ? layerEn : layerJp;
+        const targetHTML = isJp ? japaneseHTML : originalHTML;
+        const redRange = isJp ? jpRedRange : enRedRange;
+        
+        const duration = 600;
+        const start = performance.now();
+        
+        const targetPlain = targetHTML.replace(/<br>/g, "\n").replace(/<[^>]*>/g, ""); 
+        const len = targetPlain.length;
+        
+        headline.classList.remove('is-settling');
+        headline.classList.add('is-glitching');
+        
+        targetLayer.classList.add('active');
+        otherLayer.classList.remove('active');
+
+        function update(now) {
+          const elapsed = now - start;
+          const progress = Math.min(1, elapsed / duration);
+          
+          if (progress < 1) {
+            let jumbledHTML = "";
+            let plainSoFar = "";
+
+            for (let i = 0; i < len; i++) {
+              const charResolutionThreshold = Math.pow(progress, 1.5);
+              let currentChar = "";
+
+              if (targetPlain[i] === "\n") {
+                 currentChar = "\n";
+              } else if (targetPlain[i] === " ") {
+                 currentChar = " ";
+              } else if (Math.random() > charResolutionThreshold) {
+                 currentChar = chars[Math.floor(Math.random() * chars.length)];
+              } else {
+                 currentChar = targetPlain[i];
+              }
+
+              // Check if this character index is within the red range
+              // (Note: this simplified logic assumes single-word or contiguous red text)
+              if (redRange && i >= redRange.start && i < redRange.end) {
+                jumbledHTML += `<span class="red-text">${currentChar}</span>`;
+              } else {
+                jumbledHTML += currentChar;
+              }
+            }
+            
+            targetLayer.innerHTML = jumbledHTML.replace(/\n/g, '<br>');
+            frameRequest = requestAnimationFrame(update);
+          } else {
+            targetLayer.innerHTML = targetHTML;
+            headline.classList.remove('is-glitching');
+            headline.classList.add('is-settling');
+            frameRequest = null;
+          }
+        }
+        
+        frameRequest = requestAnimationFrame(update);
+      }
+
+      const hoverTarget = headline.closest('.glitch-hed-wrapper') || headline;
+
+      hoverTarget.addEventListener('mouseenter', () => {
+        if (currentLang === 'jp') return;
+        // Start 500ms delay
+        hoverTimeout = setTimeout(() => {
+          currentLang = 'jp';
+          runSequence(true);
+        }, 500);
+      });
+
+      hoverTarget.addEventListener('mouseleave', () => {
+        clearTimeout(hoverTimeout);
+        if (currentLang === 'en') return;
+        currentLang = 'en';
+        runSequence(false);
+      });
+    }
+
+    // All glitch headings get hover effect — except the chef title which plays on entry
+    document.querySelectorAll('.glitch-hed:not(.chef-title-hed)').forEach(initGlitchEffect);
+
+    // Chef title: glitch in once on section entry, then stay as "The Artisans" permanently
+    function initChefTitleOnEntry(headline) {
+      if (!headline) return;
+      const layerEn = headline.querySelector('.hed-layer.en');
+      const layerJp = headline.querySelector('.hed-layer.jp');
+      if (!layerEn || !layerJp) return;
+
+      const originalHTML = layerEn.innerHTML;
+      const targetPlain = originalHTML.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '');
+      const len = targetPlain.length;
+      let frameRequest = null;
+      let hasPlayed = false;
+
+      // Pre-compute red text char range
+      const temp = document.createElement('div');
+      temp.innerHTML = originalHTML;
+      const redSpan = temp.querySelector('.red-text');
+      let redRange = null;
+      if (redSpan) {
+        const full = temp.innerText.replace(/\n/g, ' ').trim();
+        const red  = redSpan.innerText.trim();
+        const s    = full.indexOf(red);
+        if (s !== -1) redRange = { start: s, end: s + red.length };
+      }
+
+      headline.playGlitchEntry = function() {
+        if (hasPlayed) return;
+        hasPlayed = true;
+        if (frameRequest) cancelAnimationFrame(frameRequest);
+
+        layerEn.classList.add('active');
+        layerJp.classList.remove('active');
+        headline.classList.add('is-glitching');
+
+        const duration = 900;
+        const start = performance.now();
+
+        function update(now) {
+          const progress = Math.min(1, (now - start) / duration);
+          if (progress < 1) {
+            let html = '';
+            for (let i = 0; i < len; i++) {
+              const ch = targetPlain[i];
+              let out;
+              if (ch === '\n') out = '\n';
+              else if (ch === ' ') out = ' ';
+              else if (Math.random() > Math.pow(progress, 1.4)) out = chars[Math.floor(Math.random() * chars.length)];
+              else out = ch;
+              if (redRange && i >= redRange.start && i < redRange.end) html += `<span class="red-text">${out}</span>`;
+              else html += out;
+            }
+            layerEn.innerHTML = html;
+            frameRequest = requestAnimationFrame(update);
+          } else {
+            layerEn.innerHTML = originalHTML;
+            headline.classList.remove('is-glitching');
+            headline.classList.add('is-settling');
+            frameRequest = null;
+          }
+        }
+        frameRequest = requestAnimationFrame(update);
+      };
+    }
+
+    initChefTitleOnEntry(document.querySelector('.chef-title-hed'));
+  })();
+  </script>
+
+  <!-- Gallery Subtitle Swipe Animation -->
+  <script>
+  (function() {
+    'use strict';
+    const swipeBlocks = document.querySelectorAll('.gallery-subtitle[data-scroll-swipe]');
+    if (!swipeBlocks.length) return;
+
+    swipeBlocks.forEach(block => {
+      const content = block.innerText.trim();
+      block.innerHTML = content.split('').map((char, index) => {
+        if (char === ' ') return ' ';
+        return `<span class="reveal-char" style="transition-delay: ${index * 12}ms">${char}</span>`;
+      }).join('');
+    });
+
+    const observerOptions = {
+      threshold: 0.15,
+      rootMargin: "0px 0px -50px 0px"
+    };
+
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    swipeBlocks.forEach(block => observer.observe(block));
+  })();
+  </script>
+
+  <!-- Chef Parallax Slider Code -->
+  <script>
+  window.addEventListener('load', () => {
+    'use strict';
+
+    const PROJECT_DATA = [
+      {
+        title: "Haruto Nakamura",
+        image: "images/yui/Chef%20I.jpg",
+        category: "中村 春人",
+        year: "Head Chef",
+        description: "With over three decades of mastery in Kyoto, Chef Nakamura brings a philosophy where the knife is an extension of the soul."
+      },
+      {
+        title: "Hina Tanaka",
+        image: "images/yui/Chef%20II.jpg",
+        category: "田中 陽菜",
+        year: "Chef de Cuisine",
+        description: "Honoring the source is the cornerstone of Chef Tanaka's craft. From Tsukiji to local harvests, his role is to highlight nature's perfection."
+      },
+      {
+        title: "Kenji Sato",
+        image: "images/yui/Chef%20III.jpg",
+        category: "佐藤 健司",
+        year: "Senior Chef",
+        description: "For Chef Sato, dining is a silent conversation spoken through the medium of umami, bringing the serenity of Kyoto to life."
+      }
+    ];
+
+    const CONFIG = {
+      SCROLL_SPEED: 0.75,
+      LERP_FACTOR: 0.05,
+      BUFFER_SIZE: 2,
+      MAX_VELOCITY: 150,
+      SNAP_DURATION: 500,
+    };
+
+    const lerp = (start, end, factor) => start + (end - start) * factor;
+
+    const getProjectData = (index) => {
+      const len = PROJECT_DATA.length;
+      const i = ((Math.abs(index) % len) + len) % len;
+      return PROJECT_DATA[i];
+    };
+
+    const getProjectNumber = (index) => {
+      const len = PROJECT_DATA.length;
+      const n = (((Math.abs(index) % len) + len) % len) + 1;
+      return n.toString().padStart(2, "0");
+    };
+
+    const state = {
+      currentY: 0,
+      targetY: 0,
+      isDragging: false,
+      isSnapping: false,
+      snapStart: { time: 0, y: 0, target: 0 },
+      lastScrollTime: Date.now(),
+      dragStart: { y: 0, scrollY: 0 },
+      projectHeight: window.innerHeight,
+      minimapHeight: 380,
+      requestRef: null,
+      lastSnappedIndex: 0,  // tracks the confirmed slide we last snapped to
+      scrollAccum: 0        // accumulates wheel delta between snaps
+    };
+
+    let projectsMap = new Map();
+    let minimapMap = new Map();
+    let infoMap = new Map();
+    let renderedMin = null;
+    let renderedMax = null;
+
+    const aboutEl = document.getElementById('about');
+    const parallaxContainer = document.querySelector('#about .parallax-container');
+    const projectListEl = document.querySelector('#about .project-list');
+    const minimapImgPreviewEl = document.querySelector('#about .minimap-img-preview');
+    const minimapInfoListEl = document.querySelector('#about .minimap-info-list');
+
+    if (!aboutEl || !parallaxContainer || !projectListEl || !minimapImgPreviewEl || !minimapInfoListEl) return;
+
+    const updateParallax = (img, scroll, index, height) => {
+      if (!img) return;
+      // No inner lerp — the container itself is already lerping, so a direct offset is smooth
+      const offset = (-scroll - index * height) * 0.2;
+      img.style.transform = `translateY(${offset}px) scale(1.5)`;
+    };
+
+    const updateSnap = () => {
+      const progress = Math.min((Date.now() - state.snapStart.time) / CONFIG.SNAP_DURATION, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      state.targetY = state.snapStart.y + (state.snapStart.target - state.snapStart.y) * eased;
+      if (progress >= 1) state.isSnapping = false;
+    };
+
+    const snapToSlide = (index) => {
+      const clamped = Math.max(0, Math.min(PROJECT_DATA.length - 1, index));
+      state.lastSnappedIndex = clamped;
+      const target = -clamped * state.projectHeight;
+      state.isSnapping = true;
+      state.snapStart = { time: Date.now(), y: state.targetY, target };
+    };
+
+    const updatePositions = () => {
+      const minimapY = (state.currentY * state.minimapHeight) / state.projectHeight;
+
+      // Toggle title color when chef III (last) is active
+      const activeIdx = Math.round(-state.currentY / state.projectHeight);
+      if (activeIdx === PROJECT_DATA.length - 1) {
+        parallaxContainer.classList.add('chef-active-last');
+      } else {
+        parallaxContainer.classList.remove('chef-active-last');
+      }
+
+      projectsMap.forEach((el, index) => {
+        const y = index * state.projectHeight + state.currentY;
+        el.style.transform = `translateY(${y}px)`;
+        const img = el.querySelector("img");
+        updateParallax(img, state.currentY, index, state.projectHeight);
+      });
+
+      minimapMap.forEach((el, index) => {
+        const y = index * state.minimapHeight + minimapY;
+        el.style.transform = `translateY(${y}px)`;
+        
+        if (Math.abs(y) < 10) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+
+        const img = el.querySelector("img");
+        if (img) {
+          updateParallax(img, minimapY, index, state.minimapHeight);
+        }
+      });
+
+      infoMap.forEach((el, index) => {
+        const y = index * state.minimapHeight + minimapY;
+        el.style.transform = `translateY(${y}px)`;
+      });
+    };
+
+    const animate = () => {
+      const now = Date.now();
+      const prevCurrentY = state.currentY;
+
+      // Idle safety snap — catches touch drag releasing mid-slide (wheel uses accumulator)
+      if (!state.isSnapping && !state.isDragging && now - state.lastScrollTime > 300) {
+        const nearest = Math.max(0, Math.min(
+          Math.round(-state.targetY / state.projectHeight),
+          PROJECT_DATA.length - 1
+        ));
+        const snapTarget = -nearest * state.projectHeight;
+        if (Math.abs(state.targetY - snapTarget) > 2) snapToSlide(nearest);
+      }
+
+      if (state.isSnapping) updateSnap();
+      if (!state.isDragging) {
+        state.currentY += (state.targetY - state.currentY) * CONFIG.LERP_FACTOR;
+        if (Math.abs(state.currentY - state.targetY) < 0.1) state.currentY = state.targetY;
+      }
+
+      if (Math.abs(state.currentY - prevCurrentY) > 0.01 || state.isSnapping) {
+        updatePositions();
+      }
+    };
+
+    const createProjectEl = (i) => {
+      const data = getProjectData(i);
+      const div = document.createElement('div');
+      div.className = 'project';
+      const pos = data.imgPosition ? `style="object-position:${data.imgPosition}"` : '';
+      div.innerHTML = `<img src="${data.image}" alt="${data.title}" ${pos}>`;
+      return div;
+    };
+
+    const createMinimapImgEl = (i) => {
+      const data = getProjectData(i);
+      const div = document.createElement('div');
+      div.className = 'minimap-img-item';
+      const pos = data.imgPosition ? `style="object-position:${data.imgPosition}"` : '';
+      div.innerHTML = `<img src="${data.image}" alt="${data.title}" ${pos}>`;
+      return div;
+    };
+
+    const createMinimapInfoEl = (i) => {
+      const data = getProjectData(i);
+      const num = getProjectNumber(i);
+      
+      const div = document.createElement('div');
+      div.className = 'minimap-item-info';
+      div.innerHTML = `
+        <div class="minimap-left">
+          <p class="minimap-num">${num}</p>
+          <p class="minimap-category">${data.category}</p>
+          <p class="minimap-desc">${data.description}</p>
+        </div>
+        <div class="minimap-right">
+          <p class="minimap-title">${data.title}</p>
+          <p class="minimap-year">${data.year}</p>
+        </div>
+      `;
+      return div;
+    };
+
+    const reconcileChildren = (container, min, max, creatorFunc) => {
+      const currentChildren = Array.from(container.children);
+      const childrenMap = new Map();
+      
+      currentChildren.forEach(child => {
+        const idx = parseInt(child.getAttribute('data-index'), 10);
+        childrenMap.set(idx, child);
+      });
+
+      childrenMap.forEach((child, idx) => {
+        if (idx < min || idx > max) {
+          container.removeChild(child);
+          childrenMap.delete(idx);
+        }
+      });
+
+      for (let i = min; i <= max; i++) {
+        if (!childrenMap.has(i)) {
+          const newChild = creatorFunc(i);
+          newChild.setAttribute('data-index', i.toString());
+          childrenMap.set(i, newChild);
+        }
+      }
+
+      const sortedIndices = Array.from(childrenMap.keys()).sort((a, b) => a - b);
+      sortedIndices.forEach(idx => {
+        const child = childrenMap.get(idx);
+        container.appendChild(child);
+      });
+
+      return childrenMap;
+    };
+
+    const updateDOMForRange = (min, max) => {
+      projectsMap = reconcileChildren(projectListEl, min, max, createProjectEl);
+      minimapMap = reconcileChildren(minimapImgPreviewEl, min, max, createMinimapImgEl);
+      infoMap = reconcileChildren(minimapInfoListEl, min, max, createMinimapInfoEl);
+    };
+
+    const animationLoop = () => {
+      animate();
+
+      const currentIndex = Math.round(-state.targetY / state.projectHeight);
+      const min = currentIndex - CONFIG.BUFFER_SIZE;
+      const max = currentIndex + CONFIG.BUFFER_SIZE;
+
+      if (min !== renderedMin || max !== renderedMax) {
+        renderedMin = min;
+        renderedMax = max;
+        updateDOMForRange(min, max);
+        // New elements have no transform yet — position them immediately regardless of idle state
+        updatePositions();
+      }
+
+      state.requestRef = requestAnimationFrame(animationLoop);
+    };
+
+    // ────────────────────────────────────────────────────────
+    // SNAP-LOCK SYSTEM: locks scroll on chef section,
+    // cycles Chef 1 → 2 → 3, then releases
+    // ────────────────────────────────────────────────────────
+    let isLocked = false;
+    let justReleased = false;
+    // Track boundary hits: require TWO consecutive boundary scrolls to release
+    let boundaryScrollCount = 0;
+    let lastBoundaryDir = 0;
+
+    const lockPage = () => {
+      // Stop Lenis (smooth scroll library)
+      if (window.lenis) window.lenis.stop();
+      // Also freeze body as a failsafe
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    };
+
+    const unlockPage = () => {
+      if (window.lenis) window.lenis.start();
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+
+    const snapAndLock = () => {
+      if (isLocked || justReleased) return;
+
+      const containerRect = parallaxContainer.getBoundingClientRect();
+      // Only trigger when the parallax container is meaningfully visible
+      if (containerRect.top > window.innerHeight * 0.5 || containerRect.bottom < window.innerHeight * 0.5) return;
+
+      isLocked = true;
+      boundaryScrollCount = 0;
+      lastBoundaryDir = 0;
+      state.scrollAccum = 0;
+      
+      // Determine direction of approach and set targetY only (let currentY lerp)
+      const isComingFromBelow = containerRect.top < -100;
+      if (isComingFromBelow) {
+        state.targetY = -(PROJECT_DATA.length - 1) * state.projectHeight;
+        state.currentY = state.targetY;
+        state.lastSnappedIndex = PROJECT_DATA.length - 1;
+      } else {
+        state.targetY = 0;
+        state.currentY = 0;
+        state.lastSnappedIndex = 0;
+        // Play the chef title glitch-in animation on first entry from top
+        const chefTitle = document.querySelector('.chef-title-hed');
+        if (chefTitle && chefTitle.playGlitchEntry) chefTitle.playGlitchEntry();
+      }
+
+      // Scroll the PAGE so the parallax container fills the viewport,
+      // THEN lock
+      if (window.lenis) {
+        window.lenis.scrollTo(parallaxContainer, {
+          offset: 0,
+          duration: 1.0,
+          easing: (t) => 1 - Math.pow(1 - t, 3),
+          onComplete: () => {
+            lockPage();
+          }
+        });
+      } else {
+        // Fallback: native scroll then lock
+        parallaxContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(lockPage, 800);
+      }
+    };
+
+    const releaseLock = (targetId) => {
+      isLocked = false;
+      justReleased = true;
+      boundaryScrollCount = 0;
+      lastBoundaryDir = 0;
+
+      unlockPage();
+
+      setTimeout(() => { justReleased = false; }, 2000);
+
+      if (window.lenis) {
+        const targetEl = document.querySelector(targetId);
+        if (targetEl) {
+          window.lenis.scrollTo(targetEl, { duration: 0.8 });
+        }
+      }
+    };
+
+    // ── GLOBAL wheel listener (captures before Lenis) ──
+    const SWIPE_THRESHOLD = 80; // px of accumulated scroll to trigger a slide change
+
+    window.addEventListener("wheel", (e) => {
+      if (!isLocked) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const scrollingUp   = e.deltaY < 0;
+      const scrollingDown = e.deltaY > 0;
+
+      // Boundary detection uses lastSnappedIndex — no position ambiguity
+      const atFirst = state.lastSnappedIndex === 0 && !state.isSnapping;
+      const atLast  = state.lastSnappedIndex === PROJECT_DATA.length - 1 && !state.isSnapping;
+
+      if ((atFirst && scrollingUp) || (atLast && scrollingDown)) {
+        const dir = scrollingUp ? -1 : 1;
+        if (dir === lastBoundaryDir) {
+          boundaryScrollCount++;
+        } else {
+          boundaryScrollCount = 1;
+          lastBoundaryDir = dir;
+        }
+        if (boundaryScrollCount >= 3) {
+          state.scrollAccum = 0;
+          releaseLock(scrollingUp ? '#japanese-precision' : '#about-gallery');
+        }
+        return;
+      }
+
+      boundaryScrollCount = 0;
+      lastBoundaryDir = 0;
+      state.lastScrollTime = Date.now();
+
+      const delta = Math.max(Math.min(e.deltaY * CONFIG.SCROLL_SPEED, CONFIG.MAX_VELOCITY), -CONFIG.MAX_VELOCITY);
+      state.scrollAccum += delta; // positive = intent to scroll down, negative = up
+
+      if (Math.abs(state.scrollAccum) >= SWIPE_THRESHOLD) {
+        const dir = state.scrollAccum > 0 ? 1 : -1;
+        const next = state.lastSnappedIndex + dir;
+        state.scrollAccum = 0;
+        if (next >= 0 && next < PROJECT_DATA.length) {
+          snapToSlide(next);
+        }
+      }
+    }, { passive: false, capture: true });
+
+    // ── Touch handlers (on the section itself) ──
+    aboutEl.addEventListener("touchstart", (e) => {
+      if (!isLocked) return;
+      state.isDragging = true;
+      state.isSnapping = false;
+      state.dragStart = { y: e.touches[0].clientY, scrollY: state.targetY };
+      state.lastScrollTime = Date.now();
+      boundaryScrollCount = 0;
+    }, { passive: true });
+
+    aboutEl.addEventListener("touchmove", (e) => {
+      if (!state.isDragging || !isLocked) return;
+
+      const deltaY = e.touches[0].clientY - state.dragStart.y;
+      const currentIndex = Math.round(-state.targetY / state.projectHeight);
+      const clampedIndex = Math.max(0, Math.min(currentIndex, PROJECT_DATA.length - 1));
+
+      const atFirst = clampedIndex === 0;
+      const atLast = clampedIndex === (PROJECT_DATA.length - 1);
+      const swipingUp = deltaY < -80;  // finger moves up = scroll down
+      const swipingDown = deltaY > 80; // finger moves down = scroll up
+
+      if (atFirst && swipingDown) {
+        state.isDragging = false;
+        releaseLock('#japanese-precision');
+        return;
+      }
+      if (atLast && swipingUp) {
+        state.isDragging = false;
+        releaseLock('#about-gallery');
+        return;
+      }
+
+      e.preventDefault();
+      const newY = state.dragStart.scrollY + deltaY * 1.5;
+      const minY = -(PROJECT_DATA.length - 1) * state.projectHeight;
+      state.targetY = Math.max(minY, Math.min(0, newY));
+      state.lastScrollTime = Date.now();
+    }, { passive: false });
+
+    aboutEl.addEventListener("touchend", () => {
+      state.isDragging = false;
+    });
+
+    // ── Resize ──
+    const onResize = () => {
+      state.projectHeight = window.innerHeight;
+      parallaxContainer.style.height = `${window.innerHeight}px`;
+    };
+    window.addEventListener("resize", onResize);
+    onResize();
+
+    // ── IntersectionObserver to trigger snap-lock ──
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!isLocked && !justReleased) {
+            snapAndLock();
+          }
+        } else {
+          // Section scrolled completely out of view — clean up
+          if (isLocked) {
+            isLocked = false;
+            unlockPage();
+          }
+        }
+      });
+    }, {
+      threshold: [0.6]
+    });
+
+    observer.observe(parallaxContainer);
+
+    // Start animation loop
+    state.requestRef = requestAnimationFrame(animationLoop);
+  });
+  </script>
+
+
+
+  <!-- Food Image Reveal Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observerOptions = {
+        threshold: 0.15
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+          } else {
+            // Keep it active once revealed to prevent constant flickering, 
+            // or remove if you want it to trigger every time.
+            // entry.target.classList.remove('active');
+          }
+        });
+      }, observerOptions);
+      
+      document.querySelectorAll('.food-reveal').forEach(img => observer.observe(img));
+    });
+  </script>
+  <!-- Hero PNG Sequence Animation Logic -->
+  <script>
+  (function() {
+    const canvas = document.getElementById('heroCanvas');
+    if (!canvas) return;
+    
+    const context = canvas.getContext('2d', { alpha: false });
+    const heroSection = document.getElementById('home');
+    
+    const offscreenCanvas = document.createElement('canvas');
+    const offscreenCtx = offscreenCanvas.getContext('2d', { alpha: false });
+    
+    const frameCount = 90;
+    const images = [];
+    const sequence = { frame: 0 };
+    let isVisible = true;
+    let loopRunning = false;
+    
+    let heroSectionTop = 0;
+    let heroSectionHeight = 0;
+
+    function getElementOffsetTop(el) {
+      let top = 0;
+      while (el) {
+        top += el.offsetTop;
+        el = el.offsetParent;
+      }
+      return top;
+    }
+
+    function getImagePath(i) {
+      const fileName = `hero section_[#####]${i.toString().padStart(2, '0')}.jpg`;
+      return `assets/Hero%20Section/${fileName.replace(/ /g, '%20').replace(/\[/g, '%5B').replace(/\]/g, '%5D').replace(/#/g, '%23')}`;
+    }
+
+    function paintWhite() {
+      if (canvas.width > 0 && canvas.height > 0) {
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      if (!container) return;
+      
+      // Cache values on resize
+      if (heroSection) {
+        heroSectionTop = getElementOffsetTop(heroSection);
+        heroSectionHeight = heroSection.offsetHeight;
+      }
+      
+      const rect = container.getBoundingClientRect();
+      const w = Math.round(rect.width) || Math.round(window.innerWidth * 0.7);
+      const h = Math.round(rect.height) || window.innerHeight;
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+        offscreenCanvas.width = w;
+        offscreenCanvas.height = h;
+        paintWhite();
+        render();
+      }
+    }
+
+    let loadedCount = 0;
+    for (let i = 0; i < frameCount; i++) images.push(null);
+
+    function loadImage(i) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => { img._ready = true; images[i] = img; loadedCount++; resolve(); };
+        img.onerror = () => { loadedCount++; resolve(); };
+        img.src = getImagePath(i);
+      });
+    }
+
+    async function loadAllImages() {
+      await loadImage(0);
+      render();
+      const batchSize = 6;
+      for (let start = 1; start < frameCount; start += batchSize) {
+        const batch = [];
+        for (let i = start; i < Math.min(start + batchSize, frameCount); i++) {
+          batch.push(loadImage(i));
+        }
+        await Promise.all(batch);
+        if (images[sequence.frame] && images[sequence.frame]._ready) render();
+      }
+    }
+
+    loadAllImages();
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function render() {
+      const img = images[sequence.frame];
+      if (!img || !img._ready || img.naturalWidth === 0) {
+        paintWhite();
+        return;
+      }
+      
+      const cw = canvas.width, ch = canvas.height;
+      const scaleFactor = 1.3;
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const canvasRatio = cw / ch;
+      let dw, dh, x, y;
+      if (imgRatio > canvasRatio) { dw = cw * scaleFactor; dh = (cw / imgRatio) * scaleFactor; }
+      else { dw = (ch * imgRatio) * scaleFactor; dh = ch * scaleFactor; }
+      x = cw - dw; y = (ch - dh) / 2;
+      
+      offscreenCtx.fillStyle = '#ffffff';
+      offscreenCtx.fillRect(0, 0, cw, ch);
+      offscreenCtx.drawImage(img, x, y, dw, dh);
+      context.drawImage(offscreenCanvas, 0, 0);
+    }
+
+    let targetFrame = 0;
+    let currentFrame = 0;
+
+    function startLoop() {
+      if (loopRunning) return;
+      loopRunning = true;
+      requestAnimationFrame(renderLoop);
+    }
+
+    function renderLoop() {
+      if (!isVisible) { loopRunning = false; return; } // TRULY stop - no reschedule
+      
+      const diff = targetFrame - currentFrame;
+      if (Math.abs(diff) > 0.01) {
+        currentFrame += diff * 0.1;
+      } else {
+        currentFrame = targetFrame;
+      }
+      
+      const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrame)));
+      if (sequence.frame !== frameIndex) {
+        sequence.frame = frameIndex;
+        render();
+      }
+      requestAnimationFrame(renderLoop);
+    }
+    
+    startLoop();
+
+    const visObs = new IntersectionObserver(entries => {
+      const wasVisible = isVisible;
+      isVisible = entries[0].isIntersecting;
+      if (isVisible && !wasVisible) startLoop(); // Restart loop when becoming visible
+    }, { rootMargin: '200px' });
+    if (heroSection) visObs.observe(heroSection);
+
+    window.addEventListener('scroll', function() {
+      if (!heroSection || !isVisible) return;
+      const scrollY = window.scrollY;
+      const rectTop = heroSectionTop - scrollY;
+      const totalScrollableDepth = heroSectionHeight - window.innerHeight;
+      const progress = Math.max(0, Math.min(1, -rectTop / totalScrollableDepth));
+      targetFrame = progress * (frameCount - 1);
+    }, { passive: true });
+  })();
+  </script>
+
+  <!-- Japanese Precision: Sequence + Typewriter + Glitch -->
+  <script>
+  (function() {
+    const section = document.getElementById('japanese-precision');
+    const canvas = document.getElementById('precisionCanvas');
+    const typewriter = document.getElementById('precisionTypewriter');
+    const headline = document.getElementById('precisionHeadline');
+    if (!section || !canvas) return;
+
+    // Use alpha: false + offscreen buffer to prevent black flash on clearRect
+    const context = canvas.getContext('2d', { alpha: false });
+    const offCanvas = document.createElement('canvas');
+    const offCtx = offCanvas.getContext('2d', { alpha: false });
+
+    const frameCount = 169;
+    const images = [];
+    const sequence = { frame: 0 };
+    let isVisible = false;
+    let loadStarted = false;
+    let loopRunning = false;
+    
+    let sectionTop = 0;
+    let sectionHeight = 0;
+
+    function getElementOffsetTop(el) {
+      let top = 0;
+      while (el) {
+        top += el.offsetTop;
+        el = el.offsetParent;
+      }
+      return top;
+    }
+
+    const fullText = "Yui brings a quiet Japanese presence and craft into the heart of Bangalore. Through shared meals and the warmth of togetherness, we celebrate 'The Fifth Flavor'—the elusive feeling of connection created around the table, where craft meets emotion.";
+
+    function getFramePath(i) {
+      const fileName = `Screenshot 2026-04-14 at 9-08-27 PM${i.toString().padStart(3, '0')}.jpg`;
+      return `assets/Resto%20View/${fileName.replace(/ /g, '%20')}`;
+    }
+
+    // Initialize with null placeholders
+    for (let i = 0; i < frameCount; i++) images.push(null);
+
+    function loadImage(i) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => { img._ready = true; images[i] = img; resolve(); };
+        img.onerror = () => resolve();
+        img.src = getFramePath(i);
+      });
+    }
+
+    // Lazy load: only start loading when section approaches viewport
+    async function startLoading() {
+      if (loadStarted) return;
+      loadStarted = true;
+      
+      // Load frame 0 first
+      await loadImage(0);
+      render();
+      
+      // Load rest in batches
+      const batchSize = 8;
+      for (let start = 1; start < frameCount; start += batchSize) {
+        const batch = [];
+        for (let i = start; i < Math.min(start + batchSize, frameCount); i++) {
+          batch.push(loadImage(i));
+        }
+        await Promise.all(batch);
+        if (images[sequence.frame] && images[sequence.frame]._ready) render();
+      }
+    }
+
+    // Paint white on init to prevent black screen
+    function paintWhite() {
+      if (canvas.width > 0 && canvas.height > 0) {
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function render() {
+      const img = images[sequence.frame];
+      if (!img || !img._ready || img.naturalWidth === 0) {
+        paintWhite();
+        return;
+      }
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const canvasRatio = w / h;
+      let dW, dH, x, y;
+
+      if (imgRatio > canvasRatio) {
+        dW = w; dH = w / imgRatio; x = 0; y = (h - dH) / 2;
+      } else {
+        dW = h * imgRatio; dH = h; x = (w - dW) / 2; y = 0;
+      }
+      
+      // Draw to offscreen buffer first, then blit (no clearRect flicker)
+      offCtx.fillStyle = '#ffffff';
+      offCtx.fillRect(0, 0, w, h);
+      offCtx.drawImage(img, x, y, dW, dH);
+      context.drawImage(offCanvas, 0, 0);
+    }
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      offCanvas.width = canvas.width;
+      offCanvas.height = canvas.height;
+      
+      // Cache coordinates on resize (not on scroll)
+      sectionTop = getElementOffsetTop(section);
+      sectionHeight = section.offsetHeight;
+      
+      paintWhite();
+      render();
+    }
+
+    let isGlitching = false;
+    function triggerGlitch() {
+      if (isGlitching) return;
+      isGlitching = true;
+      const en = headline.querySelector('.en');
+      const jp = headline.querySelector('.jp');
+      let count = 0;
+      const interval = setInterval(() => {
+        if (count % 2 === 0) { en.classList.remove('active'); jp.classList.add('active'); }
+        else { en.classList.add('active'); jp.classList.remove('active'); }
+        count++;
+        if (count > 5) {
+          clearInterval(interval);
+          en.classList.add('active'); jp.classList.remove('active');
+          setTimeout(() => { isGlitching = false; }, 2000);
+        }
+      }, 80);
+    }
+
+    let targetFrame = 0;
+    let currentFrame = 0;
+    let lastCharsToShow = -1;
+
+    function startLoop() {
+      if (loopRunning) return;
+      loopRunning = true;
+      requestAnimationFrame(renderLoop);
+    }
+
+    function renderLoop() {
+      if (!isVisible) { loopRunning = false; return; }
+      
+      const diff = targetFrame - currentFrame;
+      if (Math.abs(diff) > 0.01) {
+        currentFrame += diff * 0.1;
+      } else {
+        currentFrame = targetFrame;
+      }
+
+      const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrame)));
+      if (sequence.frame !== frameIndex) {
+        sequence.frame = frameIndex;
+        render();
+      }
+      requestAnimationFrame(renderLoop);
+    }
+
+    function update() {
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const rectTop = sectionTop - scrollY;
+      const rectBottom = rectTop + sectionHeight;
+      if (rectBottom < 0 || rectTop > viewportHeight) return;
+
+      const scrollDepth = -rectTop;
+      const scrollMax = sectionHeight - viewportHeight;
+      let progress = Math.max(0, Math.min(1, scrollDepth / scrollMax));
+
+      targetFrame = progress * (frameCount - 1);
+
+      const charsToShow = Math.floor(progress * fullText.length);
+      if (charsToShow !== lastCharsToShow) {
+        typewriter.innerText = fullText.substring(0, charsToShow);
+        lastCharsToShow = charsToShow;
+      }
+      if (progress > 0.05 && progress < 0.1) triggerGlitch();
+    }
+
+    const lazyObs = new IntersectionObserver(entries => {
+      const wasVisible = isVisible;
+      isVisible = entries[0].isIntersecting;
+      if (isVisible) {
+        startLoading();
+        if (!wasVisible) startLoop();
+      }
+    }, { rootMargin: '600px' });
+    lazyObs.observe(section);
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('scroll', update, { passive: true });
+    resize();
+  })();
+  </script>
+
+    <!-- Menu Section Scroll Animation: Precision Mirror -->
+  <script>
+  (function() {
+    const section = document.getElementById('menu'); 
+    const canvas = document.getElementById('menuCanvas');
+    const marquee = document.getElementById('menuMarquee');
+    const typewriter = document.getElementById('menuTypewriter');
+    const headline = document.getElementById('menuHeadline');
+    if (!section || !canvas || !marquee) return;
+
+    const context = canvas.getContext('2d', { alpha: false });
+    const offCanvas = document.createElement('canvas');
+    const offCtx = offCanvas.getContext('2d', { alpha: false });
+
+    const frameCount = 48;
+    const images = [];
+    const sequence = { frame: 0 };
+    let isVisible = false;
+    let loadStarted = false;
+    let loopRunning = false;
+    
+    let sectionTop = 0;
+    let sectionHeight = 0;
+
+    function getElementOffsetTop(el) {
+      let top = 0;
+      while (el) {
+        top += el.offsetTop;
+        el = el.offsetParent;
+      }
+      return top;
+    }
+    
+    const fullText = "A meticulously curated selection of seasonal flavors, crafted with Japanese precision and passion. Explore our signature Omakase and à la carte offerings, designed to celebrate the art of zen dining.";
+
+    function getFramePath(i) {
+      return `assets/Menu/menu_${i.toString().padStart(2, '0')}.jpg`;
+    }
+
+    // Initialize with null placeholders
+    for (let i = 0; i < frameCount; i++) images.push(null);
+
+    function loadImage(i) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => { img._ready = true; images[i] = img; resolve(); };
+        img.onerror = () => resolve();
+        img.src = getFramePath(i);
+      });
+    }
+
+    async function startLoading() {
+      if (loadStarted) return;
+      loadStarted = true;
+      await loadImage(0);
+      render();
+      const batchSize = 8;
+      for (let start = 1; start < frameCount; start += batchSize) {
+        const batch = [];
+        for (let i = start; i < Math.min(start + batchSize, frameCount); i++) {
+          batch.push(loadImage(i));
+        }
+        await Promise.all(batch);
+        if (images[sequence.frame] && images[sequence.frame]._ready) render();
+      }
+    }
+
+    function paintWhite() {
+      if (canvas.width > 0 && canvas.height > 0) {
+        context.fillStyle = '#ffffff';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function render() {
+      const img = images[sequence.frame];
+      if (!img || !img._ready || img.naturalWidth === 0) {
+        paintWhite();
+        return;
+      }
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const imgRatio = img.naturalWidth / img.naturalHeight;
+      const canvasRatio = w / h;
+      let dW, dH, x, y;
+      if (imgRatio > canvasRatio) {
+        dW = w; dH = w / imgRatio; x = 0; y = (h - dH) / 2;
+      } else {
+        dW = h * imgRatio; dH = h; x = (w - dW) / 2; y = 0;
+      }
+      
+      offCtx.fillStyle = '#ffffff';
+      offCtx.fillRect(0, 0, w, h);
+      offCtx.drawImage(img, x, y, dW, dH);
+      context.drawImage(offCanvas, 0, 0);
+      
+      const gap = (h - dH) / 2;
+      marquee.style.bottom = gap + "px";
+    }
+
+    function resize() {
+      if (!canvas.parentElement) return;
+      canvas.width = canvas.parentElement.offsetWidth;
+      canvas.height = canvas.parentElement.offsetHeight;
+      offCanvas.width = canvas.width;
+      offCanvas.height = canvas.height;
+      
+      // Cache coordinates on resize
+      sectionTop = getElementOffsetTop(section);
+      sectionHeight = section.offsetHeight;
+      
+      paintWhite();
+      render();
+    }
+
+    let isGlitching = false;
+    function triggerGlitch() {
+      if (isGlitching || !headline) return;
+      isGlitching = true;
+      const en = headline.querySelector('.en');
+      const jp = headline.querySelector('.jp');
+      let count = 0;
+      const interval = setInterval(() => {
+        if (count % 2 === 0) { en.classList.remove('active'); jp.classList.add('active'); }
+        else { en.classList.add('active'); jp.classList.remove('active'); }
+        count++;
+        if (count > 5) {
+          clearInterval(interval);
+          en.classList.add('active'); jp.classList.remove('active');
+          setTimeout(() => { isGlitching = false; }, 2000);
+        }
+      }, 80);
+    }
+
+    let targetFrame = 0;
+    let currentFrame = 0;
+    let lastCharsToShow = -1;
+
+    function startLoop() {
+      if (loopRunning) return;
+      loopRunning = true;
+      requestAnimationFrame(renderLoop);
+    }
+
+    function renderLoop() {
+      if (!isVisible) { loopRunning = false; return; }
+      
+      const diff = targetFrame - currentFrame;
+      if (Math.abs(diff) > 0.01) {
+        currentFrame += diff * 0.1;
+      } else {
+        currentFrame = targetFrame;
+      }
+
+      const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrame)));
+      if (sequence.frame !== frameIndex) {
+        sequence.frame = frameIndex;
+        render();
+      }
+      requestAnimationFrame(renderLoop);
+    }
+
+    function update() {
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const rectTop = sectionTop - scrollY;
+      const rectBottom = rectTop + sectionHeight;
+      if (rectBottom < 0 || rectTop > viewportHeight) return;
+
+      const scrollDepth = -rectTop;
+      const scrollMax = sectionHeight - viewportHeight;
+      let progress = Math.max(0, Math.min(1, scrollDepth / scrollMax));
+
+      targetFrame = progress * (frameCount - 1);
+
+      if (typewriter) {
+        const charsToShow = Math.floor(progress * fullText.length);
+        if (charsToShow !== lastCharsToShow) {
+          typewriter.innerText = fullText.substring(0, charsToShow);
+          lastCharsToShow = charsToShow;
+        }
+      }
+      if (progress > 0.05 && progress < 0.1 && !isGlitching) triggerGlitch();
+    }
+
+    const lazyObs = new IntersectionObserver(entries => {
+      const wasVisible = isVisible;
+      isVisible = entries[0].isIntersecting;
+      if (isVisible) {
+        startLoading();
+        if (!wasVisible) startLoop();
+      }
+    }, { rootMargin: '600px' });
+    lazyObs.observe(section);
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('scroll', update, { passive: true });
+    resize();
+  })();
+  </script>
+
+
+
+  <!-- Status Modal (Errors/Info) -->
+  <div id="statusModal" class="res-modal">
+    <div class="res-modal-overlay" onclick="closeStatusModal()"></div>
+    <div class="res-ticket-container">
+      <button class="res-modal-close hov" onclick="closeStatusModal()">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="res-ticket status-ticket">
+        <div class="status-ticket-icon" id="status-icon-wrap">
+          <svg id="status-svg-error" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#D22B2B" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          <svg id="status-svg-success" viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="#2E7D32" stroke-width="1.5" style="display:none">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="9 12 11.5 14.5 16 9.5"></polyline>
+          </svg>
+        </div>
+        <h3 id="status-title" class="status-title">Notice</h3>
+        <p id="status-message" class="status-message"></p>
+        <button class="status-action-btn hov" onclick="closeStatusModal()">Understood</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reservation Success Ticket Modal -->
+  <div id="resModal" class="res-modal">
+    <div class="res-modal-overlay" onclick="closeResModal()"></div>
+    <div class="res-ticket-container">
+      <button class="res-modal-close hov" onclick="closeResModal()">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="res-ticket">
+        <div class="res-ticket-header">
+          <span class="res-thankyou">Thank you!!</span>
+          <h2 class="res-guest-title">Table for <span id="ticket-name"></span></h2>
+          <p class="res-status-sub">You're all set.</p>
+        </div>
+        <div class="res-ticket-body">
+          <div class="res-qr-section">
+            <p class="res-qr-label">QR sent via SMS.</p>
+            <div class="res-qr-wrapper">
+              <svg class="res-qr-svg" viewBox="0 0 100 100" fill="currentColor">
+                <path d="M0 0h30v30H0V0zm10 10v10h10V10H10zm60-10h30v30H70V0zm10 10v10h10V10H10zM0 70h30v30H0V70zm10 10v10h10V10H10zm60 0h10v10H70V80zm20 0h10v10H90V80zm-10 10h10v10H80V90zm10 0h10v10H90V90zM40 0h10v10H40V0zm10 10h10v10H50V10zM40 20h10v10H40V20zm20-20h10v10H60V0zm0 20h10v10H60V20zm-20 20h10v10H40V40zm20 0h10v10H60V40zm-10 10h10v10H50V50zM0 40h10v10H0V40zm10 10h10v10H10V50zm20 0h10v10H30V50zm40-10h10v10H70V40zm20 0h10v10H90V40z" />
+              </svg>
+            </div>
+            <div class="res-conf-code" id="ticket-conf-code"></div>
+          </div>
+          <div class="res-info-grid">
+            <div class="res-info-item"><div class="res-info-val" id="ticket-date"></div></div>
+            <div class="res-info-row">
+              <div class="res-info-val"><span id="ticket-time"></span> Hr</div>
+              <div class="res-info-val"><span id="ticket-size"></span> Guests</div>
+            </div>
+            <div class="res-info-item detail">
+              <div class="res-info-lbl">Note :</div>
+              <div class="res-info-val" id="ticket-note"></div>
+            </div>
+            <div class="res-info-item detail">
+              <div class="res-info-lbl">Occasion :</div>
+              <div class="res-info-val" id="ticket-occasion"></div>
+            </div>
+          </div>
+        </div>
+        <div class="res-ticket-footer">
+          <a href="https://wa.me/918951765556" target="_blank" class="res-change-btn hov">
+            <span>Change Reservation</span>
+          </a>
+          <button class="res-save-btn hov" onclick="saveTicket()">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            <span>Save</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function dismissPreloader() {
+      const preloader = document.getElementById('site-preloader');
+      if (preloader && !preloader.classList.contains('hidden')) {
+        preloader.classList.add('hidden');
+        setTimeout(() => preloader.remove(), 600);
+      }
+    }
+    
+    // Dismiss preloader when page fully loads
+    window.addEventListener('load', dismissPreloader);
+    
+    // Fallback: force preloader dismissal after 1s maximum (images now load progressively)
+    setTimeout(dismissPreloader, 1000);
+
+    // Initialize Lenis Smooth Scroll
+    document.addEventListener('DOMContentLoaded', () => {
+      window.lenis = new Lenis({
+        direction: 'vertical',
+        gestureDirection: 'vertical',
+        smooth: true,
+        mouseMultiplier: 1,
+        smoothTouch: false,
+        touchMultiplier: 2,
+        infinite: false,
+      });
+
+      function raf(time) {
+        window.lenis.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+
+      // Handle anchor link scrolling through Lenis
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          const targetEl = document.querySelector(targetId);
+          if (targetEl) {
+            window.lenis.scrollTo(targetEl);
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

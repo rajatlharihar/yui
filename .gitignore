@@ -1,0 +1,33 @@
+node_modules/
+.next/
+.env*
+.DS_Store
+*.log
+build/
+out/
+.vercel
+test.txt
+inject_content.py
+move_images.sh
+**/AE Files/
+**/Adobe After Effects Auto-Save/
+*.aep
+*.aep_AME
+
+# Raw source / working files — not needed to serve the site
+assets/
+
+# Duplicate image sets
+images/yui_backup/
+images/yui_originals/
+
+# Python scripts
+*.py
+
+# Misc
+compress_hero.py
+extract.py
+extract_images.js
+inline_images.py
+update_pwd.js
+dashboard.html
