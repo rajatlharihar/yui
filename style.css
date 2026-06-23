@@ -56,7 +56,7 @@
 
     html {
       scroll-behavior: auto;
-      font-size: 16px;
+      font-size: 17.6px;
       -webkit-font-smoothing: antialiased
     }
 
@@ -155,21 +155,83 @@
     /* NAV LOGIC */
     /* NAV LOGIC - REFINED SPACING */
     .nav {
+      /* 0 = over the hero (dark/transparent) · 1 = solid white bar.
+         Driven continuously by scroll (see checkNav) so the two states
+         cross-fade smoothly instead of snapping. */
+      --nav-p: 0;
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       z-index: 800;
       height: auto;
-      min-height: 88px;
+      min-height: calc(88px - 24px * var(--nav-p));
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 32px 80px;
-      background: transparent;
-      transition: background 0.5s var(--ease), color 0.5s var(--ease), height 0.5s var(--ease), padding 0.5s var(--ease);
+      padding: calc(24px - 16px * var(--nav-p)) 80px;
+      background: rgba(255, 255, 255, calc(0.97 * var(--nav-p)));
+      backdrop-filter: blur(calc(14px * var(--nav-p)));
+      -webkit-backdrop-filter: blur(calc(14px * var(--nav-p)));
+      /* short, linear easing so the bar tracks the scroll position closely */
+      transition: background 0.3s ease, backdrop-filter 0.18s linear,
+                  min-height 0.18s linear, padding 0.18s linear, color 0.3s ease;
       overflow: visible;
-      color: #fff;
+      color: color-mix(in srgb, var(--text) calc(var(--nav-p) * 100%), #fff);
+    }
+
+    /* When over a FlowArt menu card — card colour takes over */
+    .nav.menu-card-active {
+      background: var(--nav-card-bg, rgba(255,255,255,0.97)) !important;
+      color: var(--nav-card-color, var(--text)) !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+    .nav.menu-card-active::after { opacity: 0 !important; pointer-events: none; }
+
+    /* On dark cards (red/black) — white everything */
+    .nav.menu-card-active.nav--dark .nav-logo-mark img {
+      filter: brightness(0) invert(1) !important;
+    }
+    .nav.menu-card-active.nav--dark #logoCanvas {
+      filter: brightness(0) invert(1) !important;
+    }
+    .nav.menu-card-active.nav--dark .nav-center a,
+    .nav.menu-card-active.nav--dark .nav-center a.active {
+      color: rgba(255,255,255,0.7) !important;
+    }
+    .nav.menu-card-active.nav--dark .nav-center a:hover {
+      color: #ffffff !important;
+    }
+    /* Both dark cards: white active dot */
+    .nav.menu-card-active.nav--dark .nav-center a.active::before {
+      color: rgba(255,255,255,0.6) !important;
+    }
+
+    /* RED card overrides: dot + CTA go black */
+    .nav.menu-card-active.nav--red-card .nav-center a.active::before {
+      color: #0B0B09 !important;
+    }
+    .nav.menu-card-active.nav--red-card .nav-cta {
+      background: #0B0B09 !important;
+      color: #FFFDFE !important;
+      border: none !important;
+    }
+    .nav.menu-card-active.nav--red-card .nav-cta:hover {
+      background: #1a1a1a !important;
+    }
+
+    /* BLACK card overrides: CTA goes red */
+    .nav.menu-card-active.nav--black-card .nav-cta {
+      background: #E32527 !important;
+      color: #ffffff !important;
+      border: none !important;
+    }
+    .nav.menu-card-active.nav--black-card .nav-cta:hover {
+      background: #c41f21 !important;
+    }
+    .nav.menu-card-active.nav--black-card .nav-center a.active::before {
+      color: #E32527 !important;
     }
 
     /* CSS-level dark gradient — shows on dark hero regardless of JS timing */
@@ -177,83 +239,59 @@
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 260px;
-      background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 100%);
+      /* Capped at roughly the nav height so the dark doesn't trail past the
+         nav and pile extra black below the (vertically centered) logo. */
+      height: 146px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%);
       z-index: -1;
       pointer-events: none;
-      transition: opacity 0.5s var(--ease);
-    }
-    .nav.scrolled::after {
-      opacity: 0;
-    }
-
-    .nav.scrolled {
-      background: rgba(255,255,255,0.97);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      color: var(--text);
-      height: 64px;
+      /* fades out as the white bar fades in */
+      opacity: calc(1 - var(--nav-p));
+      transition: opacity 0.18s linear;
     }
 
+    /* Logo box is a layout placeholder; the two logos float (absolute) inside and crossfade.
+       It resizes between hero (big) and white-nav (small) so the nav height collapses with it. */
     .nav-logo {
       position: relative;
-      width: 88px;
-      height: 104px;
       flex-shrink: 0;
-      margin-top: 12px; /* Slight offset for logo breathing room */
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      transition: all .5s var(--ease)
+      /* Bigger at the hero start, then scales/shrinks down to the 30x50 mark. */
+      width: calc(94px - 64px * var(--nav-p));
+      height: calc(90px - 40px * var(--nav-p));
+      transition: width .18s linear, height .18s linear;
     }
 
-    .nav.scrolled .nav-logo {
-      margin-top: 0;
-      width: 26px;
-      height: 46px
-    }
-
-    /* Logo Crossfade */
+    /* Hero: full animated YUI logo (knot mark + katakana). Crossfades out when the white nav takes over. */
     .nav-logo-full {
       position: absolute;
-      top: 0;
       left: 0;
-      opacity: 1;
-      transition: opacity .35s cubic-bezier(.16, 1, .3, 1);
+      top: 50%;
+      /* Full logo fades out FAST (gone by ~p=0.55) and shrinks toward the mark,
+         so it doesn't double-expose with the small mark during the handoff. */
+      opacity: calc((0.55 - var(--nav-p)) / 0.55);
+      transform: translateY(-50%) scale(calc(1 - 0.4 * var(--nav-p)));
+      transform-origin: left center;
+      transition: opacity .18s linear, transform .18s linear;
       pointer-events: auto;
-      will-change: opacity
+      will-change: opacity, transform;
     }
 
-    .nav-logo-full svg {
-      width: 88px;
-      height: auto;
-      display: block
-    }
-
-    .nav.scrolled .nav-logo-full {
-      opacity: 0;
-      pointer-events: none
-    }
-
+    /* White nav: just the small knot mark. Hidden over the hero. */
     .nav-logo-mark {
       position: absolute;
-      top: 0;
       left: 0;
-      opacity: 0;
-      transition: opacity .35s cubic-bezier(.16, 1, .3, 1);
+      top: 50%;
+      transform: translateY(-50%);
+      /* Mark fades in only AFTER the full logo has mostly gone (from ~p=0.45). */
+      opacity: calc((var(--nav-p) - 0.45) / 0.55);
+      transition: opacity .18s linear;
       pointer-events: none;
-      will-change: opacity
     }
-
-    .nav-logo-mark svg {
-      width: 26px;
-      height: 46px;
-      display: block
-    }
-
-    .nav.scrolled .nav-logo-mark {
-      opacity: 1;
-      pointer-events: auto
+    .nav-logo-mark img {
+      width: 30px;
+      height: auto;
+      display: block;
+      filter: brightness(0); /* dark mark — only visible once the white bar fades in */
     }
 
     .nav-logo-word {
@@ -263,12 +301,12 @@
     .nav-center {
       position: absolute;
       left: 50%;
-      transform: translateX(-50%);
+      top: 50%;
+      transform: translate(-50%, -50%);
       display: flex;
       align-items: center;
       gap: 32px;
-      margin-top: -8px;
-      transition: margin-top .5s cubic-bezier(.16, 1, .3, 1)
+      transition: top .5s cubic-bezier(.16, 1, .3, 1)
     }
 
     .nav-center a {
@@ -276,26 +314,20 @@
       font-weight: 500;
       letter-spacing: .1em;
       text-transform: lowercase;
-      color: rgba(255,255,255,0.6);
+      color: color-mix(in srgb, var(--muted) calc(var(--nav-p) * 100%), rgba(255,255,255,0.6));
       position: relative;
       padding-left: 0;
       transition: color .2s, font-weight .2s
     }
 
     .nav-center a:hover {
-      color: #fff
+      color: color-mix(in srgb, var(--text) calc(var(--nav-p) * 100%), #fff);
     }
 
     .nav-center a.active {
-      color: #fff;
+      color: color-mix(in srgb, var(--text) calc(var(--nav-p) * 100%), #fff);
       font-weight: 700
     }
-
-    .nav.scrolled .nav-center a {
-      color: var(--muted);
-    }
-    .nav.scrolled .nav-center a:hover { color: var(--text); }
-    .nav.scrolled .nav-center a.active { color: var(--text); }
 
     .nav-center a.active::before {
       content: '●';
@@ -562,14 +594,16 @@
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      width: 72px;
-      height: 72px;
-      background: transparent;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #E32527;
+      box-shadow: 0 8px 28px rgba(227, 37, 39, 0.42);
       cursor: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all .4s var(--ease);
+      transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
       z-index: 10000;
       border: none;
       pointer-events: auto;
@@ -577,15 +611,33 @@
     }
 
     .yui-launcher:hover {
-      transform: scale(1.05);
+      transform: scale(1.08);
+      box-shadow: 0 12px 36px rgba(227, 37, 39, 0.55);
     }
 
-    .yui-launcher img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3)); /* Just a clean drop shadow */
+    /* 3-dot message loading animation */
+    .yui-launcher-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .yui-ldot {
+      display: block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ffffff;
+      animation: yuiDotBounce 1.4s ease-in-out infinite;
+    }
+
+    .yui-ldot:nth-child(1) { animation-delay: 0s; }
+    .yui-ldot:nth-child(2) { animation-delay: 0.18s; }
+    .yui-ldot:nth-child(3) { animation-delay: 0.36s; }
+
+    @keyframes yuiDotBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.55; }
+      30% { transform: translateY(-7px); opacity: 1; }
     }
 
     /* Listening Pulse */
@@ -1018,7 +1070,7 @@
     }
 
     #heroVideo {
-      clip-path: inset(16% 0 10% 0);
+      clip-path: inset(13% 0 10% 0);
       transition: clip-path 0.1s linear;
     }
 
@@ -1045,7 +1097,7 @@
     .hero-content {
       position: absolute;
       left: 80px;
-      top: 50%;
+      top: max(460px, 50%);
       transform: translateY(-50%);
       z-index: 10;
       will-change: transform;
@@ -1059,26 +1111,36 @@
     #heroContent .hero-cta-group .fc-link { color: var(--cream) !important; }
     #heroContent .hero-cta-group .fc-link:hover { color: var(--cream) !important; opacity: 0.75; }
 
-    /* Logo builds in the nav on page load */
+    /* Hero heading — specific override so other sections keep their own size */
+    #heroHeadline,
+    #precisionHeadline {
+      font-size: clamp(96px, 7.2vw, 150px) !important;
+    }
+
+    #precisionHeadline,
+    #precisionHeadline .red-text,
+    #precisionHeadline .hed-layer {
+      color: #000 !important;
+    }
+
+    /* Full YUI logo builds in the nav on page load and stays through the hero */
     #logoCanvas {
       opacity: 0;
-      transition: opacity 0.4s ease, filter 0.5s ease;
-      width: 190px;
-      height: 188px;
+      transition: opacity 0.4s ease;
+      width: 92px;
+      height: auto;
       display: block;
     }
     .logo-canvas-visible { opacity: 1 !important; }
-    /* On white nav, make logo dark so it's readable */
-    .nav.scrolled #logoCanvas { filter: brightness(0); }
 
     .hero-eyebrow {
       display: flex;
       align-items: center;
       gap: 16px;
-      margin-top: 14px;
-      margin-bottom: 18px;
+      margin-top: 18px;
+      margin-bottom: 26px;
       font-family: 'Restora', serif;
-      font-size: 11px;
+      font-size: 17px;
       font-weight: 400;
       letter-spacing: .18em;
       text-transform: none;
@@ -1181,7 +1243,6 @@
       font-size: 13px;
       letter-spacing: 0.12em;
       text-transform: lowercase;
-      padding-bottom: 4px;
       transition: all 0.3s var(--ease);
       white-space: nowrap;
     }
@@ -1193,24 +1254,28 @@
 
     /* Hero CTA overrides — larger + uppercase */
     .hero-cta-group .nav-cta {
-      font-size: 11px !important;
-      padding: 11px 22px !important;
+      font-size: 13px !important;
+      padding: 15px 32px !important;
       text-transform: uppercase !important;
     }
     .hero-cta-group .fc-link {
+      font-size: 13px !important;
       text-transform: uppercase !important;
+      position: relative;
+      padding: 15px 32px !important;
+      border: 1.5px solid currentColor;
+      border-radius: 2px;
+    }
+    .hero-cta-group .fc-link::after {
+      display: none;
+    }
+    .hero-cta-group .fc-link:hover::after {
+      display: none;
     }
 
     /* Hero dark background — text overrides (weaker fallbacks; strong rules on #heroContent above) */
     .hero-content .hero-eyebrow { color: rgba(255,255,255,0.55); }
     .hero-content .hero-sub { color: rgba(255,255,255,0.65); }
-
-    /* Logo canvas — same display size as the SVG it replaces */
-    #logoCanvas {
-      width: 88px;
-      height: auto;
-      display: block;
-    }
 
     .hero-right, .hero-left { display: none; }
 
@@ -1478,16 +1543,8 @@
     }
 
     .nav-cta-wrap {
-      margin-top: -8px;
+      margin-top: 0;
       transition: margin-top .5s cubic-bezier(.16, 1, .3, 1)
-    }
-
-    .nav.scrolled .nav-cta-wrap {
-      margin-top: 0
-    }
-
-    .nav.scrolled .nav-center {
-      margin-top: 0
     }
 
     /* HAMBURGER BUTTON */
@@ -1502,12 +1559,8 @@
 
     .nav-hamburger span {
       border-radius: 50%;
-      background: #fff;
+      background: color-mix(in srgb, var(--text) calc(var(--nav-p) * 100%), #fff);
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .nav.scrolled .nav-hamburger span {
-      background: var(--text);
     }
 
     /* Unselected: Top/Bottom LARGE, Middle SMALL */
@@ -1597,10 +1650,11 @@
         height: 64px
       }
 
+      /* Mobile nav is always compact — show only the small knot mark */
       .nav-logo {
         margin-top: 0;
-        width: 26px;
-        height: 46px
+        width: 30px;
+        height: 50px;
       }
 
       .nav-logo-full {
@@ -3554,9 +3608,9 @@
   font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
 }
 
-/* Red text stays red, white text stays white on base layer */
+/* Red text made white to match rest of title */
 .chef-title-overlay .chef-title-hed .red-text {
-  color: var(--red) !important;
+  color: #ffffff !important;
 }
 
 /* Cream mask layer — sits on top, revealed by expanding clip-path circle */
@@ -3621,17 +3675,33 @@
   will-change: transform;
 }
 
-/* Subtle dark vignette overlay to make text in minimap readable */
+/* Grain texture — multiply blend so it only darkens, never bleaches to white */
+.project::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+  filter: grayscale(1);
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Heavy dark overlay — bleeds to black, not white */
 .project::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to right, rgba(23, 23, 23, 0.3) 0%, rgba(23, 23, 23, 0.7) 100%);
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.72) 100%),
+              linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.65) 100%);
   pointer-events: none;
   z-index: 2;
+}
+
+/* Heavy blur on chef background photos */
+.project img {
+  filter: blur(5px);
 }
 
 /* Minimap — Centered white info card */
@@ -3640,9 +3710,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 78vw;
-  max-width: 1060px;
-  height: 380px;
+  width: 94vw;
+  max-width: 1364px;
+  height: 567px;
   background: #F5EDE3;
   z-index: 5;
   pointer-events: none;
@@ -3663,8 +3733,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 290px;
-  height: 380px;
+  width: 431px;
+  height: 567px;
   overflow: hidden;
   z-index: 2;
 }
@@ -3673,8 +3743,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 290px;
-  height: 380px;
+  width: 431px;
+  height: 567px;
   overflow: hidden;
   background: #171717;
   will-change: transform;
@@ -3699,7 +3769,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  height: 380px;
+  height: 567px;
   display: flex;
   justify-content: space-between;
   padding: 36px 52px;
@@ -3738,13 +3808,13 @@
 
 .minimap-desc {
   font-family: var(--ff-body);
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 15px;
+  font-weight: 700;
   letter-spacing: 0.02em;
   color: #171717;
   line-height: 1.6;
   margin: 0;
-  max-width: 220px;
+  max-width: 260px;
 }
 
 /* Right column: title at top, year at middle */
@@ -3759,7 +3829,7 @@
 
 .minimap-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -4651,7 +4721,7 @@
 /* ── LARGE SCREEN POLISH (iMac 5K / ultrawide) ─────────── */
 @media (min-width: 1800px) {
   .nav {
-    padding: 36px clamp(80px, 6vw, 160px);
+    padding: calc(28px - 20px * var(--nav-p)) clamp(80px, 6vw, 160px);
   }
 
   /* Match hero-content left to nav's exact left padding formula */
@@ -4681,4 +4751,683 @@
   .res-left {
     padding: clamp(80px, 8vw, 160px);
   }
+}
+
+/* ═══════════════════════════════════════════════════════
+   BENTO GALLERY SECTION
+═══════════════════════════════════════════════════════ */
+.bento-gallery-section {
+  background: #fff;
+  padding: clamp(60px, 8vw, 110px) clamp(24px, 6vw, 100px) clamp(60px, 8vw, 110px);
+  overflow: hidden;
+}
+
+/* Two-column intro: heading left, body right */
+.bento-section-intro {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(32px, 5vw, 80px);
+  align-items: end;
+  margin-bottom: clamp(40px, 5vw, 64px);
+}
+
+.bento-intro-left .gallery-label {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+/* Bento heading — Restora with full OpenType letterform features, no glitch */
+.bento-label {
+  color: #0D0C0A !important;
+}
+
+.bento-section-hed {
+  font-family: 'Restora', Georgia, serif;
+  font-size: clamp(72px, 9vw, 220px);
+  font-weight: 400;
+  color: #0D0C0A;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  margin: 0;
+  font-feature-settings: "liga" 1, "rlig" 1, "ordn" 1, "salt" 1, "ss01" 1;
+  font-variant-ligatures: common-ligatures discretionary-ligatures;
+}
+
+.bento-intro-right {
+  padding-bottom: 6px;
+}
+
+.bento-gallery-section .gallery-subtitle {
+  color: #0D0C0A;
+  max-width: 420px;
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(14px, 1.2vw, 17px);
+  line-height: 1.65;
+}
+
+@media (max-width: 680px) {
+  .bento-section-intro {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+/* ── Tray full-width background ──────────────────────── */
+.bento-tray-wrapper {
+  position: relative;
+  /* aspect-ratio gives the wrapper a deterministic height so % positions work on child slots */
+  aspect-ratio: 1024 / 759;
+  margin-left:  calc(-1 * clamp(24px, 6vw, 100px));
+  margin-right: calc(-1 * clamp(24px, 6vw, 100px));
+  overflow: hidden;
+}
+
+/* Tray image fills wrapper exactly — hidden from tab order since it's decorative */
+.bento-tray-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Slot container — full wrapper overlay, each slot uses CSS % positions */
+.bento-tray-slots {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Each slot is absolutely positioned by % values set inline by JS */
+.bento-tray-slot {
+  position: absolute;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 12px;
+  pointer-events: all;
+  background: #0c0c0c; /* neutral dark so color-dodge lifts naturally without channel bias */
+}
+
+/* Both images fill the slot */
+.bento-tray-slot .slot-dodge,
+.bento-tray-slot .slot-reveal {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Default: color-dodge layer visible — dark, atmospheric, almost invisible */
+.bento-tray-slot .slot-dodge {
+  mix-blend-mode: color-dodge;
+  z-index: 1;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Full-color layer hidden, scales up on hover */
+.bento-tray-slot .slot-reveal {
+  mix-blend-mode: normal;
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.bento-tray-slot:hover .slot-dodge  { opacity: 0; }
+.bento-tray-slot:hover .slot-reveal { opacity: 1; transform: scale(1.06); }
+
+/* Caption on hover — sits above both image layers */
+.bento-slot-caption {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 10px 10px 8px;
+  background: linear-gradient(to top, rgba(4,2,0,0.88) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.28s ease;
+  z-index: 3;
+}
+
+.bento-tray-slot:hover .bento-slot-caption { opacity: 1; }
+
+.bento-slot-caption h3 {
+  font-family: 'Restora', Georgia, serif;
+  font-size: clamp(9px, 1vw, 13px);
+  font-weight: 400;
+  color: #fff;
+  margin: 0 0 2px;
+  line-height: 1.2;
+}
+
+.bento-slot-caption p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.6);
+  margin: 0;
+}
+
+/* ── Modal ───────────────────────────────────────────── */
+.bento-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.bento-modal-overlay.open {
+  pointer-events: all;
+  opacity: 1;
+}
+
+.bento-modal-bg {
+  position: absolute;
+  inset: 0;
+  background: rgba(8, 6, 4, 0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.bento-modal-panel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: min(90vw, 860px);
+  width: 100%;
+}
+
+.bento-modal-img {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  border-radius: 2px;
+}
+
+.bento-modal-caption {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.bento-modal-caption h3 {
+  font-family: 'Restora', Georgia, serif;
+  font-size: clamp(18px, 2vw, 26px);
+  font-weight: 400;
+  color: #fff;
+  margin: 0 0 8px;
+}
+
+.bento-modal-caption p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  margin: 0;
+}
+
+.bento-modal-close {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(20,16,12,0.85);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.bento-modal-close:hover {
+  background: var(--accent, #C8102E);
+  border-color: var(--accent, #C8102E);
+}
+
+.bento-nav-hint {
+  margin-top: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: rgba(255,255,255,0.3);
+  text-transform: uppercase;
+}
+
+/* ── Dock ────────────────────────────────────────────── */
+.bento-dock {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.bento-dock-thumb {
+  width: 48px;
+  height: 36px;
+  overflow: hidden;
+  border-radius: 2px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s, transform 0.2s;
+  opacity: 0.5;
+}
+
+.bento-dock-thumb:hover,
+.bento-dock-thumb.active {
+  opacity: 1;
+  border-color: var(--accent, #C8102E);
+  transform: translateY(-3px);
+}
+
+.bento-dock-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── Mobile ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .bento-tray-wrapper {
+    margin-left:  calc(-1 * clamp(24px, 6vw, 40px));
+    margin-right: calc(-1 * clamp(24px, 6vw, 40px));
+  }
+
+  .bento-slot-caption h3 { font-size: 8px; }
+  .bento-slot-caption p  { display: none; }
+
+  .bento-modal-close {
+    top: -12px;
+    right: -4px;
+  }
+
+  .bento-dock-thumb {
+    width: 36px;
+    height: 28px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   JAPANESE PRECISION — simplified static section
+═══════════════════════════════════════════════════════ */
+.jp-simple-section {
+  position: relative;
+  background: #fff;
+  padding: clamp(80px, 10vw, 140px) clamp(24px, 6vw, 100px) 80px;
+  overflow: hidden;
+}
+
+.jp-simple-inner {
+  max-width: 880px;
+}
+
+.jp-simple-label {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+}
+
+.jp-simple-hed {
+  font-family: 'Restora', Georgia, serif;
+  font-size: clamp(42px, 6vw, 96px);
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  color: #0D0C0A;
+  margin: 0 0 32px;
+  font-feature-settings: "liga" 1, "rlig" 1, "salt" 1, "ss01" 1;
+}
+
+.jp-simple-body {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.75;
+  color: rgba(13,12,10,0.6);
+  max-width: 580px;
+}
+
+/* ── Menu intro header (above FlowArt stack) ── */
+.menu-intro-header {
+  padding: clamp(60px, 8vw, 120px) clamp(28px, 5vw, 80px) clamp(32px, 5vw, 64px);
+  background: #fff;
+}
+.menu-intro-label {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  margin-bottom: 16px;
+}
+.menu-intro-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(4.5rem, 10.5vw, 14rem);
+  font-weight: 700;
+  line-height: 0.84;
+  letter-spacing: -0.03em;
+  color: #0B0B09;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MENU FLOW — FlowArt stacking scroll
+═══════════════════════════════════════════════════════ */
+.menu-flow { position: relative; }
+
+.mf-section {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  clip-path: inset(0);
+}
+
+.mf-inner {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(20px, 3vw, 44px) clamp(28px, 5vw, 80px) 0;
+  transform-origin: bottom left;
+  will-change: transform;
+  box-sizing: border-box;
+}
+
+/* ── top row ── */
+.mf-top {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  padding-bottom: 12px;
+  flex-shrink: 0;
+}
+.mf-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.mf-wm {
+  font-family: 'Noto Serif JP', Georgia, serif;
+  font-size: clamp(13px, 1.8vw, 20px);
+  font-weight: 300;
+  opacity: 0.14;
+  letter-spacing: 0.1em;
+}
+.mf-rule {
+  border: none;
+  border-top: 1px solid;
+  margin: 0 0 clamp(12px, 2vw, 24px);
+  flex-shrink: 0;
+  opacity: 0.25;
+}
+
+/* ── body: left hero + right items ── */
+.mf-body {
+  display: grid;
+  grid-template-columns: 52% 1fr;
+  gap: 0 clamp(20px, 3vw, 48px);
+  flex: 1;
+  min-height: 0;
+  overflow: visible;
+}
+
+/* ── left: heading + masked image ── */
+.mf-hero {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  min-height: 0;
+  position: relative;
+  clip-path: inset(0 0 -300px -300px);
+}
+.mf-body--flip .mf-hero {
+  clip-path: inset(0 -300px -300px 0);
+}
+.mf-hed {
+  font-family: 'Restora', Georgia, serif;
+  font-size: clamp(3rem, 6.5vw, 9rem);
+  font-weight: 400;
+  line-height: 0.84;
+  letter-spacing: -0.03em;
+  margin: 0 0 auto;
+  flex-shrink: 0;
+  font-feature-settings: "liga" 1, "rlig" 1, "ordn" 1, "salt" 1, "ss01" 1;
+  position: relative;
+  z-index: 2;
+}
+.mf-note {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  margin: 10px 0 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+.mf-img-bleed {
+  position: absolute;
+  bottom: clamp(144px, 26vh, 312px);
+  left: clamp(247px, 35vw, 598px);
+  width: clamp(360px, 52vw, 820px);
+  height: clamp(360px, 52vw, 820px);
+  overflow: visible;
+  z-index: 1;
+}
+.mf-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform: rotate(10deg) scale(2.4);
+  transform-origin: top right;
+}
+
+/* ── flip: image on right side (mirrored) ── */
+.mf-body--flip {
+  grid-template-columns: 1fr 52%;
+}
+.mf-body--flip .mf-hero { order: 2; }
+.mf-body--flip .mf-items-col { order: 1; }
+.mf-body--flip .mf-hed { text-align: right; }
+.mf-body--flip .mf-note { text-align: right; }
+.mf-body--flip .mf-img-bleed {
+  left: auto;
+  right: clamp(272px, 38.5vw, 658px);
+  bottom: clamp(208px, 38.4vh, 449px);
+}
+.mf-body--flip .mf-img {
+  object-position: bottom right;
+  transform: rotate(-5deg) scale(2.64);
+  transform-origin: top left;
+}
+
+/* ── right: quantity header + items ── */
+.mf-items-col {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  justify-content: flex-start;
+  padding-top: 0;
+  padding-bottom: clamp(20px, 3vh, 48px);
+  position: relative;
+  z-index: 3;
+}
+
+.mf-qty-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+.mf-qty-cols {
+  display: flex;
+  gap: clamp(20px, 3vw, 48px);
+}
+.mf-qty-lbl {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.45;
+  min-width: 44px;
+  text-align: right;
+}
+
+/* ── item row ── */
+.mf-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: clamp(16px, 2vw, 32px);
+  padding: clamp(16px, 2vw, 26px) 0;
+  border-bottom: 1px solid currentColor;
+  margin-right: calc(-1 * clamp(28px, 5vw, 80px));
+  opacity: 0.72;
+  cursor: pointer;
+  transition: opacity 0.3s ease, padding 0.38s cubic-bezier(0.22,1,0.36,1);
+}
+.mf-item:first-of-type { border-top: 1px solid currentColor; }
+.mf-item:hover { opacity: 1; padding: clamp(22px, 3vw, 40px) 0; }
+
+.mfi-left { flex: 1; min-width: 0; }
+
+.mfi-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(18px, 2.2vw, 30px);
+  font-weight: 600;
+  line-height: 1.15;
+  margin-bottom: 0;
+  transition: margin-bottom 0.38s cubic-bezier(0.22,1,0.36,1);
+}
+.mf-item:hover .mfi-name { margin-bottom: 8px; }
+
+.mfi-jp {
+  font-family: 'Noto Serif JP', Georgia, serif;
+  font-size: 0.55em;
+  font-weight: 300;
+  opacity: 0.45;
+  margin-left: 8px;
+}
+.mfi-desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(12px, 1vw, 14px);
+  line-height: 1.6;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  margin-bottom: 0;
+  transition: opacity 0.3s ease 0.06s, max-height 0.38s cubic-bezier(0.22,1,0.36,1), margin-bottom 0.38s ease;
+}
+.mf-item:hover .mfi-desc {
+  opacity: 0.52;
+  max-height: 60px;
+  margin-bottom: 10px;
+}
+.mfi-tags {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(10px, 0.75vw, 11px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.28s ease 0.12s, max-height 0.38s cubic-bezier(0.22,1,0.36,1);
+}
+.mf-item:hover .mfi-tags {
+  opacity: 0.38;
+  max-height: 24px;
+}
+
+/* ── price column(s) ── */
+.mfi-prices {
+  display: flex;
+  flex-direction: row;
+  gap: clamp(20px, 3vw, 48px);
+  flex-shrink: 0;
+  align-items: flex-start;
+  padding-top: 1px;
+}
+.mfi-pv {
+  font-family: 'Outfit', sans-serif;
+  font-size: clamp(15px, 1.7vw, 22px);
+  font-weight: 700;
+  white-space: nowrap;
+  min-width: 44px;
+  text-align: right;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.mfi-pv--alt { opacity: 0.45; }
+
+/* ── badges ── */
+.mfi-badge-chef {
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #FFD700;
+  background: rgba(255,215,0,0.14);
+  padding: 2px 6px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+.mfi-badge-popular {
+  font-family: 'Outfit', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ff8a80;
+  background: rgba(255,138,128,0.14);
+  padding: 2px 6px;
+  border-radius: 3px;
+  vertical-align: middle;
+}
+
+/* ── mobile ── */
+@media (max-width: 768px) {
+  .mf-section { height: auto; min-height: 100svh; position: relative; }
+  .mf-body { grid-template-columns: 1fr; gap: 24px 0; }
+  .mf-hed { font-size: clamp(3.5rem, 16vw, 7rem); margin-bottom: 12px; }
+  .mf-img-bleed { min-height: 240px; margin-left: -28px; margin-bottom: -28px; }
+  .mf-inner { padding: 28px 24px 0; }
+  .mf-items-col { justify-content: flex-start; padding-bottom: 40px; }
 }

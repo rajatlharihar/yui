@@ -18,7 +18,7 @@
     /* JAPANESE PRECISION SECTION */
     .precision-section {
       position: relative;
-      height: 250vh; /* Reduced height to minimize the gap before Artisans section */
+      height: 400vh;
       background: #fff;
       z-index: 5;
     }
@@ -47,7 +47,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 10vw; /* Perfect horizontal alignment with Artisans section */
+      padding: 0 10vw;
       pointer-events: none;
       z-index: 10;
     }
@@ -55,26 +55,31 @@
       width: 100%;
       height: 80%;
       display: flex;
-      flex-direction: column-reverse; /* Headline bottom, Typewriter top */
+      flex-direction: column-reverse;
       justify-content: space-between;
       color: #000;
     }
+    /* Restora font for the precision heading */
+    #precisionHeadline .hed-layer {
+      font-family: 'Restora', Georgia, serif;
+      font-feature-settings: "liga" 1, "rlig" 1, "salt" 1, "ss01" 1;
+    }
     .precision-typewriter {
-      font-family: 'Inter', sans-serif;
-      font-size: 20px;
-      line-height: 1.4;
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      line-height: 1.6;
       max-width: 50vw;
       align-self: flex-end;
       text-align: right;
-      font-weight: 300; /* Thinner weight to match Space Within */
+      font-weight: 500;
       letter-spacing: 0.02em;
-      color: var(--muted); /* Light grey to match Space Within */
+      color: var(--muted);
     }
     @media (max-width: 768px) {
       .precision-overlay { padding: 40px 24px; }
       .precision-content { height: 90%; }
       .precision-typewriter { max-width: 100%; text-align: left; align-self: flex-start; }
-      .precision-section, .menu-precision-section .precision-track { height: 140vh !important; }
+      .precision-section { height: 140vh !important; }
     }
 
     /* PRELOADER */
@@ -119,21 +124,7 @@
   <nav class="nav" id="nav">
     <a href="#home" class="nav-logo hov">
       <span class="nav-logo-full"><canvas id="logoCanvas" width="160" height="158"></canvas></span>
-      <span class="nav-logo-mark"><svg width="160" height="280" viewBox="0 0 160 280" fill="none"
-          xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M130.89 255.14C127.43 262.43 125.74 270.68 126.06 278.91C126.07 279.27 126.11 279.64 126.14 280H132.07C132.03 279.45 131.98 278.91 131.96 278.36C131.67 270.91 133.1 264.24 136.46 257.36L136.52 257.24C136.81 256.69 143.5 244.05 158.17 237.62C158.76 237.36 159.38 237.09 160.01 236.81V231.96C156.37 233.59 152.78 235.24 149.6 236.78C137.96 242.42 131.18 254.62 130.9 255.14H130.89Z"
-            fill="#222222" />
-          <path
-            d="M147.89 263.14C145.53 268 144.56 272.57 144.76 277.87C144.79 278.58 144.84 279.29 144.91 280H150.99C153.51 280 155.79 278.96 157.42 277.29C157.24 272.82 156.24 268.9 154.27 264.98L153.8 264.04L154.4 263.18C155.76 261.26 157.56 259.52 159.98 257.83V251.06C152.01 255.77 148.06 262.8 147.87 263.13L147.89 263.14Z"
-            fill="#222222" />
-          <path
-            d="M45.79 35.8102C55.54 51.4502 65.51 59.4602 81.34 64.3902L81.72 64.5202C81.92 64.6002 97.48 70.3902 114.75 65.0302C125.53 61.6802 134.01 57.2402 140.67 51.4602L141.24 50.9702L141.99 51.0402C145.07 51.3402 148.15 51.6402 151.2 51.9302C152.09 52.0202 153.06 52.1202 154.08 52.2302L157.5 52.6002L155.19 55.1502C149.35 61.5802 139.2 70.8802 118.55 77.2802C111.68 79.4102 105.09 80.1502 99.26 80.1502C87.47 80.1502 78.83 77.1302 77.33 76.5702C58.58 70.6902 46.29 60.8502 34.91 42.6002C26.48 29.0702 23.97 13.5502 27.22 0.000214843H21.11C20.65 2.13021 20.31 4.31021 20.12 6.54022C19.04 19.3402 22.48 32.9402 30.05 45.8602C40.23 63.2402 57.61 77.1202 75.39 82.0702C94.06 87.2702 111.36 86.6202 128.28 80.1002C141.25 75.1002 151.89 67.7302 159.99 58.1702V47.0602C157.2 46.8102 154.36 46.5602 151.87 46.3502L148.76 46.0802C144 45.6702 138.61 45.2002 131.52 44.4702L128.98 44.2102L133.82 34.7102C134.07 34.2002 134.32 33.6502 134.57 33.1002L135.08 31.9502L136.34 32.0702C141.58 32.5902 145.95 32.9702 149.81 33.3002C153.07 33.5802 156.38 33.8702 159.99 34.2202V28.7302C158.61 28.5502 157.31 28.3502 156.04 28.1602C154.3 27.8902 152.65 27.6402 151.1 27.5002C147.97 27.2102 144.5 26.8902 139.15 26.3402L137.14 26.1302L137.63 24.1702C138.36 21.2902 138.87 18.2802 139.17 15.2202L139.34 13.4702L141.09 13.6502C146.02 14.1502 149.31 14.4602 152.27 14.7302C153.43 14.8402 154.79 14.9202 156.2 15.0002C157.45 15.0802 158.72 15.1602 159.97 15.2602V8.98021C159.97 4.01021 155.94 -0.0197852 150.97 -0.0197852H133.45C134.11 5.62021 134.81 18.9102 128.92 31.2702C124.84 39.8402 119.06 50.7202 114.92 58.3502L114.6 58.9502L113.96 59.1702C110.48 60.3802 106.25 61.1202 101.72 61.3202L98.61 61.4502L100.12 58.7202C102.75 53.9602 111.75 37.5302 117.36 25.7602C122.59 14.7802 120.84 1.97021 120.52 -0.00978516H114.38C114.51 0.490215 114.64 0.970215 114.76 1.48021L114.79 1.61021C114.91 2.22021 117.59 16.2702 110.15 30.4502C105.89 38.5702 98.83 51.9502 94.54 60.0702L93.98 61.1202L92.8 60.9902C89.42 60.6102 86.12 59.9502 82.97 59.0202L80.92 58.4102L81.92 56.5202C85.93 48.9302 94.08 33.4802 98.8 24.4902C103.97 14.6302 102.29 4.53022 102.22 4.11022C101.89 2.65022 101.48 1.28021 101 -0.0297852H86.79C89.5 2.86021 92.48 5.01022 96.08 6.67022L97.03 7.11022L97.09 8.15021C97.28 11.1502 96.7 14.3702 95.27 18.2602L94.65 19.9602L92.97 19.2902C86.2 16.5702 80.86 12.7702 76.16 7.35021C74.16 5.04022 72.4 2.57021 70.9 -0.0197852H64.21C66.13 3.90021 68.56 7.59021 71.48 10.9702C76.63 16.9202 83.17 21.6602 90.4 24.6802L92.14 25.4102L91.28 27.0902C90.13 29.3402 88.76 31.9002 86.84 35.3902L86.07 36.7802L84.61 36.1402C75.9 32.3502 68.01 26.5502 61.78 19.3602C56.67 13.4602 52.85 6.89021 50.26 -0.0297852H40.46C36.69 10.9802 38.56 24.2502 45.75 35.7802L45.79 35.8102Z"
-            fill="#222222" />
-          <path
-            d="M57.7002 258.85C57.7202 256.45 58.1102 253.09 58.8602 248.65L59.0402 247.57L60.0902 247.26C63.3802 246.29 66.7302 245.1 70.0402 243.71L73.0802 242.44L72.4302 245.67C71.9002 248.34 71.4602 250.75 71.1402 252.82C70.8302 255.02 70.6102 257.19 70.4802 259.24V260.94H70.3902C70.1102 267.49 70.6102 273.88 71.8502 280H77.8302C75.2302 266.92 75.3302 256.38 78.1602 245.95L78.3602 245.26C78.8802 243.42 79.6202 241.27 80.5202 239.01L80.7402 238.44L81.2702 238.14C88.0302 234.24 94.2902 229.55 99.8602 224.2L102.36 226.64C98.8502 230.47 95.1402 236.82 92.4302 243.62C92.3102 243.93 91.9902 244.75 91.9502 244.85C88.2402 255.01 87.8202 265 90.5402 278.22C90.6602 278.82 90.8002 279.41 90.9402 280H113.28C113.28 279.8 113.25 279.6 113.24 279.4C112.84 269.07 114.98 258.7 119.41 249.43L119.5 249.25C119.86 248.56 128.18 232.91 143.99 225.25C148.8 222.92 154.5 220.35 159.98 217.95V203.09C155.65 202.32 151.48 202 147.44 202.17L146.69 202.2L146.15 201.68C143.99 199.58 141.82 197.47 139.67 195.39L139.51 195.23C138.87 194.6 138.17 193.92 137.45 193.2L135.01 190.78L138.4 190.24C143.6 189.41 150.71 188.76 159.97 190.13V184.21C150.23 182.95 140.74 183.54 131.62 186.02L130.3 186.42L125.41 181.76L125.7 180.74C126.21 178.97 126.7 177.06 127.19 174.9L127.43 173.87L128.45 173.6C132.86 172.42 137.45 171.59 142.09 171.16C147.98 170.61 153.96 170.66 159.97 171.32V76.1801C152.16 82.8001 143.08 88.1501 132.88 92.0801C121.95 96.3001 110.91 98.4001 99.5702 98.4001C90.5902 98.4001 81.4002 97.0801 71.9402 94.4401C51.0702 88.6301 30.7702 72.5101 18.9702 52.3601C10.0802 37.1201 6.05023 20.9101 7.35023 5.47006C7.50023 3.64006 7.74023 1.84006 8.05023 0.0600586C3.53023 0.530059 0.000234375 4.35006 0.000234375 9.00006V65.1801C2.07023 64.5201 4.18023 63.9301 6.32023 63.4001C8.62023 62.7101 11.9502 62.0801 16.4102 61.5001L17.4902 61.3601L18.0902 62.2701C19.9902 65.1301 22.1202 67.9801 24.4202 70.7201L26.5302 73.2501L23.2502 73.5901C20.5302 73.8701 18.1002 74.1701 16.0402 74.4701C13.8302 74.8301 11.6702 75.2601 9.66023 75.7501L9.23023 75.8501C6.05023 76.6401 2.97023 77.6101 -0.00976562 78.7401V85.0001C8.51023 81.2801 16.3802 79.4401 24.6802 79.1501L25.3002 79.1301H25.3202C27.2502 79.0901 29.5402 79.1701 32.0102 79.3501L32.6202 79.4001L33.0702 79.8101C38.7902 85.1101 45.1302 89.7001 51.8902 93.4501L50.3002 96.5601C45.6002 94.3401 38.4402 92.6701 31.1502 92.0901C30.8202 92.0701 29.9302 92.0001 29.8302 92.0001C19.8002 91.4901 10.7402 93.6701 0.0202344 99.2001V123.74C1.04023 123.32 2.08023 122.92 3.13023 122.56C12.8802 119.13 23.4202 118.1 33.5802 119.59L33.7802 119.62C34.5502 119.76 51.9602 123.08 63.9602 135.93C70.4402 142.86 78.4502 152.23 84.0302 158.87L84.4702 159.39L84.4402 160.07C84.2902 163.75 83.4302 167.96 81.9502 172.25L80.9302 175.2L78.9402 172.8C75.4802 168.62 63.4902 154.22 54.5902 144.68C45.7602 135.23 32.1002 132.36 31.5202 132.24C23.5302 131.09 15.1502 131.91 7.39023 134.65C4.85023 135.55 2.39023 136.66 0.0302344 137.94V144.8C3.04023 142.89 6.27023 141.3 9.66023 140.11C16.6902 137.63 23.4902 137.03 31.0502 138.2L31.1802 138.22C31.8002 138.33 45.8502 140.99 56.3302 153.1C62.3302 160.04 72.1902 171.51 78.1802 178.47L78.9602 179.37L78.4002 180.42C76.8102 183.42 74.9902 186.26 72.9702 188.85L71.6602 190.54L70.2702 188.92C64.6702 182.41 53.2902 169.16 46.6502 161.48C39.3702 153.06 29.3602 150.92 28.9402 150.83C23.6002 150.02 18.9402 150.43 13.9402 152.19C9.56023 153.73 5.60023 156.09 2.18023 159.19L1.49023 159.81L0.590234 159.59C0.400234 159.55 0.230234 159.48 0.0502344 159.44V165.48C5.99023 166.67 12.2202 166.24 18.1502 164.15C22.4102 162.65 25.8802 160.53 29.0702 157.47L29.8302 156.75L30.8302 157.07C33.6902 158 36.4702 159.71 39.5702 162.46L40.9202 163.66L39.6802 164.97C34.6702 170.27 29.1802 173.85 22.4102 176.24C17.2502 178.06 11.9302 178.96 6.63023 178.96C4.43023 178.96 2.23023 178.79 0.0502344 178.48V184.32C7.89023 185.43 16.0902 184.74 24.0602 181.93C31.4802 179.32 38.2902 174.97 43.7502 169.34L45.0702 167.98L46.3202 169.4C47.9902 171.29 49.8702 173.5 52.4102 176.57L53.4302 177.8L52.3002 178.93C45.5902 185.64 37.2902 190.86 28.3202 194.02C21.4002 196.46 14.2402 197.67 7.11023 197.67C4.75023 197.67 2.40023 197.54 0.0602344 197.27V204.45C8.85023 213.63 23.0902 217.65 37.7402 214.95C55.8602 211.6 66.9702 205.26 77.3502 192.34L77.6202 192.03C77.7602 191.87 88.8502 179.5 90.1902 161.48C91.0302 150.23 90.0002 140.71 87.0602 132.39L86.8102 131.68L87.1502 131.01C88.4702 128.42 89.7902 125.82 91.1002 123.25L91.3502 122.76C91.7602 121.96 92.2002 121.1 92.6802 120.19L94.2802 117.15L95.8002 120.23C99.6502 128.02 104.58 140.87 102.98 162.43C101.37 184.14 88.8202 198.74 87.2302 200.52C74.8902 215.81 61.2302 223.64 40.0802 227.55C36.3302 228.24 32.5902 228.58 28.9302 228.58C18.3402 228.58 8.33023 225.78 0.0702344 220.72V227.56C0.420234 227.74 0.760234 227.93 1.11023 228.11C12.6202 233.8 26.5302 235.59 41.3402 233.27C61.2502 230.16 80.5202 219.08 91.6402 204.34C103.32 188.87 109.05 172.54 109.18 154.4C109.29 138.63 105.47 124.53 97.8402 112.5L97.0702 111.36L100.08 105.31L101.14 105.29C102.99 105.25 104.95 105.15 107.16 104.99L108.21 104.91L108.77 105.8C111.21 109.67 113.35 113.81 115.13 118.11C119.78 129.28 122.08 141.52 121.99 154.48C121.84 175.47 115.26 194.3 101.86 212.05C88.8102 229.34 66.3702 242.32 43.3002 245.92C38.4402 246.68 33.6502 247.05 28.9602 247.05C18.6702 247.05 8.90023 245.23 0.0502344 241.65V270.97C0.0502344 275.94 4.08024 279.97 9.05023 279.97H58.8702C57.7002 273.16 57.3202 266.07 57.7402 258.82L57.7002 258.85ZM63.0802 124.6L62.1502 126.4L60.5102 125.22C58.1002 123.49 55.4902 121.91 52.7502 120.51L51.1802 119.71L51.9902 118.15C54.2702 113.74 55.7502 110.8 57.0902 108.14C57.6102 107.1 58.1902 105.87 58.7802 104.58C59.5502 102.93 60.3402 101.22 61.1402 99.6701L61.8802 98.2401L63.3702 98.8601C65.6502 99.8101 69.0902 101.15 72.6502 101.84L74.9502 102.29L73.8702 104.37C72.8702 106.29 71.9002 107.95 70.9602 109.56C70.0802 111.08 69.2402 112.52 68.5402 113.91C67.1302 116.71 65.5602 119.82 63.0902 124.6H63.0802ZM92.6202 107.61C90.6202 111.47 88.2602 116.23 86.3602 120.06L84.9602 122.89C82.8202 127.19 80.3902 132.07 77.1402 138.34L75.9702 140.6L68.9002 132.62C68.5102 132.2 68.1002 131.77 67.6802 131.34L66.8002 130.44L67.3802 129.32C69.8102 124.58 71.7602 120.65 73.4902 117.18C75.4102 113.32 77.4002 109.33 79.7602 104.79L80.3502 103.66L81.6102 103.88C84.8302 104.43 88.0602 104.83 91.2002 105.06L93.8502 105.25L92.6302 107.61H92.6202ZM118.62 198.9C120.1 195.99 121.43 193.02 122.58 190.08L123.55 187.61L125.44 189.48C128.53 192.53 132.39 196.2 135.48 199.14L137.77 201.32C141.23 204.62 145.15 208.36 150.22 213.35L152.04 215.14L142.32 219.53C141.8 219.78 141.27 220.04 140.73 220.32L139.61 220.9L138.71 220.02C134.96 216.36 131.8 213.35 129.01 210.68L128.92 210.59C125.96 207.77 122.6 204.56 118.94 200.94L118.03 200.04L118.61 198.9H118.62ZM108.44 214.83C110.02 212.93 112.31 210.04 114.03 206.85L115.14 204.79L116.8 206.44C118.34 207.96 119.64 209.38 120.9 210.75C122.09 212.04 123.22 213.27 124.34 214.35L124.47 214.48C126.7 216.63 129.18 219.02 132.94 222.72L134.38 224.14L132.77 225.36C130.41 227.15 128.12 229.18 125.98 231.38L124.75 232.64L123.5 231.41C119.98 227.95 117.61 225.66 115.47 223.6C114.61 222.77 113.6 221.86 112.55 220.91C111.2 219.69 109.8 218.43 108.56 217.2L107.41 216.07L108.44 214.83Z"
-            fill="#222222" />
-        </svg></span>
+      <span class="nav-logo-mark"><img src="images/yui/yui-knot-mark.png" alt="Yui"></span>
     </a>
     <nav class="nav-center"><a href="#home" class="active hov">Home</a><a href="#about" class="hov">About</a><a
         href="#menu" class="hov">Menu</a><a href="#reservation" class="hov">Reservation</a></nav>
@@ -173,41 +164,15 @@
       </div>
     </div>
   </section>
-  <!-- Japanese Precision: Sequence + Typewriter + Glitch -->
+  <!-- Japanese Precision: canvas scroll sequence -->
   <section id="japanese-precision" class="precision-section">
-    <div id="about" style="position: absolute; top: -100px;"></div> <!-- Anchor for About nav link -->
+    <div id="about" style="position: absolute; top: -100px;"></div>
     <div class="precision-track">
       <div class="precision-sticky">
         <div class="precision-visual-container" style="position: relative; width: 100%; height: 100%;">
           <canvas id="precisionCanvas"></canvas>
           <div class="marquee" style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 10; background: var(--red); color: #fff; padding: 13px 0; border: none;">
-            <div class="marquee-inner"><span class="marquee-item">食<span class="marquee-sep"></span></span><span
-                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
-                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
-                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
-                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span
-                class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span
-                  class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span
-                class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span
-                  class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span
-                class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span
-                  class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span
-                class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span
-                  class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span
-                class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span
-                  class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span
-                class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span
-                  class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span
-                class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span
-                  class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span
-                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
-                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
-                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
-                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div>
+            <div class="marquee-inner"><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div>
           </div>
         </div>
         <div class="precision-overlay">
@@ -264,185 +229,335 @@
   </div>
 
 
-  <section id="about-gallery" class="gallery-reveal">
-    <div class="gallery-header r">
-      <span class="gallery-label">The interior</span>
-      <h2 class="glitch-hed" data-glitch-jp="空間の真髄">
-          <span class="hed-layer en active">The <span class="red-text">Space</span> Within</span>
-          <span class="hed-layer jp">空間の真髄</span>
-      </h2>
-      <p class="gallery-subtitle" data-scroll-swipe>
-        Kyoto's minimal restraint meets the warmth of local teak, creating an atmosphere of quiet luxury.
-      </p>
+  <section id="about-gallery" class="bento-gallery-section">
+    <div class="bento-section-intro">
+      <div class="bento-intro-left">
+        <span class="gallery-label bento-label">The interior</span>
+        <h2 class="bento-section-hed">The Space Within</h2>
+      </div>
+      <div class="bento-intro-right">
+        <p class="gallery-subtitle">
+          Kyoto's minimal restraint meets the warmth of local teak, creating an atmosphere of quiet luxury.
+        </p>
+      </div>
     </div>
 
-    <div class="gallery-collapsible-wrapper collapsed" id="galleryWrapper">
-      <div class="gallery-masonry">
-        <!-- Main Collection (30 slots) -->
-        <div class="gallery-item"><img src="images/yui/interior01.jpg" alt="Rope Booth Interior" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior02.jpg" alt="YUI Dining Atmosphere" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior03.jpg" alt="Minimalist Teak Design" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior04.jpg" alt="Friends Dining at YUI" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior05.jpg" alt="Wabi-sabi Textures" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior06.jpg" alt="Lively Counter Dining" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior07.jpg" alt="Sake Pour Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior08.jpg" alt="Omakase Table Setting" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior09.jpg" alt="Chef at Work" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior10.jpg" alt="Sake Service" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior11.jpg" alt="City View Dining" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior12.jpg" alt="Sophisticated Interaction" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior13.jpg" alt="YUI Exterior Dusk" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior14.jpg" alt="Ceramic Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior16.jpg" alt="Atmospheric Wide Shot" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior17.jpg" alt="Carved Logo Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/gallery-11.jpg" alt="Chef Interaction" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/Main%20Resto%20Image.jpg" alt="Traditional Noren" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior01.jpg" alt="Toast at the Counter" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior02.jpg" alt="Wabi-sabi Textures" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        
-        <!-- Repeats to fill to 30 (Scattered) -->
-        <div class="gallery-item"><img src="images/yui/interior03.jpg" alt="YUI Dining Atmosphere" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior04.jpg" alt="Omakase Table Setting" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior05.jpg" alt="Sake Service" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior06.jpg" alt="Ceramic Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior07.jpg" alt="Minimalist Teak Design" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior08.jpg" alt="Friends Dining at YUI" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior09.jpg" alt="Carved Logo Detail" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior10.jpg" alt="Traditional Noren" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior11.jpg" alt="Sophisticated Interaction" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-        <div class="gallery-item"><img src="images/yui/interior12.jpg" alt="Wabi-sabi Textures" loading="lazy"><span class="gallery-attribution">shot by @yui_kyoto</span></div>
-      </div>
+    <div class="bento-tray-wrapper">
+      <img class="bento-tray-frame" src="images/yui/bento-layout-1.jpg" alt="Bento tray">
+      <div class="bento-tray-slots" id="bentoGrid"></div>
+    </div>
 
-      <div class="gallery-mobile-fade">
-        <button class="see-more-btn" onclick="expandGallery()">
-          See More
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+    <!-- Modal overlay -->
+    <div class="bento-modal-overlay" id="bentoModal" aria-hidden="true">
+      <div class="bento-modal-bg" id="bentoModalBg"></div>
+      <div class="bento-modal-panel">
+        <img class="bento-modal-img" id="bentoModalImg" src="" alt="">
+        <div class="bento-modal-caption">
+          <h3 id="bentoModalTitle"></h3>
+          <p id="bentoModalDesc"></p>
+        </div>
+        <button class="bento-modal-close" id="bentoModalClose" aria-label="Close">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
         </button>
+        <!-- Keyboard nav hint -->
+        <div class="bento-nav-hint">
+          <span>← →</span> navigate
+        </div>
       </div>
+      <div class="bento-dock" id="bentoDock"></div>
     </div>
-  </section>
   </section>
 
   <!-- Removed editorial divider -->
   </div>
 
 
-<section id="menu" class="menu-precision-section">
-    <div class="precision-track">
-      <div class="precision-sticky">
-        <div class="precision-visual-container" style="position: relative; width: 100%; height: 100%;">
-          <canvas id="menuCanvas" style="background: #fff;"></canvas>
-          <div id="menuMarquee" class="marquee" style="background: var(--red); color: #fff; padding: 13px 0; border: none; position: absolute; bottom: 0; left: 0; width: 100%; z-index: 10;">
-            <div class="marquee-inner"><span class="marquee-item">食<span class="marquee-sep"></span></span><span
-                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
-                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
-                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
-                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span
-                class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span
-                  class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span
-                class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span
-                  class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span
-                class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span
-                  class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span
-                class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span
-                  class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span
-                class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span
-                  class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span
-                class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span
-                  class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span
-                class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span
-                  class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span
-                class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span
-                  class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span
-                class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span
-                class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span
-                  class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div>
-          </div>
+<div class="menu-intro-header">
+  <span class="menu-intro-label">Our offerings</span>
+  <h2 class="menu-intro-title">Menu</h2>
+</div>
+
+<div id="menu" class="menu-flow">
+
+  <section class="mf-section" data-mf-idx="0">
+    <div class="mf-inner" style="background:#FFFDFE;color:#0B0B09;">
+      <div class="mf-top"><span class="mf-wm">前菜</span></div>
+      <hr class="mf-rule" style="border-color:rgba(11,11,9,0.12);">
+      <div class="mf-body">
+        <div class="mf-hero">
+          <h2 class="mf-hed">Appetizers</h2>
+          <div class="mf-img-bleed"><img src="images/yui/bento-menu-appetizers.jpg" alt="Menu" class="mf-img" loading="lazy"></div>
         </div>
-        <div class="precision-overlay">
-          <div class="precision-content">
-            <span class="menu-kicker">Cuisine & experience</span>
-            <div class="precision-glitch-trigger">
-              <h1 class="glitch-hed" data-glitch-jp="メニュー" id="menuHeadline">
-                <span class="hed-layer en active">Menu</span>
-                <span class="hed-layer jp">メニュー</span>
-              </h1>
-            </div>
-            <p class="precision-typewriter" id="menuTypewriter"></p>
-          </div>
+        <div class="mf-items-col">
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Chicken Karaage 🌶 <span class="mfi-jp">チキン唐揚げ</span></div>
+          <div class="mfi-desc">Twice-fried chicken in soy-mirin, yuzu mayo</div>
+          <div class="mfi-tags">Gluten · Sesame</div>
         </div>
-      </div> <!-- End precision-sticky -->
+        <div class="mfi-prices"><span class="mfi-pv">₹345</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Tofu Katsu <span class="mfi-jp">豆腐カツ</span></div>
+          <div class="mfi-desc">Crispy tofu cutlet with katsu sauce</div>
+          <div class="mfi-tags">Veg · Gluten · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹315</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Veg Tempura <span class="mfi-jp">野菜天ぷら</span></div>
+          <div class="mfi-desc">Seasonal vegetables in a light, airy batter</div>
+          <div class="mfi-tags">Veg · Gluten</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹345</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Chicken Katsu <span class="mfi-jp">チキンカツ</span></div>
+          <div class="mfi-desc">Panko-crusted chicken, katsu sauce &amp; pickles</div>
+          <div class="mfi-tags">Gluten · Egg</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹345</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Cottage Cheese Katsu 🌶🌶 <span class="mfi-jp">パニールカツ</span></div>
+          <div class="mfi-desc">Fried paneer with spiced tamarind glaze</div>
+          <div class="mfi-tags">Veg · Dairy · Gluten</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹315</span></div>
+      </div>
+        </div>
+      </div>
     </div>
   </section>
 
-<div class="ms" style="background:#FFFFFF;--sbg:#FFFFFF">
-<div class="ms-vis r d1">
-<img alt="Tempura platter" src="images/yui/menu-tempura-platter-1.jpg" loading="lazy"/>
-<span class="ms-vis-lbl">Small plates & starters</span>
-<div class="ms-wm">前菜</div>
-</div>
-<div class="ms-content">
-<p class="ms-eyebrow r">Small plates &amp; starters</p>
-<h2 class="ms-hed r d2">Appetizers</h2>
-<div class="mi r"><div><div class="mi-name">Chicken Karaage</div><div class="mi-jp">チキン唐揚げ</div><div class="mi-desc">Japanese fried chicken with lemon &amp; yuzu mayo</div></div><div class="mi-price">₹345</div></div><div class="mi r d1"><div><div class="mi-name">Tofu Katsu</div><div class="mi-jp">豆腐カツ</div><div class="mi-desc">Crispy tofu cutlet with katsu sauce</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹315</div></div><div class="mi r d2"><div><div class="mi-name">Veg Tempura</div><div class="mi-jp">野菜天ぷら</div><div class="mi-desc">Mixed vegetables lightly battered and fried</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹345</div></div><div class="mi r d3"><div><div class="mi-name">Chicken Katsu</div><div class="mi-jp">チキンカツ</div><div class="mi-desc">Breaded chicken cutlet with katsu sauce</div></div><div class="mi-price">₹345</div></div><div class="mi r d4"><div><div class="mi-name">Cottage Cheese Katsu</div><div class="mi-jp">カッテージチーズカツ</div><div class="mi-desc">Fried cottage cheese with spicy glaze</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹315</div></div>
-</div>
-</div>
-<div class="ms alt" style="background:#FFFFFF;--sbg:#FFFFFF">
-<div class="ms-vis r d2">
-<img alt="Nigiri platter" src="images/yui/menu-nigiri-platter-1.jpg" loading="lazy"/>
-<span class="ms-vis-lbl">Hand-pressed rice</span>
-<div class="ms-wm">握り</div>
-</div>
-<div class="ms-content">
-<p class="ms-eyebrow r">Hand-pressed rice</p>
-<h2 class="ms-hed r d1">Nigiri</h2>
-<p class="ms-note r d1">2 pieces per order</p>
-<div class="mi r"><div><div class="mi-name">Salmon Nigiri</div><div class="mi-jp">サーモン握り</div><div class="mi-desc">Slices of fresh salmon over seasoned sushi rice</div></div><div class="mi-price">₹345</div></div><div class="mi r d1"><div><div class="mi-name">Prawn Nigiri</div><div class="mi-jp">海老握り</div><div class="mi-desc">Cooked prawn on vinegared rice</div></div><div class="mi-price">₹345</div></div><div class="mi r d2"><div><div class="mi-name">Avocado Nigiri</div><div class="mi-jp">アボカド握り</div><div class="mi-desc">Creamy avocado over sushi rice</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹315</div></div>
-</div>
-</div>
-<div class="ms" style="background:#FFFFFF;--sbg:#FFFFFF">
-<div class="ms-vis r d1">
-<img alt="Sushi rolls" src="images/yui/menu-sushi-rolls-3.jpg" loading="lazy"/>
-<span class="ms-vis-lbl">Rolled & sliced</span>
-<div class="ms-wm">寿司</div>
-</div>
-<div class="ms-content">
-<p class="ms-eyebrow r">Rolled &amp; sliced</p>
-<h2 class="ms-hed r d2">Sushi</h2>
-<p class="ms-note r d1">4 pieces · 8 pieces</p>
-<div class="mi r"><div><div class="mi-name">Chicken Katsu Roll</div><div class="mi-jp">チキンカツロール</div><div class="mi-desc">Crispy chicken with cucumber and spicy mayo</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d1"><div><div class="mi-name">Teriyaki Chicken Roll</div><div class="mi-jp">照り焼きチキンロール</div><div class="mi-desc">Teriyaki-glazed chicken with avocado</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d2"><div><div class="mi-name">California Roll</div><div class="mi-jp">カリフォルニアロール</div><div class="mi-desc">Crab stick, avocado, cucumber, mayo</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d3"><div><div class="mi-name">Salmon Roll</div><div class="mi-jp">サーモンロール</div><div class="mi-desc">Fresh salmon with cream cheese and cucumber</div></div><div class="mi-price">₹375 · ₹675</div></div><div class="mi r d4"><div><div class="mi-name">Prawn Tempura Roll</div><div class="mi-jp">海老天ぷらロール</div><div class="mi-desc">Crispy prawn tempura with yuzu mayo</div></div><div class="mi-price">₹375 · ₹675</div></div>
-</div>
-</div>
-<div class="ms alt" style="background:#FFFFFF;--sbg:#FFFFFF">
-<div class="ms-vis r d2">
-<img alt="Ramen bowl" src="images/yui/menu-ramen-bowl-2.jpg" loading="lazy"/>
-<span class="ms-vis-lbl">Slow-cooked broth</span>
-<div class="ms-wm">拉麺</div>
-</div>
-<div class="ms-content">
-<p class="ms-eyebrow r">Slow-cooked broth</p>
-<h2 class="ms-hed r d1">Ramen</h2>
-<div class="mi r"><div><div class="mi-name">Teriyaki Chicken Ramen</div><div class="mi-jp">照り焼きチキンラーメン</div><div class="mi-desc">Rich soy broth with teriyaki chicken and noodles</div></div><div class="mi-price">₹445</div></div><div class="mi r d1"><div><div class="mi-name">Chicken Karaage Ramen</div><div class="mi-jp">チキン唐揚げラーメン</div><div class="mi-desc">Crispy fried chicken in tonkotsu-style broth</div></div><div class="mi-price">₹445</div></div><div class="mi r d2"><div><div class="mi-name">Chicken Katsu Ramen</div><div class="mi-jp">チキンカツラーメン</div><div class="mi-desc">Breaded cutlet in rich umami broth</div></div><div class="mi-price">₹445</div></div><div class="mi r d3"><div><div class="mi-name">Tofu Katsu Ramen</div><div class="mi-jp">豆腐カツラーメン</div><div class="mi-desc">Panko-fried tofu in spicy soy ramen</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div><div class="mi r d4"><div><div class="mi-name">Cottage Cheese Ramen</div><div class="mi-jp">カッテージチーズラーメン</div><div class="mi-desc">Paneer cubes in flavorful noodle soup</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div>
-</div>
-</div>
+  <section class="mf-section" data-mf-idx="1">
+    <div class="mf-inner" style="background:#E32527;color:#FFFDFE;">
+      <div class="mf-top"><span class="mf-wm">握り</span></div>
+      <hr class="mf-rule" style="border-color:rgba(255,253,254,0.2);">
+      <div class="mf-body mf-body--flip">
+        <div class="mf-hero">
+          <h2 class="mf-hed">Nigiri</h2>
+          <p class="mf-note">Per order</p>
+          <div class="mf-img-bleed"><img src="images/yui/bento-menu-nigiri.jpg" alt="Nigiri" class="mf-img" loading="lazy"></div>
+        </div>
+        <div class="mf-items-col">
+      <div class="mf-qty-head">
+        <span></span>
+        <div class="mf-qty-cols">
+          <span class="mf-qty-lbl">2 pcs</span>
+          <span class="mf-qty-lbl">4 pcs</span>
+        </div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Salmon Nigiri <span class="mfi-jp">サーモン握り</span></div>
+          <div class="mfi-desc">Fresh Atlantic salmon over seasoned sushi rice</div>
+          <div class="mfi-tags">Fish · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹345</span><span class="mfi-pv mfi-pv--alt">₹645</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Prawn Nigiri <span class="mfi-jp">海老握り</span></div>
+          <div class="mfi-desc">Poached prawn pressed on vinegared rice</div>
+          <div class="mfi-tags">Shellfish · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹345</span><span class="mfi-pv mfi-pv--alt">₹645</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Avocado Nigiri <span class="mfi-jp">アボカド握り</span></div>
+          <div class="mfi-desc">Creamy avocado, micro shiso, ponzu drizzle</div>
+          <div class="mfi-tags">Veg · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹315</span><span class="mfi-pv mfi-pv--alt">₹595</span></div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<div class="ms" style="background:#FFFFFF;--sbg:#FFFFFF">
-<div class="ms-vis r d1">
-<img alt="Japanese curry katsu" src="images/yui/menu-japanese-curry-katsu-2.jpg" loading="lazy"/>
-<span class="ms-vis-lbl">Golden japanese curry</span>
-<div class="ms-wm">咖喱</div>
+  <section class="mf-section" data-mf-idx="2">
+    <div class="mf-inner" style="background:#0B0B09;color:#FFFDFE;">
+      <div class="mf-top"><span class="mf-wm">寿司</span></div>
+      <hr class="mf-rule" style="border-color:rgba(255,253,254,0.15);">
+      <div class="mf-body">
+        <div class="mf-hero">
+          <h2 class="mf-hed">Sushi</h2>
+          <p class="mf-note">4 pieces · 8 pieces</p>
+          <div class="mf-img-bleed"><img src="images/yui/bento-menu-sushi.jpg" alt="Sushi" class="mf-img" loading="lazy"></div>
+        </div>
+        <div class="mf-items-col">
+      <div class="mf-qty-head">
+        <span></span>
+        <div class="mf-qty-cols">
+          <span class="mf-qty-lbl">4 pcs</span>
+          <span class="mf-qty-lbl">8 pcs</span>
+        </div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Chicken Katsu Roll 🌶 <span class="mfi-jp">チキンカツロール</span></div>
+          <div class="mfi-desc">Crispy chicken, cucumber, spicy mayo</div>
+          <div class="mfi-tags">Gluten · Egg</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Teriyaki Chicken Roll <span class="mfi-jp">照り焼きチキンロール</span></div>
+          <div class="mfi-desc">Teriyaki chicken, avocado, sesame crunch</div>
+          <div class="mfi-tags">Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">California Roll <span class="mfi-jp">カリフォルニアロール</span></div>
+          <div class="mfi-desc">Crab stick, avocado, cucumber, tobiko mayo</div>
+          <div class="mfi-tags">Shellfish</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Salmon Roll <span class="mfi-jp">サーモンロール</span></div>
+          <div class="mfi-desc">Salmon, cream cheese, cucumber, dill oil</div>
+          <div class="mfi-tags">Fish · Dairy</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Prawn Tempura Roll 🌶 <span class="mfi-jp">海老天ぷらロール</span></div>
+          <div class="mfi-desc">Crispy prawn, avocado, yuzu mayo, togarashi</div>
+          <div class="mfi-tags">Shellfish · Gluten</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mf-section" data-mf-idx="3">
+    <div class="mf-inner" style="background:#E32527;color:#FFFDFE;">
+      <div class="mf-top"><span class="mf-wm">拉麵</span></div>
+      <hr class="mf-rule" style="border-color:rgba(255,253,254,0.2);">
+      <div class="mf-body mf-body--flip">
+        <div class="mf-hero">
+          <h2 class="mf-hed">Ramen</h2>
+          <div class="mf-img-bleed"><img src="images/yui/bento-menu-ramen.jpg" alt="Ramen" class="mf-img" loading="lazy"></div>
+        </div>
+        <div class="mf-items-col">
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Teriyaki Chicken Ramen <span class="mfi-jp">照り焼きラーメン</span></div>
+          <div class="mfi-desc">Rich soy broth, teriyaki chicken, marinated egg</div>
+          <div class="mfi-tags">Gluten · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Karaage Ramen 🌶 <span class="mfi-jp">唐揚げラーメン</span></div>
+          <div class="mfi-desc">Crispy karaage in tonkotsu-style umami broth</div>
+          <div class="mfi-tags">Gluten · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Katsu Ramen <span class="mfi-jp">カツラーメン</span></div>
+          <div class="mfi-desc">Panko cutlet, soft-boiled egg, nori, bamboo</div>
+          <div class="mfi-tags">Gluten · Egg · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Tofu Katsu Ramen 🌶🌶 <span class="mfi-jp">豆腐カツラーメン</span></div>
+          <div class="mfi-desc">Fried tofu in spiced red miso ramen</div>
+          <div class="mfi-tags">Veg · Gluten · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Cottage Cheese Ramen <span class="mfi-jp">パニールラーメン</span></div>
+          <div class="mfi-desc">Grilled paneer in shio-style broth with mushrooms</div>
+          <div class="mfi-tags">Veg · Dairy · Gluten</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mf-section" data-mf-idx="4">
+    <div class="mf-inner" style="background:#FFFDFE;color:#0B0B09;">
+      <div class="mf-top"><span class="mf-wm">咖喱</span></div>
+      <hr class="mf-rule" style="border-color:rgba(11,11,9,0.15);">
+      <div class="mf-body">
+        <div class="mf-hero">
+          <h2 class="mf-hed">Curry</h2>
+          <p class="mf-note">Served with Japanese sticky rice</p>
+          <div class="mf-img-bleed"><img src="images/yui/bento-menu-curry.jpg" alt="Curry" class="mf-img" loading="lazy"></div>
+        </div>
+        <div class="mf-items-col">
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Chicken Katsu Curry <span class="mfi-jp">チキンカツカレー</span></div>
+          <div class="mfi-desc">Panko cutlet in classic Japanese golden curry</div>
+          <div class="mfi-tags">Gluten · Egg · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Karaage Curry <span class="mfi-jp">唐揚げカレー</span></div>
+          <div class="mfi-desc">Crispy fried chicken with rich curry sauce</div>
+          <div class="mfi-tags">Gluten · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Teriyaki Chicken Curry <span class="mfi-jp">照り焼きカレー</span></div>
+          <div class="mfi-desc">Teriyaki-glazed chicken in fragrant curry</div>
+          <div class="mfi-tags">Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Tofu Katsu Curry <span class="mfi-jp">豆腐カツカレー</span></div>
+          <div class="mfi-desc">Tofu cutlet in mild coconut-based curry</div>
+          <div class="mfi-tags">Veg · Gluten · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
+      </div>
+      <div class="mf-item">
+        <div class="mfi-left">
+          <div class="mfi-name">Cottage Cheese Curry <span class="mfi-jp">パニールカレー</span></div>
+          <div class="mfi-desc">Grilled paneer in mildly spiced Japanese curry</div>
+          <div class="mfi-tags">Veg · Dairy · Sesame</div>
+        </div>
+        <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
+      </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </div>
-<div class="ms-content">
-<p class="ms-eyebrow r">Japanese golden curry</p>
-<h2 class="ms-hed r d2">Curry</h2>
-<p class="ms-note r d1">Served with sticky rice</p>
-<div class="mi r"><div><div class="mi-name">Chicken Katsu Curry</div><div class="mi-jp">チキンカツカレー</div><div class="mi-desc">Chicken cutlet in classic Japanese curry sauce</div></div><div class="mi-price">₹445</div></div><div class="mi r d1"><div><div class="mi-name">Chicken Karaage Curry</div><div class="mi-jp">チキン唐揚げカレー</div><div class="mi-desc">Crispy fried chicken with rich golden curry</div></div><div class="mi-price">₹445</div></div><div class="mi r d2"><div><div class="mi-name">Teriyaki Chicken Curry</div><div class="mi-jp">照り焼きチキンカレー</div><div class="mi-desc">Teriyaki chicken in savory golden curry</div></div><div class="mi-price">₹445</div></div><div class="mi r d3"><div><div class="mi-name">Tofu Katsu Curry</div><div class="mi-jp">豆腐カツカレー</div><div class="mi-desc">Tofu cutlet in creamy curry sauce</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div><div class="mi r d4"><div><div class="mi-name">Cottage Cheese Curry</div><div class="mi-jp">カッテージチーズカレー</div><div class="mi-desc">Grilled paneer in mildly spiced Japanese curry</div><div class="mi-veg"><span class="mi-veg-dot"></span>Vegetarian</div></div><div class="mi-price">₹395</div></div>
-</div>
-</div>
-</section>
   <section id="reservation" class="res-wrap">
     <div class="res-left">
       <div class="res-left-grain"></div>
@@ -664,8 +779,18 @@
       const heroEl = document.getElementById('home');
       function checkNav() {
         if (!heroEl) return; // leave nav transparent (CSS gradient handles dark look)
+        // Smooth handoff: fade the white bar in across the last viewport of the
+        // hero. --nav-p goes 0 (dark over video) -> 1 (solid white bar), and every
+        // nav property interpolates off it in CSS, so nothing snaps.
         const heroBottom = heroEl.getBoundingClientRect().bottom;
-        nav.classList.toggle('scrolled', heroBottom < window.innerHeight * 0.1);
+        const vh = window.innerHeight;
+        // Stay fully dark through the whole hero; only hand off to white in the
+        // last stretch as the hero's bottom edge passes up behind the nav.
+        const start = vh * 0.42;  // begin the fade only near the very end
+        const end = vh * 0.05;    // fully white as the hero clears the nav
+        const p = Math.max(0, Math.min(1, (start - heroBottom) / (start - end)));
+        nav.style.setProperty('--nav-p', p.toFixed(3));
+        nav.classList.toggle('scrolled', p >= 0.5); // kept for any external hooks
       }
       window.addEventListener('scroll', checkNav, { passive: true });
       checkNav();
@@ -824,7 +949,11 @@
     <!-- Floating Launcher -->
     <button class="yui-launcher" id="yui-btn-toggle" aria-label="Open Yui Assistant">
       <div class="yui-listening-pulse"></div>
-      <img src="images/yui/ChatBot%20icon.svg" alt="Yui Chat Bot" class="yui-launcher-img">
+      <span class="yui-launcher-dots">
+        <span class="yui-ldot"></span>
+        <span class="yui-ldot"></span>
+        <span class="yui-ldot"></span>
+      </span>
     </button>
   </div>
   <script>
@@ -1591,117 +1720,115 @@
     };
   </script>
 
-  <!-- Gallery Reveal Animation — Sequential curtain drop -->
+
+  <!-- Bento Gallery — Tray Composite & Modal -->
   <script>
   (function() {
     'use strict';
 
-    const gallery = document.getElementById('about-gallery');
-    if (!gallery) return;
+    // g: [top, left, width, height] as fractions of the actual 1024×759 image.
+    // Pixel-measured from bento-layout-1.jpg (1024×759).
+    // Outer tray shadow: ~97px left/right, ~104px top/bottom. Outer tray wall ~43px thick.
+    // Compartment pixel bounds (inner dark area, 3px inset):
+    //   Outer frame y=105–118 (wood), inner dark y=119–131, red lacquer y=132–138, compartment y=139+
+    //   Left tall:        x=144–336, y=142–484   (top inset past lacquer border)
+    //   Bottom-left:      x=144–336, y=495–624
+    //   Top center wide:  x=364–723, y=142–284
+    //   Top right:        x=750–883, y=142–284
+    //   Mid-left small:   x=364–480, y=310–549
+    //   Mid center:       x=506–723, y=310–549
+    //   Mid right:        x=750–883, y=310–549
+    const SLOTS = [
+      { id:1, title:'The Dining Room',  desc:'Where every seat tells a story',        url:'images/yui/interior01.jpg', g:[0.187,0.141,0.188,0.451] }, // left tall
+      { id:2, title:'Noren & Light',    desc:'A threshold between worlds',            url:'images/yui/interior09.jpg', g:[0.669,0.141,0.188,0.153] }, // bottom left
+      { id:3, title:'Counter Dining',   desc:'An animated, intimate gathering',       url:'images/yui/interior11.jpg', g:[0.187,0.355,0.351,0.187] }, // top center wide
+      { id:4, title:'Sake Pour',        desc:'Poured with care and ritual',           url:'images/yui/interior08.jpg', g:[0.187,0.732,0.130,0.187] }, // top right
+      { id:5, title:'Wabi-sabi',        desc:'Imperfection as philosophy',            url:'images/yui/interior05.jpg', g:[0.408,0.355,0.113,0.312] }, // mid small left
+      { id:6, title:'Omakase',          desc:"The chef's choice, in silence",         url:'images/yui/interior07.jpg', g:[0.408,0.494,0.212,0.312] }, // mid center
+      { id:7, title:'The Kitchen',      desc:'Precision behind every plate',          url:'images/yui/interior14.jpg', g:[0.408,0.732,0.130,0.312] }, // mid right
+    ];
 
-    const panels = gallery.querySelectorAll('.gallery-item');
-    const header = gallery.querySelector('.gallery-header');
-    let ticking = false;
+    const slotsEl   = document.getElementById('bentoGrid');
+    const modal     = document.getElementById('bentoModal');
+    const modalBg   = document.getElementById('bentoModalBg');
+    const modalImg  = document.getElementById('bentoModalImg');
+    const modalTitle= document.getElementById('bentoModalTitle');
+    const modalDesc = document.getElementById('bentoModalDesc');
+    const modalClose= document.getElementById('bentoModalClose');
+    const dock      = document.getElementById('bentoDock');
+    if (!slotsEl || !modal) return;
 
-    // Cache layout dimensions
-    let galleryTop = 0;
-    let galleryHeight = 0;
-    const panelData = [];
-
-    function getElementOffsetTop(el) {
-      let top = 0;
-      while (el) {
-        top += el.offsetTop;
-        el = el.offsetParent;
-      }
-      return top;
-    }
-
-    function cacheLayout() {
-      galleryTop = getElementOffsetTop(gallery);
-      galleryHeight = gallery.offsetHeight;
-      
-      panelData.length = 0;
-      panels.forEach((panel) => {
-        const offsetTop = panel.offsetTop;
-        const verticalStagger = offsetTop * 0.00018; 
-        const logicalRow = Math.floor(offsetTop / 250);
-        const direction = logicalRow % 2 === 0 ? 1 : -1;
-        panelData.push({
-          verticalStagger,
-          direction
-        });
-      });
-    }
-
-    function updateGallery() {
-      const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
-      
-      const rectTop = galleryTop - scrollY;
-      const startTrigger = viewportHeight * 0.9;
-      
-      // Progress from 0 (not started) to 1 (fully revealed)
-      // Expanded window to handle sequential staggering of 36 items
-      let progress = (startTrigger - rectTop) / (galleryHeight * 0.85);
-      progress = Math.max(0, Math.min(1, progress));
-
-      // 1. Animate Header
-      if (header) {
-        header.style.opacity = Math.min(1, progress * 2);
-        header.style.transform = `translateY(${20 * (1 - progress)}px)`;
-      }
-
-      // 2. Animate Gallery Panels (Waterfall + Row Drift)
-      panels.forEach((panel, i) => {
-        const data = panelData[i];
-        if (!data) return;
-
-        let pProgress = (progress - data.verticalStagger) / (1 - data.verticalStagger);
-        pProgress = Math.max(0, Math.min(1, pProgress));
-
-        const easeProgress = 1 - Math.pow(1 - pProgress, 4);
-
-        const driftAmount = 25; // pixels of horizontal travel
-        const driftX = data.direction * driftAmount * (1 - easeProgress);
-
-        const bottomInset = 100 * (1 - easeProgress);
-        panel.style.clipPath = `inset(0 0 ${bottomInset}% 0)`;
-        panel.style.opacity = Math.min(1, pProgress * 3);
-        
-        // Multi-axis transform: Vertical Drop (40px) + Horizontal Drift + Scale
-        panel.style.transform = `translate3d(${driftX}px, ${40 * (1 - easeProgress)}px, 0) scale(${0.96 + (0.04 * easeProgress)})`;
-      });
-
-      ticking = false;
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        requestAnimationFrame(updateGallery);
-        ticking = true;
-      }
-    }
-
-    // Cache initial layout and setup resize listener
-    cacheLayout();
-    updateGallery();
-
-    window.addEventListener('resize', () => {
-      cacheLayout();
-      updateGallery();
+    // ── Build compartment slots ──────────────────────────
+    // Positions use CSS % — the wrapper has aspect-ratio:1030/686 so its height is
+    // always deterministic and percentage heights on absolutely-positioned children work correctly.
+    SLOTS.forEach(s => {
+      const el = document.createElement('div');
+      el.className = 'bento-tray-slot';
+      const [t, l, w, h] = s.g;
+      el.style.cssText =
+        `top:${(t*100).toFixed(3)}%;left:${(l*100).toFixed(3)}%;` +
+        `width:${(w*100).toFixed(3)}%;height:${(h*100).toFixed(3)}%`;
+      el.innerHTML = `
+        <img class="slot-dodge" src="${s.url}" alt="${s.title}" loading="lazy" decoding="async">
+        <img class="slot-reveal" src="${s.url}" alt="${s.title}" loading="lazy" decoding="async">
+        <div class="bento-slot-caption">
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+        </div>`;
+      el.addEventListener('click', () => openModal(s));
+      slotsEl.appendChild(el);
     });
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-  })();
+    // ── Build dock ───────────────────────────────────────
+    SLOTS.forEach(s => {
+      const t = document.createElement('div');
+      t.className = 'bento-dock-thumb';
+      t.dataset.id = s.id;
+      t.innerHTML = `<img src="${s.url}" alt="${s.title}" loading="lazy">`;
+      t.addEventListener('click', e => { e.stopPropagation(); switchSlot(s); });
+      dock.appendChild(t);
+    });
 
-  function expandGallery() {
-    const wrapper = document.getElementById('galleryWrapper');
-    if (wrapper) {
-      wrapper.classList.remove('collapsed');
-      window.dispatchEvent(new Event('scroll'));
+    let activeId = null;
+    modalImg.style.transition = 'opacity 0.11s ease';
+
+    // ── Modal ────────────────────────────────────────────
+    function switchSlot(s) {
+      activeId = s.id;
+      modalImg.style.opacity = '0';
+      setTimeout(() => { modalImg.src = s.url; modalImg.alt = s.title; modalImg.style.opacity = '1'; }, 110);
+      modalTitle.textContent = s.title;
+      modalDesc.textContent  = s.desc;
+      dock.querySelectorAll('.bento-dock-thumb').forEach(t =>
+        t.classList.toggle('active', +t.dataset.id === s.id));
     }
-  }
+
+    function openModal(s) {
+      switchSlot(s);
+      modal.setAttribute('aria-hidden', 'false');
+      modal.classList.add('open');
+      if (window.lenis) window.lenis.stop();
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      if (window.lenis) window.lenis.start();
+      document.body.style.overflow = '';
+    }
+
+    modalClose.addEventListener('click', closeModal);
+    modalBg.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', e => {
+      if (!modal.classList.contains('open')) return;
+      if (e.key === 'Escape') { closeModal(); return; }
+      const idx = SLOTS.findIndex(s => s.id === activeId);
+      if (e.key === 'ArrowRight') switchSlot(SLOTS[(idx + 1) % SLOTS.length]);
+      if (e.key === 'ArrowLeft')  switchSlot(SLOTS[(idx - 1 + SLOTS.length) % SLOTS.length]);
+    });
+  })();
   </script>
 
   <!-- Glitch Effect — Heading Interaction -->
@@ -1824,70 +1951,16 @@
     }
 
     // All glitch headings get hover effect — except hero headline and chef title
-    document.querySelectorAll('.glitch-hed:not(.chef-title-hed):not(#heroHeadline)').forEach(initGlitchEffect);
+    document.querySelectorAll('.glitch-hed:not(.chef-title-hed):not(#heroHeadline):not(#precisionHeadline)').forEach(initGlitchEffect);
 
-    // Chef title: glitch in once on section entry, then stay as "The Artisans" permanently
+    // Chef title: show immediately, no glitch
     function initChefTitleOnEntry(headline) {
       if (!headline) return;
       const layerEn = headline.querySelector('.hed-layer.en');
       const layerJp = headline.querySelector('.hed-layer.jp');
-      if (!layerEn || !layerJp) return;
-
-      const originalHTML = layerEn.innerHTML;
-      const targetPlain = originalHTML.replace(/<br>/g, '\n').replace(/<[^>]*>/g, '');
-      const len = targetPlain.length;
-      let frameRequest = null;
-      let hasPlayed = false;
-
-      // Pre-compute red text char range
-      const temp = document.createElement('div');
-      temp.innerHTML = originalHTML;
-      const redSpan = temp.querySelector('.red-text');
-      let redRange = null;
-      if (redSpan) {
-        const full = temp.innerText.replace(/\n/g, ' ').trim();
-        const red  = redSpan.innerText.trim();
-        const s    = full.indexOf(red);
-        if (s !== -1) redRange = { start: s, end: s + red.length };
-      }
-
-      headline.playGlitchEntry = function() {
-        if (hasPlayed) return;
-        hasPlayed = true;
-        if (frameRequest) cancelAnimationFrame(frameRequest);
-
-        layerEn.classList.add('active');
-        layerJp.classList.remove('active');
-        headline.classList.add('is-glitching');
-
-        const duration = 900;
-        const start = performance.now();
-
-        function update(now) {
-          const progress = Math.min(1, (now - start) / duration);
-          if (progress < 1) {
-            let html = '';
-            for (let i = 0; i < len; i++) {
-              const ch = targetPlain[i];
-              let out;
-              if (ch === '\n') out = '\n';
-              else if (ch === ' ') out = ' ';
-              else if (Math.random() > Math.pow(progress, 1.4)) out = chars[Math.floor(Math.random() * chars.length)];
-              else out = ch;
-              if (redRange && i >= redRange.start && i < redRange.end) html += `<span class="red-text">${out}</span>`;
-              else html += out;
-            }
-            layerEn.innerHTML = html;
-            frameRequest = requestAnimationFrame(update);
-          } else {
-            layerEn.innerHTML = originalHTML;
-            headline.classList.remove('is-glitching');
-            headline.classList.add('is-settling');
-            frameRequest = null;
-          }
-        }
-        frameRequest = requestAnimationFrame(update);
-      };
+      if (layerEn) layerEn.classList.add('active');
+      if (layerJp) layerJp.classList.remove('active');
+      headline.playGlitchEntry = function() {};
     }
 
     initChefTitleOnEntry(document.querySelector('.chef-title-hed'));
@@ -1961,7 +2034,7 @@
       LERP_FACTOR: 0.05,
       BUFFER_SIZE: 2,
       MAX_VELOCITY: 150,
-      SNAP_DURATION: 500,
+      SNAP_DURATION: 280,
     };
 
     const lerp = (start, end, factor) => start + (end - start) * factor;
@@ -1987,7 +2060,7 @@
       lastScrollTime: Date.now(),
       dragStart: { y: 0, scrollY: 0 },
       projectHeight: window.innerHeight,
-      minimapHeight: 380,
+      minimapHeight: 567,
       requestRef: null,
       lastSnappedIndex: 0,  // tracks the confirmed slide we last snapped to
       scrollAccum: 0        // accumulates wheel delta between snaps
@@ -1998,6 +2071,7 @@
     let infoMap = new Map();
     let renderedMin = null;
     let renderedMax = null;
+    let lastActiveIdx = -1;
 
     const aboutEl = document.getElementById('about');
     const parallaxContainer = document.querySelector('#about .parallax-container');
@@ -2083,13 +2157,21 @@
         if (Math.abs(state.targetY - snapTarget) > 2) snapToSlide(nearest);
       }
 
-      if (state.isSnapping) updateSnap();
-      if (!state.isDragging) {
-        state.currentY += (state.targetY - state.currentY) * CONFIG.LERP_FACTOR;
+      if (state.isSnapping) {
+        updateSnap();
+        // During a programmatic snap, updateSnap drives targetY with cubic ease —
+        // follow it directly so currentY tracks the ease precisely with no trailing lag.
+        state.currentY = state.targetY;
+      } else if (state.isDragging) {
+        // Touch drag: lerp for a slightly damped feel
+        state.currentY += (state.targetY - state.currentY) * 0.15;
         if (Math.abs(state.currentY - state.targetY) < 0.1) state.currentY = state.targetY;
+      } else {
+        // Idle: snap directly so we don't spin the loop after coming to rest
+        state.currentY = state.targetY;
       }
 
-      if (Math.abs(state.currentY - prevCurrentY) > 0.01 || state.isSnapping) {
+      if (Math.abs(state.currentY - prevCurrentY) > 0.01) {
         updatePositions();
       }
     };
@@ -2217,7 +2299,8 @@
     };
 
     const snapAndLock = () => {
-      if (isLocked || justReleased) return;
+      if (isLocked || justReleased || window._lenisScrollingToTarget) return;
+      window._artisanTransitioning = true;
 
       const containerRect = parallaxContainer.getBoundingClientRect();
       // Only trigger when the parallax container is meaningfully visible
@@ -2248,8 +2331,8 @@
       if (window.lenis) {
         window.lenis.scrollTo(parallaxContainer, {
           offset: 0,
-          duration: 1.0,
-          easing: (t) => 1 - Math.pow(1 - t, 3),
+          duration: 0.25,
+          easing: (t) => t * (2 - t),
           onComplete: () => {
             lockPage();
           }
@@ -2257,7 +2340,7 @@
       } else {
         // Fallback: native scroll then lock
         parallaxContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(lockPage, 800);
+        setTimeout(lockPage, 250);
       }
     };
 
@@ -2266,6 +2349,7 @@
       justReleased = true;
       boundaryScrollCount = 0;
       lastBoundaryDir = 0;
+      window._artisanTransitioning = false;
 
       unlockPage();
 
@@ -2275,7 +2359,7 @@
         const targetEl = document.querySelector(targetId);
         if (targetEl) {
           window.lenis.scrollTo(targetEl, {
-            duration: 1.6,
+            duration: 0.65,
             easing: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
           });
         }
@@ -2470,6 +2554,7 @@
       const navCtx = navCanvas.getContext('2d');
       let frame = 0, playing = false, lastTime = 0;
 
+      // Source-crop to the knot mark only — katakana "ソリー" sits at x>=110 in the frame
       function drawNav(idx) {
         const img = frames[idx];
         if (!img) return;
@@ -2523,7 +2608,7 @@
         else video.currentTime = t;
 
         const exp = Math.min(1, p / 0.4);
-        const top = 16 * (1 - exp);
+        const top = 13 * (1 - exp);
         const bot = 10 * (1 - exp);
         video.style.clipPath = (top > 0.05 || bot > 0.05)
           ? `inset(${top}% 0 ${bot}% 0)` : 'none';
@@ -2555,6 +2640,7 @@
   })();
   </script>
 
+
   <!-- Japanese Precision: Sequence + Typewriter + Glitch -->
   <script>
   (function() {
@@ -2564,7 +2650,6 @@
     const headline = document.getElementById('precisionHeadline');
     if (!section || !canvas) return;
 
-    // Use alpha: false + offscreen buffer to prevent black flash on clearRect
     const context = canvas.getContext('2d', { alpha: false });
     const offCanvas = document.createElement('canvas');
     const offCtx = offCanvas.getContext('2d', { alpha: false });
@@ -2575,27 +2660,22 @@
     let isVisible = false;
     let loadStarted = false;
     let loopRunning = false;
-    
     let sectionTop = 0;
     let sectionHeight = 0;
 
     function getElementOffsetTop(el) {
       let top = 0;
-      while (el) {
-        top += el.offsetTop;
-        el = el.offsetParent;
-      }
+      while (el) { top += el.offsetTop; el = el.offsetParent; }
       return top;
     }
 
-    const fullText = "Yui brings a quiet Japanese presence and craft into the heart of Bangalore. Through shared meals and the warmth of togetherness, we celebrate 'The Fifth Flavor'—the elusive feeling of connection created around the table, where craft meets emotion.";
+    const fullText = "Yui brings a quiet Japanese presence and craft into the heart of Bangalore. Through shared meals and the warmth of togetherness, we celebrate ‘The Fifth Flavor’—the elusive feeling of connection created around the table, where craft meets emotion.";
 
     function getFramePath(i) {
       const fileName = `Screenshot 2026-04-14 at 9-08-27 PM${i.toString().padStart(3, '0')}.jpg`;
       return `assets/Resto%20View/${fileName.replace(/ /g, '%20')}`;
     }
 
-    // Initialize with null placeholders
     for (let i = 0; i < frameCount; i++) images.push(null);
 
     function loadImage(i) {
@@ -2607,28 +2687,20 @@
       });
     }
 
-    // Lazy load: only start loading when section approaches viewport
     async function startLoading() {
       if (loadStarted) return;
       loadStarted = true;
-      
-      // Load frame 0 first
       await loadImage(0);
       render();
-      
-      // Load rest in batches
       const batchSize = 8;
       for (let start = 1; start < frameCount; start += batchSize) {
         const batch = [];
-        for (let i = start; i < Math.min(start + batchSize, frameCount); i++) {
-          batch.push(loadImage(i));
-        }
+        for (let i = start; i < Math.min(start + batchSize, frameCount); i++) batch.push(loadImage(i));
         await Promise.all(batch);
         if (images[sequence.frame] && images[sequence.frame]._ready) render();
       }
     }
 
-    // Paint white on init to prevent black screen
     function paintWhite() {
       if (canvas.width > 0 && canvas.height > 0) {
         context.fillStyle = '#ffffff';
@@ -2638,24 +2710,13 @@
 
     function render() {
       const img = images[sequence.frame];
-      if (!img || !img._ready || img.naturalWidth === 0) {
-        paintWhite();
-        return;
-      }
-
-      const w = canvas.width;
-      const h = canvas.height;
+      if (!img || !img._ready || img.naturalWidth === 0) { paintWhite(); return; }
+      const w = canvas.width, h = canvas.height;
       const imgRatio = img.naturalWidth / img.naturalHeight;
       const canvasRatio = w / h;
       let dW, dH, x, y;
-
-      if (imgRatio > canvasRatio) {
-        dW = w; dH = w / imgRatio; x = 0; y = (h - dH) / 2;
-      } else {
-        dW = h * imgRatio; dH = h; x = (w - dW) / 2; y = 0;
-      }
-      
-      // Draw to offscreen buffer first, then blit (no clearRect flicker)
+      if (imgRatio > canvasRatio) { dW = w; dH = w / imgRatio; x = 0; y = (h - dH) / 2; }
+      else { dW = h * imgRatio; dH = h; x = (w - dW) / 2; y = 0; }
       offCtx.fillStyle = '#ffffff';
       offCtx.fillRect(0, 0, w, h);
       offCtx.drawImage(img, x, y, dW, dH);
@@ -2667,11 +2728,8 @@
       canvas.height = window.innerHeight;
       offCanvas.width = canvas.width;
       offCanvas.height = canvas.height;
-      
-      // Cache coordinates on resize (not on scroll)
       sectionTop = getElementOffsetTop(section);
       sectionHeight = section.offsetHeight;
-      
       paintWhite();
       render();
     }
@@ -2695,9 +2753,7 @@
       }, 80);
     }
 
-    let targetFrame = 0;
-    let currentFrame = 0;
-    let lastCharsToShow = -1;
+    let targetFrame = 0, currentFrame = 0, lastCharsToShow = -1;
 
     function startLoop() {
       if (loopRunning) return;
@@ -2707,50 +2763,38 @@
 
     function renderLoop() {
       if (!isVisible) { loopRunning = false; return; }
-      
       const diff = targetFrame - currentFrame;
-      if (Math.abs(diff) > 0.01) {
-        currentFrame += diff * 0.1;
-      } else {
-        currentFrame = targetFrame;
-      }
-
+      if (Math.abs(diff) > 0.01) currentFrame += diff * 0.1;
+      else currentFrame = targetFrame;
       const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrame)));
-      if (sequence.frame !== frameIndex) {
-        sequence.frame = frameIndex;
-        render();
-      }
+      if (sequence.frame !== frameIndex) { sequence.frame = frameIndex; render(); }
       requestAnimationFrame(renderLoop);
     }
 
     function update() {
       const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
       const rectTop = sectionTop - scrollY;
       const rectBottom = rectTop + sectionHeight;
-      if (rectBottom < 0 || rectTop > viewportHeight) return;
-
+      if (rectBottom < 0 || rectTop > window.innerHeight) return;
       const scrollDepth = -rectTop;
-      const scrollMax = sectionHeight - viewportHeight;
-      let progress = Math.max(0, Math.min(1, scrollDepth / scrollMax));
-
+      const scrollMax = sectionHeight - window.innerHeight;
+      const progress = Math.max(0, Math.min(1, scrollDepth / scrollMax));
       targetFrame = progress * (frameCount - 1);
-
       const charsToShow = Math.floor(progress * fullText.length);
       if (charsToShow !== lastCharsToShow) {
         typewriter.innerText = fullText.substring(0, charsToShow);
         lastCharsToShow = charsToShow;
       }
-      if (progress > 0.05 && progress < 0.1) triggerGlitch();
+      // Parallax: text drifts DOWN as section exits (lags behind scroll = appears to fall)
+      if (headline) headline.style.transform = 'translateY(' + (progress * 50) + 'px)';
+      if (typewriter) typewriter.style.transform = 'translateY(' + (progress * 25) + 'px)';
+      // glitch disabled — heading stays in English
     }
 
     const lazyObs = new IntersectionObserver(entries => {
       const wasVisible = isVisible;
       isVisible = entries[0].isIntersecting;
-      if (isVisible) {
-        startLoading();
-        if (!wasVisible) startLoop();
-      }
+      if (isVisible) { startLoading(); if (!wasVisible) startLoop(); }
     }, { rootMargin: '600px' });
     lazyObs.observe(section);
 
@@ -2760,205 +2804,98 @@
   })();
   </script>
 
-    <!-- Menu Section Scroll Animation: Precision Mirror -->
+  <!-- FlowArt Menu: sticky stack + rotate-in animation + nav colour sync -->
   <script>
   (function() {
-    const section = document.getElementById('menu'); 
-    const canvas = document.getElementById('menuCanvas');
-    const marquee = document.getElementById('menuMarquee');
-    const typewriter = document.getElementById('menuTypewriter');
-    const headline = document.getElementById('menuHeadline');
-    if (!section || !canvas || !marquee) return;
+    var sections = Array.from(document.querySelectorAll('.mf-section'));
+    if (!sections.length) return;
 
-    const context = canvas.getContext('2d', { alpha: false });
-    const offCanvas = document.createElement('canvas');
-    const offCtx = offCanvas.getContext('2d', { alpha: false });
+    // Set z-index so each section stacks on top of the previous
+    sections.forEach(function(s, i) { s.style.zIndex = i + 1; });
 
-    const frameCount = 48;
-    const images = [];
-    const sequence = { frame: 0 };
-    let isVisible = false;
-    let loadStarted = false;
-    let loopRunning = false;
-    
-    let sectionTop = 0;
-    let sectionHeight = 0;
+    // Card colours (must match inline styles in HTML)
+    var cardBgs    = ['#FFFDFE','#E32527','#0B0B09','#E32527','#FFFDFE'];
+    var cardColors = ['#0B0B09','#FFFDFE','#FFFDFE','#FFFDFE','#0B0B09'];
+    var isDark     = [false, true, true, true, false];
+    var cardType   = ['', 'red', 'black', 'red', '']; // '' = light card
+    var nav = document.querySelector('.nav');
+    var lastCardIdx = -2;
 
-    function getElementOffsetTop(el) {
-      let top = 0;
-      while (el) {
-        top += el.offsetTop;
-        el = el.offsetParent;
-      }
-      return top;
-    }
-    
-    const fullText = "A meticulously curated selection of seasonal flavors, crafted with Japanese precision and passion. Explore our signature Omakase and à la carte offerings, designed to celebrate the art of zen dining.";
-
-    function getFramePath(i) {
-      return `assets/Menu/menu_${i.toString().padStart(2, '0')}.jpg`;
-    }
-
-    // Initialize with null placeholders
-    for (let i = 0; i < frameCount; i++) images.push(null);
-
-    function loadImage(i) {
-      return new Promise(resolve => {
-        const img = new Image();
-        img.onload = () => { img._ready = true; images[i] = img; resolve(); };
-        img.onerror = () => resolve();
-        img.src = getFramePath(i);
-      });
-    }
-
-    async function startLoading() {
-      if (loadStarted) return;
-      loadStarted = true;
-      await loadImage(0);
-      render();
-      const batchSize = 8;
-      for (let start = 1; start < frameCount; start += batchSize) {
-        const batch = [];
-        for (let i = start; i < Math.min(start + batchSize, frameCount); i++) {
-          batch.push(loadImage(i));
+    function updateNavColor() {
+      if (!nav) return;
+      var menuEl = document.getElementById('menu');
+      if (!menuEl) return;
+      var menuRect = menuEl.getBoundingClientRect();
+      // Outside the menu zone — restore default nav
+      if (menuRect.bottom < 0 || menuRect.top > window.innerHeight) {
+        if (lastCardIdx !== -1) {
+          lastCardIdx = -1;
+          nav.classList.remove('menu-card-active', 'nav--dark', 'nav--red-card', 'nav--black-card');
+          nav.style.removeProperty('--nav-card-bg');
+          nav.style.removeProperty('--nav-card-color');
         }
-        await Promise.all(batch);
-        if (images[sequence.frame] && images[sequence.frame]._ready) render();
-      }
-    }
-
-    function paintWhite() {
-      if (canvas.width > 0 && canvas.height > 0) {
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-
-    function render() {
-      const img = images[sequence.frame];
-      if (!img || !img._ready || img.naturalWidth === 0) {
-        paintWhite();
         return;
       }
-
-      const w = canvas.width;
-      const h = canvas.height;
-      const imgRatio = img.naturalWidth / img.naturalHeight;
-      const canvasRatio = w / h;
-      let dW, dH, x, y;
-      if (imgRatio > canvasRatio) {
-        dW = w; dH = w / imgRatio; x = 0; y = (h - dH) / 2;
-      } else {
-        dW = h * imgRatio; dH = h; x = (w - dW) / 2; y = 0;
+      // Find topmost card (last one scrolled past top)
+      var activeIdx = 0;
+      sections.forEach(function(s, i) {
+        if (s.getBoundingClientRect().top <= 1) activeIdx = i;
+      });
+      if (activeIdx !== lastCardIdx) {
+        lastCardIdx = activeIdx;
+        nav.classList.add('menu-card-active');
+        nav.style.setProperty('--nav-card-bg', cardBgs[activeIdx]);
+        nav.style.setProperty('--nav-card-color', cardColors[activeIdx]);
+        if (isDark[activeIdx]) nav.classList.add('nav--dark');
+        else nav.classList.remove('nav--dark');
+        nav.classList.remove('nav--red-card', 'nav--black-card');
+        if (cardType[activeIdx]) nav.classList.add('nav--' + cardType[activeIdx] + '-card');
       }
-      
-      offCtx.fillStyle = '#ffffff';
-      offCtx.fillRect(0, 0, w, h);
-      offCtx.drawImage(img, x, y, dW, dH);
-      context.drawImage(offCanvas, 0, 0);
-      
-      const gap = (h - dH) / 2;
-      marquee.style.bottom = gap + "px";
     }
 
-    function resize() {
-      if (!canvas.parentElement) return;
-      canvas.width = canvas.parentElement.offsetWidth;
-      canvas.height = canvas.parentElement.offsetHeight;
-      offCanvas.width = canvas.width;
-      offCanvas.height = canvas.height;
-      
-      // Cache coordinates on resize
-      sectionTop = getElementOffsetTop(section);
-      sectionHeight = section.offsetHeight;
-      
-      paintWhite();
-      render();
+    function animateFlow() {
+      var vh = window.innerHeight;
+      sections.forEach(function(section, i) {
+        if (i === 0) return;
+        var inner = section.querySelector('.mf-inner');
+        if (!inner) return;
+        var top = section.getBoundingClientRect().top;
+        // progress 0 = card just entering from bottom, 1 = fully flat
+        var progress = Math.max(0, Math.min(1, 1 - top / (vh * 0.9)));
+        var rotate = 3.5 * (1 - progress);
+        var translateY = 12 * (1 - progress);
+        inner.style.transform = 'rotate(' + rotate + 'deg) translateY(' + translateY + 'px)';
+      });
+      updateNavColor();
     }
 
-    let isGlitching = false;
-    function triggerGlitch() {
-      if (isGlitching || !headline) return;
-      isGlitching = true;
-      const en = headline.querySelector('.en');
-      const jp = headline.querySelector('.jp');
-      let count = 0;
-      const interval = setInterval(() => {
-        if (count % 2 === 0) { en.classList.remove('active'); jp.classList.add('active'); }
-        else { en.classList.add('active'); jp.classList.remove('active'); }
-        count++;
-        if (count > 5) {
-          clearInterval(interval);
-          en.classList.add('active'); jp.classList.remove('active');
-          setTimeout(() => { isGlitching = false; }, 2000);
-        }
-      }, 80);
+    window.addEventListener('scroll', animateFlow, { passive: true });
+    if (window.lenis) { window.lenis.on('scroll', animateFlow); }
+
+    animateFlow();
+  })();
+  </script>
+
+  <!-- Artisans section: parallax on "The Artisans" title -->
+  <script>
+  (function() {
+    var chefSection = document.querySelector('section#about');
+    var chefTitle = document.querySelector('.chef-title-overlay');
+    if (!chefSection || !chefTitle) return;
+
+    function updateChefParallax() {
+      var rect = chefSection.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
+      // How far the section has scrolled past the top of the viewport
+      var scrolled = -rect.top;
+      var sectionH = rect.height;
+      var progress = Math.max(0, Math.min(1, scrolled / sectionH));
+      // Title drifts DOWN as section exits (lags behind = slow fall effect)
+      chefTitle.style.transform = 'translateY(' + (progress * 40) + 'px)';
     }
 
-    let targetFrame = 0;
-    let currentFrame = 0;
-    let lastCharsToShow = -1;
-
-    function startLoop() {
-      if (loopRunning) return;
-      loopRunning = true;
-      requestAnimationFrame(renderLoop);
-    }
-
-    function renderLoop() {
-      if (!isVisible) { loopRunning = false; return; }
-      
-      const diff = targetFrame - currentFrame;
-      if (Math.abs(diff) > 0.01) {
-        currentFrame += diff * 0.1;
-      } else {
-        currentFrame = targetFrame;
-      }
-
-      const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrame)));
-      if (sequence.frame !== frameIndex) {
-        sequence.frame = frameIndex;
-        render();
-      }
-      requestAnimationFrame(renderLoop);
-    }
-
-    function update() {
-      const scrollY = window.scrollY;
-      const viewportHeight = window.innerHeight;
-      const rectTop = sectionTop - scrollY;
-      const rectBottom = rectTop + sectionHeight;
-      if (rectBottom < 0 || rectTop > viewportHeight) return;
-
-      const scrollDepth = -rectTop;
-      const scrollMax = sectionHeight - viewportHeight;
-      let progress = Math.max(0, Math.min(1, scrollDepth / scrollMax));
-
-      targetFrame = progress * (frameCount - 1);
-
-      if (typewriter) {
-        const charsToShow = Math.floor(progress * fullText.length);
-        if (charsToShow !== lastCharsToShow) {
-          typewriter.innerText = fullText.substring(0, charsToShow);
-          lastCharsToShow = charsToShow;
-        }
-      }
-      if (progress > 0.05 && progress < 0.1 && !isGlitching) triggerGlitch();
-    }
-
-    const lazyObs = new IntersectionObserver(entries => {
-      const wasVisible = isVisible;
-      isVisible = entries[0].isIntersecting;
-      if (isVisible) {
-        startLoading();
-        if (!wasVisible) startLoop();
-      }
-    }, { rootMargin: '600px' });
-    lazyObs.observe(section);
-
-    window.addEventListener('resize', resize);
-    window.addEventListener('scroll', update, { passive: true });
-    resize();
+    window.addEventListener('scroll', updateChefParallax, { passive: true });
+    updateChefParallax();
   })();
   </script>
 
@@ -3090,7 +3027,14 @@
           if (targetId === '#') return;
           const targetEl = document.querySelector(targetId);
           if (targetEl) {
-            window.lenis.scrollTo(targetEl);
+            // Flag suppresses snap-lock so it can't intercept this navigation
+            window._lenisScrollingToTarget = true;
+            document.documentElement.style.overflow = '';
+            document.body.style.overflow = '';
+            window.lenis.start();
+            window.lenis.scrollTo(targetEl, {
+              onComplete: () => { window._lenisScrollingToTarget = false; }
+            });
           }
         });
       });
