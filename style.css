@@ -5449,14 +5449,7 @@
   flex-direction: column;
 }
 
-.fy-grain {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.035;
-  pointer-events: none;
-  z-index: 0;
-}
+.fy-grain { display: none; }
 
 .fy-inner {
   position: relative;
@@ -5486,6 +5479,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+#fyLogoCanvas {
+  width: 140px;
+  height: 140px;
+  display: block;
+  border-radius: 12px;
 }
 
 .fy-logo-text {
@@ -5540,9 +5542,9 @@
 }
 
 .fy-email {
-  font-family: 'Restora', Georgia, serif;
+  font-family: 'Outfit', sans-serif;
   font-size: clamp(20px, 3vw, 48px);
-  font-weight: 400;
+  font-weight: 300;
   color: rgba(255,253,254,0.62);
   text-decoration: none;
   position: relative;
@@ -5574,7 +5576,7 @@
 /* MID ROW */
 .fy-mid {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: start;
   gap: clamp(32px, 5vw, 80px);
   margin-bottom: clamp(48px, 7vh, 96px);
@@ -5658,6 +5660,7 @@
 /* Quick nav */
 .fy-nav { display: flex; flex-direction: column; align-items: flex-end; }
 .fy-nav .fy-col-label { text-align: right; }
+.fy-navlink { text-align: right; }
 
 .fy-navlink {
   font-family: 'Outfit', sans-serif;
@@ -5791,8 +5794,6 @@
 /* RESPONSIVE */
 @media (max-width: 960px) {
   .fy-top { flex-direction: column; }
-  .fy-mid { grid-template-columns: 1fr 1fr; }
-  .fy-cta-col { grid-column: 1 / -1; justify-content: center; }
   .fy-nav { align-items: flex-start; }
   .fy-nav .fy-col-label, .fy-navlink { text-align: left; }
   .fy-navlink::after { right: auto; left: 0; }

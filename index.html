@@ -710,13 +710,12 @@
     </div>
   </section>
   <footer class="fy">
-    <div class="fy-grain"></div>
     <div class="fy-inner">
 
       <!-- TOP: Logo mark + Editorial headline -->
       <div class="fy-top">
         <div class="fy-logo-wrap" data-fy-reveal data-fy-delay="0">
-          <div class="fy-logo-box"><span class="fy-logo-text">[ YUI ]</span></div>
+          <div class="fy-logo-box"><canvas id="fyLogoCanvas" width="140" height="140"></canvas></div>
           <p class="fy-tagline">Modern Japanese Dining · Bengaluru</p>
         </div>
         <div class="fy-hed-wrap" data-fy-reveal data-fy-delay="120">
@@ -727,7 +726,7 @@
       <!-- RESERVATION EMAIL -->
       <div class="fy-res-row" data-fy-reveal data-fy-delay="60">
         <span class="fy-res-label">Reservations</span>
-        <a href="mailto:reservations@yui.com" class="fy-email">reservations@yui.com</a>
+        <a href="mailto:konnichiwa@yui.com" class="fy-email">konnichiwa@yui.com</a>
       </div>
 
       <hr class="fy-rule">
@@ -740,16 +739,13 @@
           <a href="#" class="fy-social">LinkedIn<span class="fy-arr"> ↗</span></a>
           <a href="#" class="fy-social">Google Maps<span class="fy-arr"> ↗</span></a>
         </div>
-        <div class="fy-cta-col" data-fy-reveal data-fy-delay="80">
-          <a href="#reservation" class="fy-cta" id="fyCta">Reserve a Table</a>
-        </div>
-        <nav class="fy-nav" data-fy-reveal data-fy-delay="120">
+        <nav class="fy-nav" data-fy-reveal data-fy-delay="80">
           <p class="fy-col-label">Navigate</p>
           <a href="#menu" class="fy-navlink">Menu</a>
           <a href="#reservation" class="fy-navlink">Reservations</a>
           <a href="#about" class="fy-navlink">About YUI</a>
-          <a href="#" class="fy-navlink">FAQs</a>
-          <a href="#" class="fy-navlink">Privacy Policy</a>
+          <a href="faq.html" class="fy-navlink">FAQs</a>
+          <a href="privacy.html" class="fy-navlink">Privacy Policy</a>
         </nav>
       </div>
 
@@ -3107,15 +3103,44 @@
       tagIO.observe(tags[0].closest('.fy-tags'));
     }
 
-    var cta = document.getElementById('fyCta');
-    if (cta) {
-      cta.addEventListener('mousemove', function(e) {
-        var r = cta.getBoundingClientRect();
-        var x = (e.clientX - r.left - r.width / 2) * 0.14;
-        var y = (e.clientY - r.top - r.height / 2) * 0.22;
-        cta.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(1.04)';
-      });
-      cta.addEventListener('mouseleave', function() { cta.style.transform = ''; });
+  })();
+
+  // Footer logo — same frames array, plays on footer hover/touch
+  (function() {
+    var fyCanvas = document.getElementById('fyLogoCanvas');
+    if (!fyCanvas) return;
+    var fyCtx = fyCanvas.getContext('2d');
+    var fyFrame = 0, fyPlaying = false, fyLastTime = 0;
+
+    function drawFy(idx) {
+      var img = frames[idx];
+      if (!img || !img.complete) return;
+      fyCtx.clearRect(0, 0, fyCanvas.width, fyCanvas.height);
+      fyCtx.drawImage(img, 0, 0, fyCanvas.width, fyCanvas.height);
+    }
+
+    function fyTick(now) {
+      if (fyFrame >= FRAME_COUNT - 1) { drawFy(FRAME_COUNT - 1); fyPlaying = false; return; }
+      if (now - fyLastTime >= INTERVAL) { fyLastTime = now; drawFy(fyFrame); fyFrame++; }
+      requestAnimationFrame(fyTick);
+    }
+
+    function fyPlay() {
+      if (fyPlaying) return;
+      fyFrame = 0; fyPlaying = true; fyLastTime = performance.now();
+      requestAnimationFrame(fyTick);
+    }
+
+    function fyInit() {
+      if (frames[0] && frames[0].complete) drawFy(0);
+      else setTimeout(fyInit, 120);
+    }
+    fyInit();
+
+    var footer = document.querySelector('footer.fy');
+    if (footer) {
+      footer.addEventListener('mouseenter', fyPlay);
+      footer.addEventListener('touchstart', fyPlay, { passive: true });
     }
   })();
   </script>

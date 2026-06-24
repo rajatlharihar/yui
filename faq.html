@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQs — YUI Japanese Dining</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/xxxxxxx.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink: #0B0B09;
+      --cream: #FFFDFE;
+      --dim: rgba(255,253,254,0.38);
+      --faint: rgba(255,253,254,0.1);
+      --rule: rgba(255,253,254,0.08);
+    }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--ink);
+      color: var(--cream);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: clamp(60px, 10vh, 120px) clamp(24px, 6vw, 60px) clamp(80px, 12vh, 140px);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-decoration: none;
+      margin-bottom: clamp(48px, 8vh, 96px);
+      transition: color 0.3s ease;
+    }
+    .back-link:hover { color: var(--cream); }
+    .back-link svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+    .back-link:hover svg { transform: translateX(-4px); }
+
+    .page-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 20px;
+    }
+
+    .page-title {
+      font-family: 'Restora', Georgia, serif;
+      font-size: clamp(40px, 6vw, 80px);
+      font-weight: 700;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
+      color: var(--cream);
+      margin-bottom: clamp(48px, 8vh, 80px);
+    }
+
+    .faq-list { list-style: none; }
+
+    .faq-item {
+      border-top: 1px solid var(--rule);
+    }
+    .faq-item:last-child { border-bottom: 1px solid var(--rule); }
+
+    .faq-btn {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px 0;
+      text-align: left;
+      color: var(--cream);
+    }
+
+    .faq-question {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(15px, 1.6vw, 20px);
+      font-weight: 500;
+      color: rgba(255,253,254,0.82);
+      transition: color 0.3s ease;
+    }
+
+    .faq-item.open .faq-question { color: var(--cream); }
+
+    .faq-icon {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--faint);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.3s ease, transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    }
+    .faq-item.open .faq-icon { border-color: rgba(255,253,254,0.28); transform: rotate(45deg); }
+
+    .faq-icon svg { display: block; }
+
+    .faq-answer {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.45s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .faq-item.open .faq-answer { max-height: 400px; }
+
+    .faq-answer-inner {
+      padding-bottom: 28px;
+      font-size: clamp(13px, 1.2vw, 16px);
+      font-weight: 400;
+      line-height: 1.75;
+      color: var(--dim);
+    }
+
+    .faq-answer-inner a {
+      color: rgba(255,253,254,0.65);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .page-footer {
+      margin-top: clamp(60px, 10vh, 100px);
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .page-footer-copy {
+      font-size: 11px;
+      font-weight: 500;
+      color: rgba(255,253,254,0.2);
+      letter-spacing: 0.06em;
+    }
+
+    .page-footer-link {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,253,254,0.3);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    .page-footer-link:hover { color: var(--cream); }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <a href="index.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to YUI
+    </a>
+
+    <p class="page-eyebrow">Frequently Asked Questions</p>
+    <h1 class="page-title">What you<br>want to know.</h1>
+
+    <ul class="faq-list">
+
+      <li class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-question">Do I need a reservation to dine at YUI?</span>
+          <span class="faq-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Reservations are strongly recommended, particularly on weekends and for our Omakase counter seats, which tend to fill 2–3 weeks in advance. Walk-ins are welcome at the bar depending on availability. To book, write to us at <a href="mailto:konnichiwa@yui.com">konnichiwa@yui.com</a> or use the reservation form on our website.</p>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-question">What is Omakase?</span>
+          <span class="faq-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Omakase (お任せ) means "I leave it to you." At YUI, this is our chef-curated tasting experience — a sequence of 8 to 12 courses chosen daily based on the finest seasonal produce and the chef's creative vision. It is a journey of trust between the kitchen and the guest, and it is among our most intimate offerings.</p>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-question">Can dietary requirements be accommodated?</span>
+          <span class="faq-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Yes. We cater to vegetarian, gluten-free, and shellfish-free preferences with advance notice. Please mention your requirements when booking — our kitchen team will craft alternatives that maintain the integrity of the meal. We regret that vegan Omakase is not currently available, though most à la carte dishes can be adapted.</p>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-question">What is the dress code?</span>
+          <span class="faq-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">We invite smart casual to formal attire. YUI is a fine-dining environment and the dress code reflects the care we put into every detail of the experience. We kindly ask guests to avoid beachwear, sportswear, or flip-flops. When in doubt, dress as though the occasion deserves it — it usually does.</p>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-question">Is there a cancellation or no-show policy?</span>
+          <span class="faq-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">We ask for at least 24 hours' notice for cancellations. For Omakase bookings, a 48-hour notice is required as our chefs prepare your menu in advance. Repeated no-shows may affect future reservation eligibility. To reschedule, email <a href="mailto:konnichiwa@yui.com">konnichiwa@yui.com</a>.</p>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-question">Do you offer private dining?</span>
+          <span class="faq-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">Yes. Our private dining room accommodates up to 14 guests and is available for corporate dinners, celebrations, and curated Omakase events. We work closely with each host to design a bespoke experience — from custom menus to sake pairings and floral arrangements. Write to us at <a href="mailto:konnichiwa@yui.com">konnichiwa@yui.com</a> to discuss availability.</p>
+        </div>
+      </li>
+
+      <li class="faq-item">
+        <button class="faq-btn" aria-expanded="false">
+          <span class="faq-question">What are your opening hours?</span>
+          <span class="faq-icon">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+        </button>
+        <div class="faq-answer">
+          <p class="faq-answer-inner">YUI is open Tuesday through Sunday, 12:00 PM to 11:00 PM. Last orders for the kitchen are at 10:00 PM. We are closed on Mondays for prep and team wellness. During festive seasons or private buyouts, hours may vary — follow us on Instagram for updates.</p>
+        </div>
+      </li>
+
+    </ul>
+
+    <footer class="page-footer">
+      <span class="page-footer-copy">© 2025 YUI Restaurant</span>
+      <a href="privacy.html" class="page-footer-link">Privacy Policy</a>
+    </footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('.faq-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var item = this.closest('.faq-item');
+        var isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(function(el) {
+          el.classList.remove('open');
+          el.querySelector('.faq-btn').setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          this.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
