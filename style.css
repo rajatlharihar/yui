@@ -5115,7 +5115,7 @@
 /* ── Menu intro header (above FlowArt stack) ── */
 .menu-intro-header {
   padding: clamp(60px, 8vw, 120px) clamp(28px, 5vw, 80px) clamp(32px, 5vw, 64px);
-  background: #fff;
+  background: linear-gradient(to bottom, #ffffff 40%, #FFFDFE 100%);
 }
 .menu-intro-label {
   display: block;
@@ -5148,6 +5148,7 @@
   height: 100vh;
   overflow: hidden;
   clip-path: inset(0);
+  contain: paint; /* guarantees all child overflow is clipped at section boundary */
 }
 
 .mf-inner {
@@ -5159,6 +5160,7 @@
   transform-origin: bottom left;
   will-change: transform;
   box-sizing: border-box;
+  overflow: hidden; /* clips image to section boundary before/during rotation */
 }
 
 /* ── top row ── */
@@ -5350,16 +5352,16 @@
 }
 .mfi-desc {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(12px, 1vw, 14px);
-  line-height: 1.6;
-  opacity: 0;
-  max-height: 0;
+  font-size: clamp(11px, 0.9vw, 13px);
+  line-height: 1.55;
+  opacity: 0.38;
+  max-height: 40px;
   overflow: hidden;
-  margin-bottom: 0;
-  transition: opacity 0.3s ease 0.06s, max-height 0.38s cubic-bezier(0.22,1,0.36,1), margin-bottom 0.38s ease;
+  margin-bottom: 5px;
+  transition: opacity 0.3s ease, max-height 0.38s cubic-bezier(0.22,1,0.36,1), margin-bottom 0.38s ease;
 }
 .mf-item:hover .mfi-desc {
-  opacity: 0.52;
+  opacity: 0.65;
   max-height: 60px;
   margin-bottom: 10px;
 }
