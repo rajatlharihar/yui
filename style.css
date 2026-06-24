@@ -3807,7 +3807,7 @@
 }
 
 .minimap-desc {
-  font-family: var(--ff-body);
+  font-family: 'Outfit', sans-serif;
   font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.02em;
@@ -4789,7 +4789,7 @@
 .bento-section-hed {
   font-family: 'Restora', Georgia, serif;
   font-size: clamp(72px, 9vw, 220px);
-  font-weight: 400;
+  font-weight: 700;
   color: #0D0C0A;
   line-height: 0.9;
   letter-spacing: -0.02em;
