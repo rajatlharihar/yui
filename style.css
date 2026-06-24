@@ -5231,8 +5231,8 @@
 .mf-body--flip .mf-note { text-align: right; }
 .mf-body--flip .mf-img-bleed {
   left: auto;
-  right: clamp(272px, 38.5vw, 658px);
-  bottom: clamp(208px, 38.4vh, 449px);
+  right: clamp(299px, 42.4vw, 724px);
+  bottom: clamp(250px, 46vh, 539px);
 }
 .mf-body--flip .mf-img {
   object-position: bottom right;
@@ -5310,18 +5310,18 @@
 }
 .mfi-desc {
   font-family: 'Outfit', sans-serif;
-  font-size: clamp(11px, 0.9vw, 13px);
-  line-height: 1.55;
-  opacity: 0.38;
-  max-height: 40px;
+  font-size: clamp(12px, 0.95vw, 14px);
+  line-height: 1.65;
+  opacity: 0;
+  max-height: 0;
   overflow: hidden;
-  margin-bottom: 5px;
-  transition: opacity 0.3s ease, max-height 0.38s cubic-bezier(0.22,1,0.36,1), margin-bottom 0.38s ease;
+  margin-bottom: 0;
+  transition: opacity 0.35s ease, max-height 0.42s cubic-bezier(0.22,1,0.36,1), margin-bottom 0.38s ease;
 }
 .mf-item:hover .mfi-desc {
-  opacity: 0.65;
-  max-height: 60px;
-  margin-bottom: 10px;
+  opacity: 0.7;
+  max-height: 120px;
+  margin-bottom: 12px;
 }
 .mfi-tags {
   font-family: 'Outfit', sans-serif;
@@ -5695,7 +5695,7 @@
 
 .fy-loc-name {
   font-family: 'Outfit', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: rgba(255,253,254,0.55);
@@ -5704,10 +5704,10 @@
 
 .fy-loc-addr, .fy-loc-hours {
   font-family: 'Outfit', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.75;
-  color: rgba(255,253,254,0.25);
+  color: rgba(255,253,254,0.28);
   margin: 0;
 }
 
@@ -5717,22 +5717,22 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8px;
+  gap: 10px;
 }
 
 .fy-copy {
   font-family: 'Outfit', sans-serif;
-  font-size: 11px;
-  color: rgba(255,253,254,0.18);
+  font-size: 13px;
+  color: rgba(255,253,254,0.2);
   letter-spacing: 0.04em;
   margin: 0;
 }
 
 .fy-phone a {
   font-family: 'Outfit', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 500;
-  color: rgba(255,253,254,0.32);
+  color: rgba(255,253,254,0.35);
   text-decoration: none;
   transition: color 0.28s ease;
 }

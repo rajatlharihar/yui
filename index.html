@@ -45,18 +45,17 @@
       position: absolute;
       inset: 0;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 10vw;
+      align-items: flex-end;
+      justify-content: flex-start;
+      padding: 0 clamp(28px, 5vw, 80px) clamp(48px, 8vh, 96px);
       pointer-events: none;
       z-index: 10;
     }
     .precision-content {
       width: 100%;
-      height: 80%;
       display: flex;
-      flex-direction: column-reverse;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 28px;
       color: #000;
     }
     /* Restora font for the precision heading */
@@ -66,20 +65,46 @@
     }
     .precision-typewriter {
       font-family: 'Outfit', sans-serif;
-      font-size: 18px;
-      line-height: 1.6;
-      max-width: 50vw;
-      align-self: flex-end;
-      text-align: right;
-      font-weight: 500;
-      letter-spacing: 0.02em;
-      color: var(--muted);
+      font-size: clamp(14px, 1.15vw, 18px);
+      line-height: 1.65;
+      max-width: 44ch;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: rgba(11,11,9,0.52);
+    }
+    .precision-reserve-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #0B0B09;
+      text-decoration: none;
+      pointer-events: auto;
+      border: 1.5px solid rgba(11,11,9,0.25);
+      border-radius: 40px;
+      padding: 14px 28px;
+      transition: background 0.28s ease, color 0.28s ease, border-color 0.28s ease;
+    }
+    .precision-reserve-cta::after {
+      content: '→';
+      font-size: 13px;
+      font-weight: 300;
+    }
+    .precision-reserve-cta:hover {
+      background: #E32527;
+      color: #FFFDFE;
+      border-color: #E32527;
     }
     @media (max-width: 768px) {
-      .precision-overlay { padding: 40px 24px; }
-      .precision-content { height: 90%; }
-      .precision-typewriter { max-width: 100%; text-align: left; align-self: flex-start; }
+      .precision-overlay { padding: 0 clamp(20px, 5vw, 32px) 48px; }
+      .precision-content { gap: 20px; }
+      .precision-typewriter { max-width: 100%; }
       .precision-section { height: 140vh !important; }
+      #precisionHeadline { font-size: clamp(48px, 14vw, 96px) !important; }
     }
 
     /* PRELOADER */
@@ -184,6 +209,7 @@
               </h2>
             </div>
             <p class="precision-typewriter" id="precisionTypewriter"></p>
+            <a href="#reservation" class="precision-reserve-cta">Reserve a Table</a>
           </div>
         </div>
       </div>
@@ -294,7 +320,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Chicken Karaage 🌶 <span class="mfi-jp">チキン唐揚げ</span></div>
-          <div class="mfi-desc">Double-fried in aged soy-mirin brine, yuzu kosho aioli, toasted sesame</div>
+          <div class="mfi-desc">Double-fried in a 24-hour soy-mirin cure — shatter-crisp at the surface, steam-locked tender within. Lifted by yuzu kosho aioli and finished with micro shiso and toasted sesame.</div>
           <div class="mfi-tags">Gluten · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹345</span></div>
@@ -302,7 +328,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Tofu Katsu <span class="mfi-jp">豆腐カツ</span></div>
-          <div class="mfi-desc">House-pressed silken tofu in artisan panko, katsu demi-glace, pickled daikon</div>
+          <div class="mfi-desc">House-pressed silken tofu — drained overnight for a custard-smooth core — cloaked in artisan panko. Fried to a resonant amber, laid over a katsu demi-glace, with pickled daikon to cut through the richness.</div>
           <div class="mfi-tags">Veg · Gluten · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹315</span></div>
@@ -310,7 +336,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Veg Tempura <span class="mfi-jp">野菜天ぷら</span></div>
-          <div class="mfi-desc">Market-fresh vegetables in feather-light dashi batter, tentsuyu dipping broth</div>
+          <div class="mfi-desc">The market decides this daily — lotus root, shishito, sweet potato, nasu — each piece disappeared into ice-cold dashi batter and fried once, briefly, at a precise temperature. Tentsuyu dipping broth alongside.</div>
           <div class="mfi-tags">Veg · Gluten</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹345</span></div>
@@ -318,7 +344,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Chicken Katsu <span class="mfi-jp">チキンカツ</span></div>
-          <div class="mfi-desc">Free-range breast in artisan panko, tonkatsu glaze, house-pressed cucumber pickle</div>
+          <div class="mfi-desc">Free-range breast butterflied for evenness, pressed into artisan panko and fried to a deep golden crust. Rested before slicing, with tonkatsu glaze and a cucumber pickle pressed in-house for 36 hours.</div>
           <div class="mfi-tags">Gluten · Egg</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹345</span></div>
@@ -326,7 +352,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Cottage Cheese Katsu 🌶🌶 <span class="mfi-jp">パニールカツ</span></div>
-          <div class="mfi-desc">Handmade paneer in crisp Japanese breadcrumbs, aged tamarind reduction, micro herbs</div>
+          <div class="mfi-desc">Handmade paneer formed from morning milk, firmed overnight and sliced thick — encased in crisp Japanese breadcrumbs and fried golden. Served with an aged tamarind reduction that leans savoury, finished with micro herbs.</div>
           <div class="mfi-tags">Veg · Dairy · Gluten</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹315</span></div>
@@ -357,7 +383,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Salmon Nigiri <span class="mfi-jp">サーモン握り</span></div>
-          <div class="mfi-desc">Day-boat Atlantic salmon, hand-pressed on akazu-seasoned shari, wasabi</div>
+          <div class="mfi-desc">Day-boat Atlantic salmon, hand-pressed warm on akazu-seasoned shari. A brush of nikiri, a touch of wasabi — nothing else interrupts the cold-clean richness of the fish.</div>
           <div class="mfi-tags">Fish · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹345</span><span class="mfi-pv mfi-pv--alt">₹645</span></div>
@@ -365,7 +391,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Tuna Nigiri <span class="mfi-jp">マグロ握り</span></div>
-          <div class="mfi-desc">Lean akami tuna, soy-brushed nikiri, body-temperature shari</div>
+          <div class="mfi-desc">Lean akami selected for its clean mineral finish, rested to body temperature on shari. Soy-brushed nikiri seals the surface — a piece that speaks of restraint and precision.</div>
           <div class="mfi-tags">Fish · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹395</span><span class="mfi-pv mfi-pv--alt">₹745</span></div>
@@ -373,7 +399,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Yellowtail Nigiri <span class="mfi-jp">ハマチ握り</span></div>
-          <div class="mfi-desc">Cold-water hamachi, chive oil, white soy, hand-moulded rice</div>
+          <div class="mfi-desc">Cold-water hamachi with a fat that coats and lingers, lifted by chive oil and white soy. Pressed rice that exhales vinegar when bitten — a balance rarely achieved in a single mouthful.</div>
           <div class="mfi-tags">Fish · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹395</span><span class="mfi-pv mfi-pv--alt">₹745</span></div>
@@ -381,7 +407,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Prawn Nigiri <span class="mfi-jp">海老握り</span></div>
-          <div class="mfi-desc">Sweet ohmi prawn, brushed nikiri glaze, perfectly moulded shari</div>
+          <div class="mfi-desc">Sweet prawn cooked to just-set translucence, laid over perfectly moulded shari. A brushed nikiri glaze that quietly deepens the ocean sweetness — simple and immaculate.</div>
           <div class="mfi-tags">Shellfish · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹345</span><span class="mfi-pv mfi-pv--alt">₹645</span></div>
@@ -389,7 +415,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Scallop Nigiri <span class="mfi-jp">ホタテ握り</span></div>
-          <div class="mfi-desc">Seared Hokkaido scallop, ponzu pearls, micro shiso, seasoned rice</div>
+          <div class="mfi-desc">Hokkaido scallop seared to a caramelised crust while the core stays raw silk — laid on seasoned rice with ponzu pearls that burst at the bite and a crown of micro shiso.</div>
           <div class="mfi-tags">Shellfish · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹425</span><span class="mfi-pv mfi-pv--alt">₹795</span></div>
@@ -397,7 +423,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Avocado Nigiri <span class="mfi-jp">アボカド握り</span></div>
-          <div class="mfi-desc">Hass avocado, micro shiso, aged ponzu drizzle, black sesame</div>
+          <div class="mfi-desc">Hass avocado at its exact peak of ripeness, laid on black sesame-flecked shari. A careful pour of aged ponzu drizzle and micro shiso — clean, composed, quietly satisfying.</div>
           <div class="mfi-tags">Veg · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹315</span><span class="mfi-pv mfi-pv--alt">₹595</span></div>
@@ -405,7 +431,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Tamago Nigiri <span class="mfi-jp">玉子握り</span></div>
-          <div class="mfi-desc">Kaeshi-sweetened rolled egg, hand-sliced, bound with a ribbon of nori</div>
+          <div class="mfi-desc">Kaeshi-sweetened rolled egg built in seven careful layers, hand-sliced to exactly 3cm and bound to the shari with a thin ribbon of nori. The classic done with full attention.</div>
           <div class="mfi-tags">Veg · Egg · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹295</span><span class="mfi-pv mfi-pv--alt">₹545</span></div>
@@ -436,7 +462,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Chicken Katsu Roll 🌶 <span class="mfi-jp">チキンカツロール</span></div>
-          <div class="mfi-desc">Free-range panko chicken, Japanese cucumber, shichimi aioli, pickled ginger</div>
+          <div class="mfi-desc">Free-range panko-fried chicken inside-out with Japanese cucumber for crunch. Shichimi aioli and pickled ginger to wake the palate — warmth that builds slowly after each piece.</div>
           <div class="mfi-tags">Gluten · Egg</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
@@ -444,7 +470,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Teriyaki Chicken Roll <span class="mfi-jp">照り焼きチキンロール</span></div>
-          <div class="mfi-desc">Glaze-roasted chicken thigh, ripe avocado, sesame crunch, micro cress</div>
+          <div class="mfi-desc">Glaze-roasted thigh caramelised to a mahogany sheen, with ripe avocado and sesame crunch. Micro cress for brightness — rich, balanced, deeply satisfying on every level.</div>
           <div class="mfi-tags">Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
@@ -452,7 +478,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">California Roll <span class="mfi-jp">カリフォルニアロール</span></div>
-          <div class="mfi-desc">Ocean crab, avocado, English cucumber, flying fish roe, Japanese mayo</div>
+          <div class="mfi-desc">Ocean crab, ripe avocado, English cucumber and flying fish roe that pop at the surface. Japanese mayo binds it together — the roll that started everything, made with genuine care.</div>
           <div class="mfi-tags">Shellfish</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
@@ -460,7 +486,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Salmon Roll <span class="mfi-jp">サーモンロール</span></div>
-          <div class="mfi-desc">Fresh salmon belly, cream cheese, English cucumber, dill-compressed oil</div>
+          <div class="mfi-desc">Fresh salmon belly with cream cheese and English cucumber — cool, clean, slightly herbaceous. A dill-compressed oil finish that turns the whole thing bright and unexpectedly light.</div>
           <div class="mfi-tags">Fish · Dairy</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
@@ -468,7 +494,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Prawn Tempura Roll 🌶 <span class="mfi-jp">海老天ぷらロール</span></div>
-          <div class="mfi-desc">Crisp tiger prawn, avocado fan, yuzu mayo, togarashi flake, nori</div>
+          <div class="mfi-desc">Crisp tiger prawn tempura with an avocado fan and yuzu mayo that cuts through the richness. A flake of togarashi for slow heat, a wrap of nori for earth — crunch, creaminess, and fire in every bite.</div>
           <div class="mfi-tags">Shellfish · Gluten</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹375</span><span class="mfi-pv mfi-pv--alt">₹675</span></div>
@@ -491,7 +517,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Teriyaki Chicken Ramen <span class="mfi-jp">照り焼きラーメン</span></div>
-          <div class="mfi-desc">24-hour shoyu broth, glazed free-range thigh, marinated tamago, menma, scallion</div>
+          <div class="mfi-desc">A 24-hour shoyu broth — clear amber, deeply savoury — with glazed free-range thigh that gives way at the touch. Marinated tamago, menma, scallion, and a tangle of fresh ramen noodles.</div>
           <div class="mfi-tags">Gluten · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
@@ -499,7 +525,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Karaage Ramen 🌶 <span class="mfi-jp">唐揚げラーメン</span></div>
-          <div class="mfi-desc">Tonkotsu-style umami broth, twice-fried karaage, nori, black garlic oil</div>
+          <div class="mfi-desc">Tonkotsu-style broth clouded and rich with weeks of collagen reduction, carrying twice-fried karaage that holds its crunch above the surface. Nori, scallion, and black garlic oil that makes the bowl sing.</div>
           <div class="mfi-tags">Gluten · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
@@ -507,7 +533,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Katsu Ramen <span class="mfi-jp">カツラーメン</span></div>
-          <div class="mfi-desc">Slow-cooked tonkotsu broth, hand-breaded cutlet, soft-boiled tamago, bamboo shoot</div>
+          <div class="mfi-desc">Slow-cooked tonkotsu broth reduced to silk, with a hand-breaded cutlet that somehow holds its crunch. A soft-boiled tamago split at service, bamboo shoot, nori — the bowl that converts people.</div>
           <div class="mfi-tags">Gluten · Egg · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
@@ -515,7 +541,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Tofu Katsu Ramen 🌶🌶 <span class="mfi-jp">豆腐カツラーメン</span></div>
-          <div class="mfi-desc">Fermented red miso base, crisp silken tofu cutlet, beni shoga, toasted sesame</div>
+          <div class="mfi-desc">Fermented red miso base with body and slow heat, balanced by a crisp silken tofu cutlet that dissolves at the centre. Beni shoga for acid, toasted sesame for finish — complex and deeply warming.</div>
           <div class="mfi-tags">Veg · Gluten · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
@@ -523,7 +549,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Cottage Cheese Ramen <span class="mfi-jp">パニールラーメン</span></div>
-          <div class="mfi-desc">Shio-style dashi broth, grilled paneer, king oyster mushrooms, yuzu zest</div>
+          <div class="mfi-desc">Shio-style dashi broth — the most restrained of our bowls, light and luminous. Grilled paneer with a char that gives it weight, king oyster mushrooms for earthiness, and a breath of yuzu zest at the finish.</div>
           <div class="mfi-tags">Veg · Dairy · Gluten</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
@@ -547,7 +573,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Chicken Katsu Curry <span class="mfi-jp">チキンカツカレー</span></div>
-          <div class="mfi-desc">70-hour golden curry roux, free-range panko cutlet, pickled fukujinzuke, steamed rice</div>
+          <div class="mfi-desc">A 70-hour golden curry roux built from nineteen spices — slightly sweet, deeply aromatic, with heat that arrives late. Free-range panko cutlet, pickled fukujinzuke, and compressed steamed rice. The best version of this dish you will eat.</div>
           <div class="mfi-tags">Gluten · Egg · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
@@ -555,7 +581,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Karaage Curry <span class="mfi-jp">唐揚げカレー</span></div>
-          <div class="mfi-desc">Aromatic house curry roux, twice-fried karaage, caramelised onion, Japanese pickle</div>
+          <div class="mfi-desc">Aromatic house curry roux with caramelised onion worked in slowly for sweetness and body. Twice-fried karaage holds its structure against the sauce — a textural tension that makes every spoonful interesting.</div>
           <div class="mfi-tags">Gluten · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
@@ -563,7 +589,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Teriyaki Chicken Curry <span class="mfi-jp">照り焼きカレー</span></div>
-          <div class="mfi-desc">Teriyaki-glazed free-range thigh, fragrant S&amp;B-inspired roux, compressed sticky rice</div>
+          <div class="mfi-desc">Teriyaki-glazed thigh with a mahogany lacquer meets a fragrant S&B-inspired roux. Compressed sticky rice that holds the sauce — sweet, savoury, and warmly spiced. Three textures in one plate.</div>
           <div class="mfi-tags">Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹445</span></div>
@@ -571,7 +597,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Tofu Katsu Curry <span class="mfi-jp">豆腐カツカレー</span></div>
-          <div class="mfi-desc">Crisp silken tofu cutlet, mild coconut-infused Japanese curry, house pickle, sesame rice</div>
+          <div class="mfi-desc">A mild coconut-infused Japanese curry with a gentleness that lets each element speak. The crisp silken tofu cutlet provides the counterpoint this quiet curry needs, with house pickle and sesame rice alongside.</div>
           <div class="mfi-tags">Veg · Gluten · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
@@ -579,7 +605,7 @@
       <div class="mf-item">
         <div class="mfi-left">
           <div class="mfi-name">Cottage Cheese Curry <span class="mfi-jp">パニールカレー</span></div>
-          <div class="mfi-desc">Grilled handmade paneer, mildly spiced Japanese golden curry, compressed rice, nori</div>
+          <div class="mfi-desc">Grilled handmade paneer in a mildly spiced Japanese golden curry — an Eastern sensibility applied to a familiar comfort. Compressed rice for substance, nori for a quiet earthiness at the end.</div>
           <div class="mfi-tags">Veg · Dairy · Sesame</div>
         </div>
         <div class="mfi-prices"><span class="mfi-pv">₹395</span></div>
@@ -2698,6 +2724,45 @@
         }
       }, { passive: true });
     }
+
+    // ── FOOTER LOGO — same frames, plays on footer hover/touch ──
+    (function() {
+      const fyCanvas = document.getElementById('fyLogoCanvas');
+      if (!fyCanvas) return;
+      const fyCtx = fyCanvas.getContext('2d');
+      let fyFrame = 0, fyPlaying = false, fyLastTime = 0;
+
+      function drawFy(idx) {
+        const img = frames[idx];
+        if (!img) return;
+        fyCtx.clearRect(0, 0, fyCanvas.width, fyCanvas.height);
+        fyCtx.drawImage(img, 0, 0, fyCanvas.width, fyCanvas.height);
+      }
+
+      function fyTick(now) {
+        if (fyFrame >= FRAME_COUNT - 1) { drawFy(FRAME_COUNT - 1); fyPlaying = false; return; }
+        if (now - fyLastTime >= INTERVAL) { fyLastTime = now; if (frames[fyFrame]) drawFy(fyFrame); fyFrame++; }
+        requestAnimationFrame(fyTick);
+      }
+
+      function fyPlay() {
+        if (fyPlaying) return;
+        fyFrame = 0; fyPlaying = true; fyLastTime = performance.now();
+        requestAnimationFrame(fyTick);
+      }
+
+      function fyWait() {
+        if (frames[0]) { drawFy(0); }
+        else requestAnimationFrame(fyWait);
+      }
+      fyWait();
+
+      const footer = document.querySelector('footer.fy');
+      if (footer) {
+        footer.addEventListener('mouseenter', fyPlay);
+        footer.addEventListener('touchstart', fyPlay, { passive: true });
+      }
+    })();
   })();
   </script>
 
@@ -3136,44 +3201,6 @@
 
   })();
 
-  // Footer logo — same frames array, plays on footer hover/touch
-  (function() {
-    var fyCanvas = document.getElementById('fyLogoCanvas');
-    if (!fyCanvas) return;
-    var fyCtx = fyCanvas.getContext('2d');
-    var fyFrame = 0, fyPlaying = false, fyLastTime = 0;
-
-    function drawFy(idx) {
-      var img = frames[idx];
-      if (!img || !img.complete) return;
-      fyCtx.clearRect(0, 0, fyCanvas.width, fyCanvas.height);
-      fyCtx.drawImage(img, 0, 0, fyCanvas.width, fyCanvas.height);
-    }
-
-    function fyTick(now) {
-      if (fyFrame >= FRAME_COUNT - 1) { drawFy(FRAME_COUNT - 1); fyPlaying = false; return; }
-      if (now - fyLastTime >= INTERVAL) { fyLastTime = now; drawFy(fyFrame); fyFrame++; }
-      requestAnimationFrame(fyTick);
-    }
-
-    function fyPlay() {
-      if (fyPlaying) return;
-      fyFrame = 0; fyPlaying = true; fyLastTime = performance.now();
-      requestAnimationFrame(fyTick);
-    }
-
-    function fyInit() {
-      if (frames[0] && frames[0].complete) drawFy(0);
-      else setTimeout(fyInit, 120);
-    }
-    fyInit();
-
-    var footer = document.querySelector('footer.fy');
-    if (footer) {
-      footer.addEventListener('mouseenter', fyPlay);
-      footer.addEventListener('touchstart', fyPlay, { passive: true });
-    }
-  })();
   </script>
 </body>
 </html>
