@@ -908,46 +908,46 @@
     <!-- YUI ASSISTANT -->
   <div class="yui-wrapper" id="yui-widget">
     <div class="yui-panel" id="yui-chat-panel">
+
       <!-- Header -->
       <div class="yui-header">
-        <button class="yui-back" id="yui-btn-back" aria-label="Back">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-        </button>
-        <div class="yui-avatar">
-          <img src="images/yui/Main_Logo_Illustrations%202.svg" alt="Yui" style="width: 28px; height: auto; filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
-        </div>
-        <div class="yui-header-info">
-          <div class="yui-name">yui <span class="yui-jp">結</span></div>
-          <div class="yui-status-area">
-            <div class="yui-status-text" id="yui-status-text">Yokoso ようこそ</div>
-            <div class="yui-status-indicator" id="yui-status-indicator">
-              <span></span><span></span><span></span><span></span>
+        <div class="yui-header-left">
+          <div class="yui-avatar">
+            <img src="images/yui/Main_Logo_Illustrations%202.svg" alt="Yui" style="width:22px;height:auto;filter:brightness(0) invert(1);">
+          </div>
+          <div class="yui-header-info">
+            <div class="yui-name">yui <span class="yui-jp">結</span></div>
+            <div class="yui-status-area">
+              <span class="yui-online-dot"></span>
+              <div class="yui-status-text" id="yui-status-text">ようこそ · Online</div>
+              <div class="yui-status-indicator" id="yui-status-indicator">
+                <span></span><span></span><span></span><span></span>
+              </div>
             </div>
           </div>
         </div>
         <button class="yui-close" id="yui-btn-close" aria-label="Close">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="9" cy="9" r="9" fill="rgba(0,0,0,0.06)"/>
-            <path d="M6 6L12 12M12 6L6 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <button class="yui-back" id="yui-btn-back" aria-label="Back" style="display:none">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 4l-6 6 6 6"/>
           </svg>
         </button>
       </div>
 
-
-      <!-- Messages Pane / Empty State -->
+      <!-- Messages Pane -->
       <div class="yui-messages" id="yui-msg-container">
+        <!-- Empty / welcome state -->
         <div class="yui-empty-state">
-          <svg class="yui-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <div class="yui-instruction">Yokoso ようこそ</div>
-          <div class="yui-placeholder-text">Conversation will appear here</div>
+          <div class="yui-welcome-badge">YUI · 結</div>
+          <p class="yui-welcome-title">Good evening.<br>How can I help?</p>
+          <p class="yui-welcome-sub">Ask me about our menu, reservations,<br>or anything about the experience.</p>
         </div>
-        
-        <!-- Typing indicator skeleton -->
+
+        <!-- Typing indicator -->
         <div class="yui-typing" id="yui-typing-indicator">
           <div class="yui-dot"></div>
           <div class="yui-dot"></div>
@@ -955,25 +955,33 @@
         </div>
       </div>
 
-      <!-- Action Area -->
+      <!-- Suggestion chips (hide once chat starts) -->
+      <div class="yui-suggestions" id="yui-suggestions">
+        <button class="yui-chip">Book a table</button>
+        <button class="yui-chip">Today's menu</button>
+        <button class="yui-chip">Opening hours</button>
+        <button class="yui-chip">Omakase</button>
+      </div>
+
+      <!-- Input Row -->
       <div class="yui-action-area">
         <div class="yui-input-wrapper">
-          <input type="text" id="yui-input" class="yui-text-input" placeholder="Type a message..." autocomplete="off">
-          <button id="yui-btn-send" class="yui-btn-send" aria-label="Send message">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13"></line>
-              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          <button class="yui-mic-pill" id="yui-btn-mic-main" aria-label="Voice input">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            </svg>
+          </button>
+          <input type="text" id="yui-input" class="yui-text-input" placeholder="Ask anything…" autocomplete="off">
+          <button id="yui-btn-send" class="yui-btn-send" aria-label="Send">
+            <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+              <path d="M3 10l14-7-5 7 5 7-14-7z" fill="currentColor"/>
             </svg>
           </button>
         </div>
-        <button class="yui-mic-large" id="yui-btn-mic-main">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-            <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-            <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
-          </svg>
-        </button>
-        <div class="yui-powered">Powered by yui assistant</div>
+        <p class="yui-powered">YUI · Modern Japanese · Bengaluru</p>
       </div>
+
     </div>
 
     <!-- Floating Launcher -->
@@ -1409,10 +1417,33 @@
 
       sendInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-          isVoiceMode = false; // Keyboard means no auto-speak
+          isVoiceMode = false;
           handleSend();
         }
       });
+
+      // Suggestion chips
+      const suggestionsEl = document.getElementById('yui-suggestions');
+      if (suggestionsEl) {
+        suggestionsEl.querySelectorAll('.yui-chip').forEach(chip => {
+          chip.addEventListener('click', () => {
+            sendInput.value = chip.textContent;
+            isVoiceMode = false;
+            handleSend();
+            suggestionsEl.style.display = 'none';
+          });
+        });
+      }
+
+      // Hide suggestions once chat has messages
+      const origAddMsg = panel.classList.add.bind(panel.classList);
+      const hideSuggestionsOnMessage = () => {
+        if (suggestionsEl && panel.classList.contains('has-messages')) {
+          suggestionsEl.style.display = 'none';
+        }
+      };
+      const msgObserver = new MutationObserver(hideSuggestionsOnMessage);
+      msgObserver.observe(panel, { attributes: true, attributeFilter: ['class'] });
 
       // About logo parallax
       (function () {
