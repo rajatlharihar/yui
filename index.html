@@ -44,24 +44,40 @@
     .precision-overlay {
       position: absolute;
       inset: 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: flex-start;
-      padding: 0 clamp(28px, 5vw, 80px) clamp(48px, 8vh, 96px);
       pointer-events: none;
-      z-index: 10;
+      z-index: 9;
+      color: #000;
     }
     .precision-content {
+      position: relative;
       width: 100%;
+      height: 100%;
+    }
+    /* Heading sits at the bottom; JS nudges it down behind the red bar */
+    .precision-left {
+      position: absolute;
+      bottom: 12vh;
+      left: calc(80px + 4vw);
+    }
+    /* Body + CTA pinned to top-right */
+    .precision-right {
+      position: absolute;
+      top: clamp(48px, 8vh, 96px);
+      left: calc(50% + 8vw);
       display: flex;
       flex-direction: column;
       gap: 28px;
-      color: #000;
+      align-items: flex-start;
+      pointer-events: auto;
     }
-    /* Restora font for the precision heading */
     #precisionHeadline .hed-layer {
       font-family: 'Restora', Georgia, serif;
       font-feature-settings: "liga" 1, "rlig" 1, "salt" 1, "ss01" 1;
+      text-align: left;
+    }
+    #precisionHeadline {
+      font-size: clamp(116px, 7.2vw, 170px) !important;
+      text-align: left;
     }
     .precision-typewriter {
       font-family: 'Outfit', sans-serif;
@@ -85,7 +101,7 @@
       text-decoration: none;
       pointer-events: auto;
       border: 1.5px solid rgba(11,11,9,0.25);
-      border-radius: 40px;
+      border-radius: 3px;
       padding: 14px 28px;
       transition: background 0.28s ease, color 0.28s ease, border-color 0.28s ease;
     }
@@ -100,11 +116,16 @@
       border-color: #E32527;
     }
     @media (max-width: 768px) {
-      .precision-overlay { padding: 0 clamp(20px, 5vw, 32px) 48px; }
-      .precision-content { gap: 20px; }
-      .precision-typewriter { max-width: 100%; }
-      .precision-section { height: 140vh !important; }
+      .precision-left {
+        left: clamp(20px, 5vw, 32px);
+        bottom: 0;
+      }
+      .precision-right {
+        top: clamp(20px, 5vw, 32px);
+        left: clamp(20px, 5vw, 32px);
+      }
       #precisionHeadline { font-size: clamp(48px, 14vw, 96px) !important; }
+      .precision-section { height: 140vh !important; }
     }
 
     /* PRELOADER */
@@ -202,14 +223,18 @@
         </div>
         <div class="precision-overlay">
           <div class="precision-content">
-            <div class="precision-glitch-trigger">
-              <h2 class="glitch-hed" data-glitch-jp="精度" id="precisionHeadline">
-                <span class="hed-layer en active">Japanese <span class="red-text">Precision</span></span>
-                <span class="hed-layer jp">精度</span>
-              </h2>
+            <div class="precision-left">
+              <div class="precision-glitch-trigger">
+                <h2 class="glitch-hed" data-glitch-jp="精度" id="precisionHeadline">
+                  <span class="hed-layer en active">Japanese <span class="red-text">Precision</span></span>
+                  <span class="hed-layer jp">精度</span>
+                </h2>
+              </div>
             </div>
-            <p class="precision-typewriter" id="precisionTypewriter"></p>
-            <a href="#reservation" class="precision-reserve-cta">Reserve a Table</a>
+            <div class="precision-right">
+              <p class="precision-typewriter" id="precisionTypewriter"></p>
+              <a href="#reservation" class="precision-reserve-cta">Reserve a Table</a>
+            </div>
           </div>
         </div>
       </div>
@@ -301,7 +326,6 @@
 
 
 <div class="menu-intro-header">
-  <span class="menu-intro-label">Our offerings</span>
   <h2 class="menu-intro-title">Menu</h2>
 </div>
 
@@ -362,7 +386,7 @@
     </div>
   </section>
 
-  <section class="mf-section" data-mf-idx="1">
+  <section class="mf-section" data-mf-idx="1" id="menu-nigiri">
     <div class="mf-inner" style="background:#E32527;color:#FFFDFE;">
       <div class="mf-top"><span class="mf-wm">握り</span></div>
       <hr class="mf-rule" style="border-color:rgba(255,253,254,0.2);">
@@ -441,7 +465,7 @@
     </div>
   </section>
 
-  <section class="mf-section" data-mf-idx="2">
+  <section class="mf-section" data-mf-idx="2" id="menu-sushi">
     <div class="mf-inner" style="background:#0B0B09;color:#FFFDFE;">
       <div class="mf-top"><span class="mf-wm">寿司</span></div>
       <hr class="mf-rule" style="border-color:rgba(255,253,254,0.15);">
@@ -616,78 +640,55 @@
   </section>
 
 </div>
-  <section id="reservation" class="res-wrap">
+  <section id="reservation" class="res-section">
+
+    <!-- LEFT: Editorial column -->
     <div class="res-left">
-      <div class="res-left-grain"></div>
-      <img src="images/yui/yui-logo-wordmark.svg" class="res-logo-bg" alt="Yui Logo">
-      
-      <div class="res-editorial-container">
-        <span class="eb-label">Make a Reservation</span>
-        <div class="glitch-hed-wrapper">
-          <h2 class="glitch-hed" data-glitch-jp="ご予約">
-            <span class="hed-layer en active">Host <span class="red-text">You.</span></span>
-            <span class="hed-layer jp">ご予約</span>
-          </h2>
+      <div class="res-watermark" aria-hidden="true">ご予約</div>
+
+      <div class="res-left-inner">
+        <h2 class="res-hed">Save your seat.<br>We'll handle<br>the rest.</h2>
+        <p class="res-body">Reserve your seat at YUI and allow us to prepare an evening designed around exceptional food, thoughtful service, and unforgettable moments. We confirm within 4 hours.</p>
+      </div>
+
+      <div class="res-info-block">
+        <div class="res-info-row">
+          <span class="res-info-lbl">Address</span>
+          <span class="res-info-val">No. 17, 3rd Cross, Greenleaf Layout, Bengaluru 560114</span>
         </div>
-        
-        <p class="res-body">We would be glad to host you. Reserve your table at Yui and let us arrange an evening you'll carry home with you.</p>
-        
-        <div class="res-details">
-          <div class="rd">
-            <div class="rd-icon">
-              <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-            </div>
-            <div>
-              <div class="rd-lbl">Address</div>
-              <div class="rd-val">No. 17, 3rd Cross, Greenleaf Layout<br>Sector 5, Bengaluru • 560114</div>
-            </div>
-          </div>
-          
-          <div class="rd">
-            <div class="rd-icon">
-              <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-            </div>
-            <div>
-              <div class="rd-lbl">Phone</div>
-              <div class="rd-val">+91 89517 65556</div>
-            </div>
-          </div>
-          
-          <div class="rd">
-            <div class="rd-icon">
-              <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-            </div>
-            <div>
-              <div class="rd-lbl">Hours</div>
-              <div class="rd-val">Tue • Sun: 12pm • 3pm · 7pm • 11pm<br>Mondays closed</div>
-            </div>
-          </div>
+        <div class="res-info-row">
+          <span class="res-info-lbl">Phone</span>
+          <span class="res-info-val">+91 89517 65556</span>
+        </div>
+        <div class="res-info-row">
+          <span class="res-info-lbl">Hours</span>
+          <span class="res-info-val">Tue – Sun &nbsp;·&nbsp; 12 PM – 11 PM &nbsp;·&nbsp; Closed Mondays</span>
         </div>
       </div>
-      <div class="res-kanji">結</div>
     </div>
+
+    <!-- RIGHT: Flat form, no card -->
     <div class="res-right">
-      <h2 class="cf-title r">Reserve your visit</h2>
-      <p class="cf-sub r d1">Fill in the details and we will confirm within 4 hours.</p>
       <form id="reservationForm" autocomplete="off" novalidate>
-        <!-- Toast replaced by statusModal popup -->
-        <div class="fg r d1">
-          <label class="fl" for="res-name">Full Name</label>
-          <input class="fi" id="res-name" name="name" type="text" placeholder="Arjun Mehta" required />
-        </div>
-        <div class="fg r d2">
-          <label class="fl" for="res-phone">Phone Number</label>
-          <input class="fi" id="res-phone" name="phone" type="tel" placeholder="+91 98765 43210" required />
+        <div class="f2">
+          <div class="fg r d1">
+            <label class="fl" for="res-name">Full Name <span class="res-req">*</span></label>
+            <input class="fi" id="res-name" name="name" type="text" placeholder="Arjun Mehta" required />
+          </div>
+          <div class="fg r d2">
+            <label class="fl" for="res-phone">Phone Number <span class="res-req">*</span></label>
+            <input class="fi" id="res-phone" name="phone" type="tel" placeholder="+91 98765 43210" required />
+          </div>
         </div>
         <div class="f2">
           <div class="fg r d3 custom-date-picker" id="datePickerContainer">
-            <label class="fl" for="res-date">Date</label>
+            <label class="fl" for="res-date">Date <span class="res-req">*</span></label>
             <div class="fi hov date-trigger" id="dateTrigger" onclick="toggleDateDropdown()">Select Date</div>
             <div class="date-dropdown" id="dateDropdown" onclick="event.stopPropagation()"></div>
             <input type="hidden" name="date" id="res-date" required />
           </div>
           <div class="fg r d3 custom-time-picker" id="timePickerContainer">
-            <label class="fl" for="res-time">Time</label>
+            <label class="fl" for="res-time">Time <span class="res-req">*</span></label>
             <div class="time-trigger fi hov" id="timeTrigger" onclick="toggleTimeDropdown()">19:00</div>
             <div class="time-dropdown" id="timeDropdown" onclick="event.stopPropagation()">
               <div class="time-dropdown-inner" id="timeDropdownInner"></div>
@@ -696,7 +697,7 @@
           </div>
         </div>
         <div class="fg r d4">
-          <label class="fl">Party Size</label>
+          <label class="fl">Party Size <span class="res-req">*</span></label>
           <div class="chips" id="partySizeChips">
             <button type="button" class="chip on hov" data-value="2" onclick="pickSize(this)">2</button>
             <button type="button" class="chip hov" data-value="4" onclick="pickSize(this)">4</button>
@@ -706,43 +707,42 @@
           <input type="hidden" name="partySize" id="res-partySize" value="2" />
         </div>
         <div class="fg r d4">
-          <label class="fl">Occasion <span
-              style="font-weight:400;letter-spacing:.08em;text-transform:none;opacity:.5">(optional)</span></label>
+          <label class="fl">Occasion <span class="res-optional">(optional)</span></label>
           <div class="chips" id="occasionChips">
             <button type="button" class="chip hov" data-value="Birthday" onclick="pickOccasion(this)">Birthday</button>
-            <button type="button" class="chip hov" data-value="Anniversary"
-              onclick="pickOccasion(this)">Anniversary</button>
+            <button type="button" class="chip hov" data-value="Anniversary" onclick="pickOccasion(this)">Anniversary</button>
             <button type="button" class="chip hov" data-value="Business" onclick="pickOccasion(this)">Business</button>
-            <button type="button" class="chip hov" data-value="Casual dining" onclick="pickOccasion(this)">Casual
-              dining</button>
+            <button type="button" class="chip hov" data-value="Casual dining" onclick="pickOccasion(this)">Casual dining</button>
           </div>
           <input type="hidden" name="occasion" id="res-occasion" value="" />
         </div>
         <div class="fg r d4">
-          <label class="fl" for="res-note">Note <span
-              style="font-weight:400;letter-spacing:.08em;text-transform:none;opacity:.5">(optional)</span></label>
-          <textarea class="fi-textarea" id="res-note" name="note" placeholder="Any special requests"
-            rows="3"></textarea>
+          <label class="fl" for="res-note">Note <span class="res-optional">(optional)</span></label>
+          <textarea class="fi-textarea" id="res-note" name="note" placeholder="Tell us about allergies, celebrations, seating preferences, or anything else we should know." rows="3"></textarea>
         </div>
-        <button type="submit" class="cf-submit hov r" id="submitBtn" style="margin-top:28px">
-          <span class="btn-label">Confirm reservation</span>
+        <button type="submit" class="cf-submit hov r" id="submitBtn">
+          <span class="btn-label">Reserve Your Table</span>
           <span class="spinner"></span>
-          <svg viewBox="0 0 15 15" fill="none">
-            <path d="M1 7.5h13M9 3.5l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round" />
-          </svg>
         </button>
       </form>
     </div>
+
   </section>
-  <footer class="fy">
+  <footer class="fy" id="site-footer">
     <div class="fy-inner">
 
       <!-- TOP: Logo mark + Editorial headline -->
       <div class="fy-top">
         <div class="fy-logo-wrap" data-fy-reveal data-fy-delay="0">
-          <div class="fy-logo-box"><canvas id="fyLogoCanvas" width="140" height="140"></canvas></div>
-          <p class="fy-tagline">Modern Japanese Dining · Bengaluru</p>
+          <canvas id="fyLogoCanvas" width="140" height="140"></canvas>
+          <div class="fy-logo-row">
+            <button class="fy-scroll-top" id="fyScrollTop" aria-label="Back to top">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M7 11V3M3 7l4-4 4 4" stroke="#FFFDFE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <a href="#reservation" class="fy-footer-reserve">Reserve Now<span class="fy-footer-reserve-arr"> →</span></a>
+          </div>
         </div>
         <div class="fy-hed-wrap" data-fy-reveal data-fy-delay="120">
           <h2 class="fy-hed">An evening<br>worth<br>returning to.</h2>
@@ -751,7 +751,6 @@
 
       <!-- RESERVATION EMAIL -->
       <div class="fy-res-row" data-fy-reveal data-fy-delay="60">
-        <span class="fy-res-label">Reservations</span>
         <a href="mailto:konnichiwa@yui.com" class="fy-email">konnichiwa@yui.com</a>
       </div>
 
@@ -767,22 +766,22 @@
         </div>
         <nav class="fy-nav" data-fy-reveal data-fy-delay="80">
           <p class="fy-col-label">Navigate</p>
-          <a href="#menu" class="fy-navlink">Menu</a>
-          <a href="#reservation" class="fy-navlink">Reservations</a>
-          <a href="#about" class="fy-navlink">About YUI</a>
-          <a href="faq.html" class="fy-navlink">FAQs</a>
-          <a href="privacy.html" class="fy-navlink">Privacy Policy</a>
+          <a href="#menu" class="fy-navlink">Menu<span class="fy-arr"> ↗</span></a>
+          <a href="#reservation" class="fy-navlink">Reservations<span class="fy-arr"> ↗</span></a>
+          <a href="#about" class="fy-navlink">About YUI<span class="fy-arr"> ↗</span></a>
+          <a href="faq.html" class="fy-navlink">FAQs<span class="fy-arr"> ↗</span></a>
+          <a href="privacy.html" class="fy-navlink">Privacy Policy<span class="fy-arr"> ↗</span></a>
         </nav>
       </div>
 
       <!-- EXPERIENCE TAGS -->
       <div class="fy-tags">
-        <span class="fy-tag">Omakase</span>
-        <span class="fy-tag">Sushi</span>
-        <span class="fy-tag">Signature Cocktails</span>
-        <span class="fy-tag">Private Dining</span>
-        <span class="fy-tag">Seasonal Menu</span>
-        <span class="fy-tag">Japanese Cuisine</span>
+        <a class="fy-tag" href="#reservation">Omakase</a>
+        <a class="fy-tag" href="#menu-sushi" data-menu-idx="2">Sushi</a>
+        <a class="fy-tag" href="#menu-nigiri" data-menu-idx="1">Nigiri</a>
+        <a class="fy-tag" href="#reservation">Private Dining</a>
+        <a class="fy-tag" href="#menu">Seasonal Menu</a>
+        <a class="fy-tag" href="#about">Japanese Cuisine</a>
       </div>
 
       <!-- BOTTOM: Location + Copyright -->
@@ -850,6 +849,8 @@
       }
       window.addEventListener('scroll', checkNav, { passive: true });
       checkNav();
+      // Expose so Lenis init (below) can hook it in too
+      window._checkNav = checkNav;
     }
     // Reveal
     const obs = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) e.target.classList.add('up') }), { threshold: .08, rootMargin: '0px 0px -24px 0px' });
@@ -1047,12 +1048,7 @@
           const MIC_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>`;
           const STOP_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>`;
           let isVoiceMode = false;
-          let chatHistory = [];
-          try {
-            chatHistory = JSON.parse(localStorage.getItem('yui_chat_history') || '[]');
-          } catch (e) {
-            console.error("YUI Chatbot: Failed to parse chat history:", e);
-          }
+          let chatHistory = []; // session-only, never persisted
           let yuiVoiceAudio = null;
 
       // Voice Activity Detection (VAD) & Audio Feedback chimes
@@ -1242,14 +1238,6 @@
         msgContainer.scrollTop = msgContainer.scrollHeight;
       };
 
-      // Load existing history into UI
-      if (chatHistory.length > 0) {
-        panel.classList.add('has-messages');
-        chatHistory.forEach(m => {
-          if (m.role !== 'system') addMessage(m.content, m.role === 'user' ? 'user' : 'bot');
-        });
-      }
-
       const speakYui = (text, onStartCallback) => {
         if (yuiVoiceAudio) {
           yuiVoiceAudio.pause();
@@ -1288,7 +1276,6 @@
 
         setYuiState('thinking');
         chatHistory.push({ role: 'user', content: text });
-        localStorage.setItem('yui_chat_history', JSON.stringify(chatHistory));
         sendInput.value = '';
         addMessage(text, 'user');
 
@@ -1299,9 +1286,10 @@
           const response = await fetch(`${API_BASE}/api/chat`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
               messages: chatHistory,
-              userName: localStorage.getItem('yui_user_name')
+              userName: localStorage.getItem('yui_user_name'),
+              userPhone: localStorage.getItem('yui_user_phone')
             })
           });
 
@@ -1311,13 +1299,9 @@
           if (data.reply) {
             chatHistory.push({ role: 'assistant', content: data.reply });
             
-            // If the bot learned a name, save it!
-            if (data.saveName) {
-              localStorage.setItem('yui_user_name', data.saveName);
-            }
-            
-            localStorage.setItem('yui_chat_history', JSON.stringify(chatHistory));
-            
+            if (data.saveName) localStorage.setItem('yui_user_name', data.saveName);
+            if (data.savePhone) localStorage.setItem('yui_user_phone', data.savePhone);
+
             if (isVoiceMode) {
               // Voice mode: speak AND show text with animation
               speakYui(data.reply, () => {
@@ -2121,7 +2105,7 @@
       LERP_FACTOR: 0.05,
       BUFFER_SIZE: 2,
       MAX_VELOCITY: 150,
-      SNAP_DURATION: 280,
+      SNAP_DURATION: 220,
     };
 
     const lerp = (start, end, factor) => start + (end - start) * factor;
@@ -2159,6 +2143,7 @@
     let renderedMin = null;
     let renderedMax = null;
     let lastActiveIdx = -1;
+    let renderedPositionsY = null;
 
     const aboutEl = document.getElementById('about');
     const parallaxContainer = document.querySelector('#about .parallax-container');
@@ -2190,43 +2175,45 @@
       state.snapStart = { time: Date.now(), y: state.targetY, target };
     };
 
+    // Cached img refs — avoids querySelector inside the hot rAF loop
+    const imgCache = new Map();
+    const getImg = (el) => {
+      if (!imgCache.has(el)) imgCache.set(el, el.querySelector('img'));
+      return imgCache.get(el);
+    };
+
     const updatePositions = () => {
       const minimapY = (state.currentY * state.minimapHeight) / state.projectHeight;
 
-      // Toggle title color when chef III (last) is active
+      // Only touch classList when the active index actually changes
       const activeIdx = Math.round(-state.currentY / state.projectHeight);
-      if (activeIdx === PROJECT_DATA.length - 1) {
-        parallaxContainer.classList.add('chef-active-last');
-      } else {
-        parallaxContainer.classList.remove('chef-active-last');
+      if (activeIdx !== lastActiveIdx) {
+        lastActiveIdx = activeIdx;
+        if (activeIdx === PROJECT_DATA.length - 1) {
+          parallaxContainer.classList.add('chef-active-last');
+        } else {
+          parallaxContainer.classList.remove('chef-active-last');
+        }
       }
 
       projectsMap.forEach((el, index) => {
         const y = index * state.projectHeight + state.currentY;
         el.style.transform = `translateY(${y}px)`;
-        const img = el.querySelector("img");
-        updateParallax(img, state.currentY, index, state.projectHeight);
+        updateParallax(getImg(el), state.currentY, index, state.projectHeight);
       });
 
       minimapMap.forEach((el, index) => {
         const y = index * state.minimapHeight + minimapY;
         el.style.transform = `translateY(${y}px)`;
-        
-        if (Math.abs(y) < 10) {
-          el.classList.add('active');
-        } else {
-          el.classList.remove('active');
-        }
-
-        const img = el.querySelector("img");
-        if (img) {
-          updateParallax(img, minimapY, index, state.minimapHeight);
-        }
+        const isActive = Math.abs(y) < 10;
+        if (isActive) el.classList.add('active');
+        else el.classList.remove('active');
+        const img = getImg(el);
+        if (img) updateParallax(img, minimapY, index, state.minimapHeight);
       });
 
       infoMap.forEach((el, index) => {
-        const y = index * state.minimapHeight + minimapY;
-        el.style.transform = `translateY(${y}px)`;
+        el.style.transform = `translateY(${index * state.minimapHeight + minimapY}px)`;
       });
     };
 
@@ -2342,8 +2329,15 @@
 
     let chefVisible = false;
 
+    const scheduleLoop = () => {
+      if (!state.requestRef && chefVisible) {
+        state.requestRef = requestAnimationFrame(animationLoop);
+      }
+    };
+
     const animationLoop = () => {
-      if (!chefVisible) { state.requestRef = null; return; }
+      state.requestRef = null;
+      if (!chefVisible) return;
       animate();
 
       const currentIndex = Math.round(-state.targetY / state.projectHeight);
@@ -2353,12 +2347,18 @@
       if (min !== renderedMin || max !== renderedMax) {
         renderedMin = min;
         renderedMax = max;
+        imgCache.clear(); // clear stale img refs when DOM changes
         updateDOMForRange(min, max);
-        // New elements have no transform yet — position them immediately regardless of idle state
+        updatePositions();
+      } else if (Math.abs(state.currentY - (renderedPositionsY ?? state.currentY + 1)) > 0.01) {
         updatePositions();
       }
+      renderedPositionsY = state.currentY;
 
-      state.requestRef = requestAnimationFrame(animationLoop);
+      // Keep looping only while animating; idle = stop the loop
+      const stillMoving = state.isSnapping || state.isDragging ||
+                          Math.abs(state.currentY - state.targetY) > 0.05;
+      if (stillMoving) state.requestRef = requestAnimationFrame(animationLoop);
     };
 
     // ────────────────────────────────────────────────────────
@@ -2397,7 +2397,7 @@
       boundaryScrollCount = 0;
       lastBoundaryDir = 0;
       state.scrollAccum = 0;
-      
+
       // Determine direction of approach and set targetY only (let currentY lerp)
       const isComingFromBelow = containerRect.top < -100;
       if (isComingFromBelow) {
@@ -2489,7 +2489,7 @@
       state.lastScrollTime = Date.now();
 
       const delta = Math.max(Math.min(e.deltaY * CONFIG.SCROLL_SPEED, CONFIG.MAX_VELOCITY), -CONFIG.MAX_VELOCITY);
-      state.scrollAccum += delta; // positive = intent to scroll down, negative = up
+      state.scrollAccum += delta;
 
       if (Math.abs(state.scrollAccum) >= SWIPE_THRESHOLD) {
         const dir = state.scrollAccum > 0 ? 1 : -1;
@@ -2499,6 +2499,7 @@
           snapToSlide(next);
         }
       }
+      scheduleLoop();
     }, { passive: false, capture: true });
 
     // ── Touch handlers (on the section itself) ──
@@ -2539,6 +2540,7 @@
       const minY = -(PROJECT_DATA.length - 1) * state.projectHeight;
       state.targetY = Math.max(minY, Math.min(0, newY));
       state.lastScrollTime = Date.now();
+      scheduleLoop();
     }, { passive: false });
 
     aboutEl.addEventListener("touchend", () => {
@@ -2679,37 +2681,40 @@
 
     if (video && heroSection) {
       let duration = 0;
-      let ticking = false;
-      let latestProgress = 0;
+      let targetP = 0;
+      let currentP = 0;
+      let scrubRaf = null;
 
       video.addEventListener('loadedmetadata', () => { duration = video.duration; });
 
-      // Muted play/pause forces the browser to decode + paint the first frame
+      // Decode + paint first frame without autoplay
       video.play().then(() => { video.pause(); video.currentTime = 0; })
            .catch(() => { video.currentTime = 0.001; });
 
-      function applyProgress(p) {
-        // fastSeek is designed for scrubbing (exact=false but instant)
-        const t = p * (duration || 0);
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function scrubFrame() {
+        const diff = targetP - currentP;
+        currentP = Math.abs(diff) < 0.0008 ? targetP : lerp(currentP, targetP, 0.1);
+
+        const t = currentP * (duration || 0);
         if (typeof video.fastSeek === 'function') video.fastSeek(t);
         else video.currentTime = t;
 
-        const exp = Math.min(1, p / 0.4);
+        const exp = Math.min(1, currentP / 0.4);
         const top = 13 * (1 - exp);
         const bot = 10 * (1 - exp);
         video.style.clipPath = (top > 0.05 || bot > 0.05)
           ? `inset(${top}% 0 ${bot}% 0)` : 'none';
-        ticking = false;
+
+        scrubRaf = Math.abs(diff) >= 0.0008 ? requestAnimationFrame(scrubFrame) : null;
       }
 
       window.addEventListener('scroll', () => {
+        if (window.innerWidth <= 767) return;
         const depth = heroSection.offsetHeight - window.innerHeight;
-        latestProgress = Math.max(0, Math.min(1, window.scrollY / depth));
-        // rAF ticking: queue at most one update per frame, always use latest value
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(() => applyProgress(latestProgress));
-        }
+        targetP = Math.max(0, Math.min(1, window.scrollY / depth));
+        if (!scrubRaf) scrubRaf = requestAnimationFrame(scrubFrame);
       }, { passive: true });
     }
 
@@ -2717,51 +2722,73 @@
     const heroContent = document.getElementById('heroContent');
     if (heroContent && heroSection) {
       window.addEventListener('scroll', () => {
+        if (window.innerWidth <= 767) return;
         const scrollY = window.scrollY;
         const heroHeight = heroSection.scrollHeight;
         if (scrollY < heroHeight) {
-          heroContent.style.transform = `translateY(calc(-50% + ${scrollY * 0.18}px))`;
+          const maxShift = window.innerHeight * 0.18;
+          heroContent.style.transform = `translateY(calc(-50% + ${Math.min(scrollY * 0.18, maxShift)}px))`;
         }
       }, { passive: true });
     }
 
-    // ── FOOTER LOGO — same frames, plays on footer hover/touch ──
+    // ── FOOTER LOGO — plays once when footer enters viewport, stays on last frame ──
     (function() {
       const fyCanvas = document.getElementById('fyLogoCanvas');
       if (!fyCanvas) return;
       const fyCtx = fyCanvas.getContext('2d');
-      let fyFrame = 0, fyPlaying = false, fyLastTime = 0;
+      let fyFrame = 0, fyPlaying = false, fyPlayed = false, fyLastTime = 0;
+      let fyCssW = 140, fyCssH = 140;
+
+      // Scale canvas buffer to match CSS display size × devicePixelRatio for sharp rendering
+      function setupFyCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        fyCssW = fyCanvas.offsetWidth || 140;
+        fyCssH = fyCanvas.offsetHeight || 140;
+        fyCanvas.width  = Math.round(fyCssW * dpr);
+        fyCanvas.height = Math.round(fyCssH * dpr);
+        fyCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
 
       function drawFy(idx) {
         const img = frames[idx];
         if (!img) return;
-        fyCtx.clearRect(0, 0, fyCanvas.width, fyCanvas.height);
-        fyCtx.drawImage(img, 0, 0, fyCanvas.width, fyCanvas.height);
+        fyCtx.clearRect(0, 0, fyCssW, fyCssH);
+        fyCtx.drawImage(img, 0, 0, fyCssW, fyCssH);
       }
 
       function fyTick(now) {
-        if (fyFrame >= FRAME_COUNT - 1) { drawFy(FRAME_COUNT - 1); fyPlaying = false; return; }
+        if (fyFrame >= FRAME_COUNT - 1) {
+          drawFy(FRAME_COUNT - 1); // hold on last frame permanently
+          fyPlaying = false;
+          return;
+        }
         if (now - fyLastTime >= INTERVAL) { fyLastTime = now; if (frames[fyFrame]) drawFy(fyFrame); fyFrame++; }
         requestAnimationFrame(fyTick);
       }
 
       function fyPlay() {
-        if (fyPlaying) return;
+        if (fyPlaying || fyPlayed) return;
+        fyPlayed = true;
         fyFrame = 0; fyPlaying = true; fyLastTime = performance.now();
         requestAnimationFrame(fyTick);
       }
 
       function fyWait() {
-        if (frames[0]) { drawFy(0); }
+        if (frames[0]) { setupFyCanvas(); drawFy(0); }
         else requestAnimationFrame(fyWait);
       }
       fyWait();
 
+      // Play once when footer scrolls into view
+      const fyIO = new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) {
+          fyPlay();
+          fyIO.disconnect();
+        }
+      }, { threshold: 0.1 });
       const footer = document.querySelector('footer.fy');
-      if (footer) {
-        footer.addEventListener('mouseenter', fyPlay);
-        footer.addEventListener('touchstart', fyPlay, { passive: true });
-      }
+      if (footer) fyIO.observe(footer);
     })();
   })();
   </script>
@@ -2911,8 +2938,9 @@
         typewriter.innerText = fullText.substring(0, charsToShow);
         lastCharsToShow = charsToShow;
       }
-      // Parallax: text drifts DOWN as section exits (lags behind scroll = appears to fall)
-      if (headline) headline.style.transform = 'translateY(' + (progress * 50) + 'px)';
+      // Subtle parallax: heading drifts down gently, settling behind the red bar
+      const precisionLeft = document.querySelector('.precision-left');
+      if (precisionLeft) precisionLeft.style.transform = 'translateY(' + (progress * 60) + 'px)';
       if (typewriter) typewriter.style.transform = 'translateY(' + (progress * 25) + 'px)';
       // glitch disabled — heading stays in English
     }
@@ -3145,6 +3173,9 @@
       }
       requestAnimationFrame(raf);
 
+      // Keep --nav-p in sync during Lenis-driven scroll (native 'scroll' can lag behind)
+      if (window._checkNav) window.lenis.on('scroll', window._checkNav);
+
       // Handle anchor link scrolling through Lenis
       document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -3197,6 +3228,54 @@
         tagIO.disconnect();
       }, { threshold: 0.25 });
       tagIO.observe(tags[0].closest('.fy-tags'));
+    }
+
+    // Menu-section tags: sticky elements confuse lenis.scrollTo(element),
+    // so compute the correct document offset manually.
+    document.querySelectorAll('.fy-tag[data-menu-idx]').forEach(function(tag) {
+      tag.addEventListener('click', function(e) {
+        var idx = parseInt(this.dataset.menuIdx || '0');
+        var menuEl = document.getElementById('menu');
+        if (!menuEl) return;
+        e.preventDefault();
+        var target = menuEl.offsetTop + idx * window.innerHeight;
+        if (window.lenis) {
+          window._lenisScrollingToTarget = true;
+          window.lenis.start();
+          window.lenis.scrollTo(target, {
+            duration: 1.2,
+            onComplete: function() { window._lenisScrollingToTarget = false; }
+          });
+        } else {
+          window.scrollTo({ top: target, behavior: 'smooth' });
+        }
+      });
+    });
+
+    var scrollTopBtn = document.getElementById('fyScrollTop');
+    if (scrollTopBtn) {
+      scrollTopBtn.addEventListener('click', function() {
+        if (window.lenis) {
+          window.lenis.scrollTo(0, { duration: 1.2 });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    }
+
+    // ── Nav: hide when reservation section scrolls fully past the top ──
+    var resSection = document.getElementById('reservation');
+    var siteNav    = document.getElementById('nav');
+    if (resSection && siteNav) {
+      new IntersectionObserver(function(entries) {
+        var e = entries[0];
+        if (!e.isIntersecting && e.boundingClientRect.bottom < 150) {
+          // Reservation has scrolled completely above the viewport — footer zone
+          siteNav.classList.add('nav--over-footer');
+        } else {
+          siteNav.classList.remove('nav--over-footer');
+        }
+      }, { threshold: 0 }).observe(resSection);
     }
 
   })();

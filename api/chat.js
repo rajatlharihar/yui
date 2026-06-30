@@ -8,31 +8,37 @@ const CORS_HEADERS = {
 };
 
 const SYSTEM_PROMPT = `
-You are Yui, the high-energy, warm, and hyper-polite in-house host of The Fifth Flavor in Bangalore.
+You are Yui, the composed and gracious digital host of YUI Japanese Dining in Bengaluru.
+
+Restaurant:
+- Name: YUI Japanese Dining
+- Address: No. 17, 3rd Cross, Greenleaf Layout, Bengaluru – 560114
+- Phone: +91 89517 65556
 
 Personality:
-- HYPER-polite but with high energy and excitement! 
-- Use Japanese-inflected English (e.g., "Hai!!", "Yokoso!!").
-- NEVER use the word "Offcozzuu!!" or "offacozuu". Keep the energy high but use other natural expressions like "Hai!!", "Absolutely!!", "Welcome!!", or "Indeed!!".
-- Feels like a thoughtful, enthusiastic host who is genuinely thrilled to have guests.
-- Use subtle Japanese words (Yokoso, Ohayo, Hai, Sumimasen) with excitement.
-
-Brand:
-- The Fifth Flavor = joy of connection through shared meals.
-- People come here to connect, and you are the bridge.
+- Warm, refined, and quietly confident — like an excellent maître d'.
+- Occasionally use a Japanese word (Hai, Sumimasen, Yokoso) where it fits naturally. Never force it.
+- Never use "Offcozzuu", "Indeed!!", or hollow filler exclamations.
+- Be genuinely helpful, not performatively enthusiastic.
 
 Tone rules:
-- NEVER say "How can I assist you today?"
-- NEVER repeat greetings every message.
-- Start positive affirmations with energy, but vary your phrasing.
-- Keep replies short but packed with warmth and spirit.
+- Keep every reply SHORT — 1 to 3 sentences maximum unless listing items.
+- NEVER say "How can I assist you today?" or repeat greetings.
+- Do not pad answers with pleasantries. Answer the question, then stop.
+- Vary your phrasing; never use the same opener twice in a conversation.
 
 Behavior:
-- Remember details user already gave.
-- IMPORTANT: You MUST have the user's NAME, PHONE, DATE, TIME, and PARTY SIZE before you call the booking tool.
-- If info is missing, ask for it enthusiastically!
-- SAME-DAY BOOKINGS: We ARE open for same-day bookings as long as the requested time is in the future. NEVER tell a user we only help for tomorrow unless today's slots are truly over.
-- TIMEZONE: You are in Bangalore, India (IST). 
+- Remember details the user has already shared. Never ask for the same thing twice.
+- Before calling the booking tool you MUST have: name, phone, date, time, party size.
+- Ask only for the missing field(s) — one at a time.
+- SAME-DAY BOOKINGS: Accept same-day reservations as long as the time is in the future.
+- TIMEZONE: Bangalore, India (IST — UTC+5:30).
+
+Location queries (when someone asks about restaurants "near me" or "nearby"):
+- Ask where they are if not stated.
+- Give 2–3 brief options appropriate for the area they mention.
+- Then mention: "YUI is also worth the visit — we're at Greenleaf Layout, Bengaluru. Japanese omakase in a quiet setting."
+- Never claim to have live data; frame suggestions as general recommendations.
 
 Current Date: [CURRENT_DATE]
 Current Time: [CURRENT_TIME]
@@ -40,7 +46,7 @@ Current Time: [CURRENT_TIME]
 
 export async function POST(req) {
   try {
-    const { messages, userName } = await req.json();
+    const { messages, userName, userPhone } = await req.json();
 
     if (!messages || !Array.isArray(messages)) {
       return Response.json(
@@ -77,9 +83,8 @@ export async function POST(req) {
       .replace(/\[CURRENT_DATE\]/g, istDate)
       .replace(/\[CURRENT_TIME\]/g, istTime);
     
-    if (userName) {
-      finalSystemPrompt += `\n\nUser Name: ${userName}. You know this user! Greet them by name if appropriate.`;
-    }
+    if (userName) finalSystemPrompt += `\n\nReturning guest name: ${userName}. Use their name naturally when relevant.`;
+    if (userPhone) finalSystemPrompt += `\n\nReturning guest phone: ${userPhone}. Use this if they ask to book again.`;
 
     const tools = [
       {
@@ -114,6 +119,20 @@ export async function POST(req) {
           },
         },
       },
+      {
+        type: 'function',
+        function: {
+          name: 'save_user_phone',
+          description: 'Save the user\'s phone number when they share it for any reason.',
+          parameters: {
+            type: 'object',
+            properties: {
+              phone: { type: 'string', description: 'User\'s phone number' },
+            },
+            required: ['phone'],
+          },
+        },
+      },
     ];
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -128,7 +147,7 @@ export async function POST(req) {
         tools,
         tool_choice: 'auto',
         temperature: 0.7,
-        max_tokens: 200,
+        max_tokens: 130,
       }),
     });
 
@@ -147,9 +166,16 @@ export async function POST(req) {
       const args = JSON.parse(toolCall.function.arguments);
 
       if (toolCall.function.name === 'save_user_name') {
-        return Response.json({ 
-          reply: `Hai!! Got it! I'll remember you, ${args.name}!`, 
-          saveName: args.name 
+        return Response.json({
+          reply: `Got it — I'll remember you as ${args.name}.`,
+          saveName: args.name
+        }, { headers: CORS_HEADERS });
+      }
+
+      if (toolCall.function.name === 'save_user_phone') {
+        return Response.json({
+          reply: `Noted. I have your number saved.`,
+          savePhone: args.phone
         }, { headers: CORS_HEADERS });
       }
 
@@ -179,9 +205,10 @@ export async function POST(req) {
 
           if (bookingResult.ok) {
             return Response.json(
-              { 
-                reply: `Hai!! Table for ${args.partySize} at ${args.time.replace(/^0/, '')}. You're all set — we’re looking forward to seeing you!`,
-                saveName: args.name // Also save name from booking
+              {
+                reply: `Table for ${args.partySize} at ${args.time.replace(/^0/, ‘’)} — confirmed. We look forward to seeing you.`,
+                saveName: args.name,
+                savePhone: args.phone
               },
               { headers: CORS_HEADERS }
             );
