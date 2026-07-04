@@ -1245,6 +1245,14 @@
       }
     });
 
+    // Pre-fill credentials remembered on this device
+    (function () {
+      const savedEmail = localStorage.getItem('yui-dash-email');
+      const savedPwd = localStorage.getItem('yui-dash-pwd');
+      if (savedEmail) document.getElementById('login-email').value = savedEmail;
+      if (savedPwd) document.getElementById('login-password').value = savedPwd;
+    })();
+
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('login-email').value.trim();
@@ -1263,6 +1271,10 @@
         errBox.removeAttribute('data-hidden');
         btn.textContent = "Sign In";
         btn.disabled = false;
+      } else {
+        // Remember for next time on this device
+        localStorage.setItem('yui-dash-email', email);
+        localStorage.setItem('yui-dash-pwd', pwd);
       }
     });
 
