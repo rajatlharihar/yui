@@ -2655,7 +2655,7 @@
       loadStarted = true;
       await loadImage(0);
       render();
-      const batchSize = 8;
+      const batchSize = window.innerWidth <= 768 ? 4 : 8; // gentler decode bursts on phone
       for (let start = 1; start < frameCount; start += batchSize) {
         const batch = [];
         for (let i = start; i < Math.min(start + batchSize, frameCount); i++) batch.push(loadImage(i));
@@ -2778,7 +2778,12 @@
       const wasVisible = isVisible;
       isVisible = entries[0].isIntersecting;
       if (isVisible) { startLoading(); if (!wasVisible) startLoop(); }
-    }, { rootMargin: '600px' });
+    }, {
+      // Phone: only start pulling the 169 frames when the section is truly
+      // near — preloading them at page load was flooding the main thread
+      // exactly while the logo reveal and hero video were playing
+      rootMargin: window.innerWidth <= 768 ? '120px' : '600px'
+    });
     lazyObs.observe(section);
 
     window.addEventListener('resize', resize);

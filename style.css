@@ -6733,9 +6733,12 @@
 
 /* night = the existing black header, no overrides needed */
 
-/* Welcome backdrop — the knot artwork sits faintly behind the greeting */
+/* Welcome backdrop — the knot artwork sits faintly behind the greeting.
+   Painted ONLY while the panel is open: the SVG's blur+noise filters are
+   expensive to rasterize and were being rendered at page load even though
+   the panel was invisible (opacity 0, not display none). */
 .yui-messages { position: relative; }
-.yui-messages::before {
+.yui-panel.open .yui-messages::before {
   content: '';
   position: absolute;
   inset: -12%;
