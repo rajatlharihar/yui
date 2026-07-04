@@ -6853,11 +6853,6 @@
    PHONE EXTRAS: bento sway hint + dish dropdown chevrons
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-  /* The tray sways when it first appears — "you can swipe me" */
-  .bento-tray-scroll.bento-hint .bento-tray-wrapper {
-    animation: bentoSway 2.4s ease-in-out 0.5s 3;
-  }
-
   /* Chevron on every dish name — tap opens the description */
   .mfi-name::after {
     content: '';
@@ -6876,8 +6871,4 @@
     transform: rotate(-135deg);
     vertical-align: -1px;
   }
-}
-@keyframes bentoSway {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-38px); }
 }

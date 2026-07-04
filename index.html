@@ -2063,18 +2063,31 @@
     modalClose.addEventListener('click', closeModal);
     modalBg.addEventListener('click', closeModal);
 
-    // Phone: sway the tray when it first appears — signals "swipe me".
-    // Cancels only on an actual swipe of the tray — the old touchstart
-    // canceller was killing the hint while people merely scrolled past.
+    // Phone: when the tray first appears it drifts very slowly to the
+    // right (a real scroll, so it stays where it lands) — "swipe me".
+    // A touch on the tray hands control straight to the user.
     const trayScroll = document.querySelector('.bento-tray-scroll');
     if (trayScroll && window.innerWidth <= 767) {
+      let driftCancelled = false;
+      trayScroll.addEventListener('touchstart', () => { driftCancelled = true; }, { once: true, passive: true });
+      const driftRight = () => {
+        const dur = 5000, to = 110;
+        const t0 = performance.now();
+        const step = (now) => {
+          if (driftCancelled) return;
+          const p = Math.min(1, (now - t0) / dur);
+          const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; // easeInOutQuad
+          trayScroll.scrollLeft = to * e;
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      };
       new IntersectionObserver((entries, obs) => {
         if (entries[0].isIntersecting) {
-          trayScroll.classList.add('bento-hint');
+          setTimeout(driftRight, 500);
           obs.disconnect();
         }
-      }, { threshold: 0.25 }).observe(trayScroll);
-      trayScroll.addEventListener('scroll', () => trayScroll.classList.remove('bento-hint'), { once: true, passive: true });
+      }, { threshold: 0.3 }).observe(trayScroll);
     }
 
     document.addEventListener('keydown', e => {
@@ -2407,7 +2420,7 @@
     const navCanvas = document.getElementById('logoCanvas');
     if (navCanvas) {
       const navCtx = navCanvas.getContext('2d');
-      let frame = 0, playing = false, lastTime = 0;
+      let frame = -1, playing = false, startTime = 0;
 
       function drawNav(idx) {
         if (!spriteReady) return;
@@ -2419,18 +2432,16 @@
         if (playing) return;
         playing = true;
         navCanvas.classList.add('logo-canvas-visible');
-        lastTime = performance.now();
+        startTime = performance.now();
         requestAnimationFrame(tick);
       }
 
+      // Time-based frames: on a busy main thread the reveal DROPS frames
+      // and stays on schedule instead of slowing into a stutter
       function tick(now) {
-        if (frame >= FRAME_COUNT - 1) { drawNav(FRAME_COUNT - 1); return; }
-        if (now - lastTime >= INTERVAL) {
-          lastTime = now;
-          drawNav(frame);
-          frame++;
-        }
-        requestAnimationFrame(tick);
+        const idx = Math.min(FRAME_COUNT - 1, Math.floor((now - startTime) / INTERVAL));
+        if (idx !== frame) { frame = idx; drawNav(idx); }
+        if (idx < FRAME_COUNT - 1) requestAnimationFrame(tick);
       }
 
       function waitAndStart() {
@@ -2537,19 +2548,16 @@
       }
 
       function fyTick(now) {
-        if (fyFrame >= FRAME_COUNT - 1) {
-          drawFy(FRAME_COUNT - 1); // hold on last frame permanently
-          fyPlaying = false;
-          return;
-        }
-        if (now - fyLastTime >= INTERVAL) { fyLastTime = now; drawFy(fyFrame); fyFrame++; }
-        requestAnimationFrame(fyTick);
+        const idx = Math.min(FRAME_COUNT - 1, Math.floor((now - fyLastTime) / INTERVAL));
+        if (idx !== fyFrame) { fyFrame = idx; drawFy(idx); }
+        if (idx < FRAME_COUNT - 1) requestAnimationFrame(fyTick);
+        else fyPlaying = false; // hold on last frame permanently
       }
 
       function fyPlay() {
         if (fyPlaying || fyPlayed) return;
         fyPlayed = true;
-        fyFrame = 0; fyPlaying = true; fyLastTime = performance.now();
+        fyFrame = -1; fyPlaying = true; fyLastTime = performance.now();
         requestAnimationFrame(fyTick);
       }
 
