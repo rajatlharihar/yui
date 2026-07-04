@@ -6501,72 +6501,9 @@
   /* ── Footer: breathing room between the logo and Reserve Now ── */
   .fy-logo-row { margin-top: 26px; }
 
-  /* ── Bento modal: stacked scroll-cards gallery (21st.dev scroll-cards) ── */
+  /* ── Bento: phone-only bits (dock/dots hidden; cards CSS is global) ── */
   .bento-dock { display: none !important; }
   .bento-dots { display: none !important; }
-
-  .bento-modal-overlay.cards-mode .bento-modal-panel {
-    position: absolute;
-    inset: 0;
-    top: 0;
-    left: 0;
-    width: 100%;
-    max-width: none;
-    height: 100%;
-    transform: none;
-    padding: 0;
-    background: transparent;
-  }
-  .bento-modal-overlay.cards-mode .bento-modal-img,
-  .bento-modal-overlay.cards-mode .bento-modal-caption,
-  .bento-modal-overlay.cards-mode .bento-nav-hint {
-    display: none !important;
-  }
-  .bento-modal-overlay.cards-mode .bento-modal-close {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    z-index: 30;
-  }
-  .bento-modal-overlay.cards-mode .bento-cards-scroll {
-    display: block;
-    position: absolute;
-    inset: 72px 0 0;
-    overflow-y: auto;
-    padding: 0 20px 70px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-    touch-action: pan-y;         /* the finger scrolls this, nothing else */
-    overscroll-behavior: contain; /* don't hand the scroll to the page */
-  }
-  .bento-cards-scroll::-webkit-scrollbar { display: none; }
-  .bento-scroll-card {
-    position: sticky;
-    margin-bottom: 22px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #1b1b1b;
-    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.5);
-  }
-  .bento-scroll-card img {
-    width: 100%;
-    height: 44vh;
-    object-fit: cover;
-    display: block;
-  }
-  .bsc-cap { padding: 14px 16px 18px; }
-  .bsc-cap h3 {
-    font-family: 'Restora', Georgia, serif;
-    font-size: 19px;
-    color: #FFFDFE;
-    margin: 0 0 4px;
-  }
-  .bsc-cap p {
-    font-size: 12px;
-    line-height: 1.55;
-    color: rgba(255, 253, 254, 0.65);
-    margin: 0;
-  }
 
   /* ── Minimal nav past the hero: logo chip left, hamburger chip right ── */
   .nav.nav--minimal {
@@ -6779,3 +6716,139 @@
 }
 .yui-panel.has-messages .yui-messages::before { display: none; }
 .yui-empty-state { position: relative; z-index: 1; }
+
+/* ═══════════════════════════════════════════════════════════════
+   BENTO GALLERY MODAL — stacked scroll-cards on EVERY screen size
+   ═══════════════════════════════════════════════════════════════ */
+.bento-modal-overlay.cards-mode .bento-modal-panel {
+  position: absolute;
+  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  transform: none;
+  padding: 0;
+  background: transparent;
+}
+.bento-modal-overlay.cards-mode .bento-modal-img,
+.bento-modal-overlay.cards-mode .bento-modal-caption,
+.bento-modal-overlay.cards-mode .bento-nav-hint,
+.bento-modal-overlay.cards-mode .bento-dock {
+  display: none !important;
+}
+.bento-modal-overlay.cards-mode .bento-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  z-index: 30;
+}
+.bento-modal-overlay.cards-mode .bento-cards-scroll {
+  display: block;
+  position: absolute;
+  inset: 72px 0 0;
+  overflow-y: auto;
+  padding: 0 20px 80px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
+}
+.bento-cards-scroll::-webkit-scrollbar { display: none; }
+.bento-scroll-card {
+  position: sticky;
+  max-width: 760px;
+  margin: 0 auto 22px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #1b1b1b;
+  box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.5);
+}
+.bento-scroll-card img {
+  width: 100%;
+  height: 44vh;
+  object-fit: cover;
+  display: block;
+}
+.bsc-cap { padding: 14px 16px 18px; }
+.bsc-cap h3 {
+  font-family: 'Restora', Georgia, serif;
+  font-size: 19px;
+  color: #FFFDFE;
+  margin: 0 0 4px;
+}
+.bsc-cap p {
+  font-size: 12px;
+  line-height: 1.55;
+  color: rgba(255, 253, 254, 0.65);
+  margin: 0;
+}
+@media (min-width: 768px) {
+  .bento-modal-overlay.cards-mode .bento-cards-scroll { padding: 0 40px 100px; }
+  .bento-scroll-card img { height: 54vh; }
+  .bsc-cap { padding: 18px 24px 22px; }
+  .bsc-cap h3 { font-size: 24px; }
+  .bsc-cap p { font-size: 14px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CHATBOT INPUT — gradient pill (ruixen) + loading send (kokonut)
+   ═══════════════════════════════════════════════════════════════ */
+.yui-input-wrapper {
+  border-radius: 999px !important;
+  border: 1.5px solid transparent !important;
+  background:
+    linear-gradient(#f7f6f4, #f7f6f4) padding-box,
+    linear-gradient(120deg, #E32527, #e8c9a8, #E32527) border-box !important;
+}
+.yui-input-wrapper:focus-within {
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(120deg, #E32527, #c41f21, #E32527) border-box !important;
+}
+/* While Yui thinks, the send arrow becomes a spinner */
+.yui-panel.thinking .yui-btn-send svg { display: none; }
+.yui-panel.thinking .yui-btn-send::after {
+  content: '';
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: yuiSendSpin 0.7s linear infinite;
+}
+@keyframes yuiSendSpin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════════════
+   PHONE EXTRAS: bento sway hint + dish dropdown chevrons
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  /* The tray sways twice when it first appears — "you can swipe me" */
+  .bento-tray-scroll.bento-hint .bento-tray-wrapper {
+    animation: bentoSway 2.2s ease-in-out 0.4s 2;
+  }
+
+  /* Chevron on every dish name — tap opens the description */
+  .mfi-name::after {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-right: 1.6px solid currentColor;
+    border-bottom: 1.6px solid currentColor;
+    transform: rotate(45deg);
+    margin-left: 10px;
+    opacity: 0.5;
+    vertical-align: 3px;
+    transition: transform 0.3s ease;
+  }
+  .mf-item.open .mfi-name::after {
+    transform: rotate(-135deg);
+    vertical-align: -1px;
+  }
+}
+@keyframes bentoSway {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-38px); }
+}

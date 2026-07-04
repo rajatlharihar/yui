@@ -1084,7 +1084,6 @@
       <!-- Input Row -->
       <div class="yui-action-area">
         <div class="yui-input-wrapper">
-          <input type="text" id="yui-input" class="yui-text-input" placeholder="Ask anything…" autocomplete="off">
           <button class="yui-mic-pill" id="yui-btn-mic-main" aria-label="Voice input">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
               <rect x="9" y="2" width="6" height="12" rx="3"/>
@@ -1092,6 +1091,7 @@
               <path d="M12 18v4"/>
             </svg>
           </button>
+          <input type="text" id="yui-input" class="yui-text-input" placeholder="Ask anything…" autocomplete="off">
           <button id="yui-btn-send" class="yui-btn-send" aria-label="Send">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
               <path d="M22 2 11 13"/>
@@ -2033,16 +2033,12 @@
       switchSlot(s);
       modal.setAttribute('aria-hidden', 'false');
       modal.classList.add('open');
-      // Phone: stacked scroll-cards view, opened at the tapped photo
-      if (window.innerWidth <= 767) {
-        modal.classList.add('cards-mode');
-        requestAnimationFrame(() => {
-          const card = cardsWrap.querySelector('[data-id="' + s.id + '"]');
-          if (card) cardsWrap.scrollTop = card.offsetTop;
-        });
-      } else {
-        modal.classList.remove('cards-mode');
-      }
+      // Stacked scroll-cards view on every screen, opened at the tapped photo
+      modal.classList.add('cards-mode');
+      requestAnimationFrame(() => {
+        const card = cardsWrap.querySelector('[data-id="' + s.id + '"]');
+        if (card) cardsWrap.scrollTop = card.offsetTop;
+      });
       if (window.lenis) window.lenis.stop();
       document.body.style.overflow = 'hidden';
       // Phone: hide the floating nav chips — the modal X sits where the
@@ -2062,6 +2058,18 @@
 
     modalClose.addEventListener('click', closeModal);
     modalBg.addEventListener('click', closeModal);
+
+    // Phone: sway the tray when it first appears — signals "swipe me"
+    const trayScroll = document.querySelector('.bento-tray-scroll');
+    if (trayScroll && window.innerWidth <= 767) {
+      new IntersectionObserver((entries, obs) => {
+        if (entries[0].isIntersecting) {
+          trayScroll.classList.add('bento-hint');
+          obs.disconnect();
+        }
+      }, { threshold: 0.4 }).observe(trayScroll);
+      trayScroll.addEventListener('touchstart', () => trayScroll.classList.remove('bento-hint'), { once: true, passive: true });
+    }
 
     document.addEventListener('keydown', e => {
       if (!modal.classList.contains('open')) return;
@@ -2802,9 +2810,10 @@
       // dropped below the nav, so the wipe-down syncs with the card leaving.
       var goingDownDir = window.scrollY >= lastNavScrollY;
       lastNavScrollY = window.scrollY;
-      // Scrolling up: switch early (card still covers the nav) so the
-      // wipe-down completes FIRST, then the card visibly falls away
-      var threshold = goingDownDir ? 1 : (nav.offsetHeight || 88) + 160;
+      // Both directions switch the instant the boundary crosses the top —
+      // scrolling up, the colour peels down FIRST (card still covering),
+      // then the card visibly drops away
+      var threshold = 1;
       var activeIdx = -1;
       sections.forEach(function(s, i) {
         if (s.getBoundingClientRect().top <= threshold) activeIdx = i;
