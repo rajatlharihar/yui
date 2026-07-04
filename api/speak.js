@@ -6,6 +6,61 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
+async function openaiTTS(text) {
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) return { buffer: null, error: 'OPENAI_API_KEY is missing' };
+
+  const voice = process.env.OPENAI_TTS_VOICE || 'nova';
+  const response = await fetch('https://api.openai.com/v1/audio/speech', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'tts-1',
+      input: text,
+      voice: voice,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    return { buffer: null, error: { source: 'openai', detail: error } };
+  }
+  return { buffer: await response.arrayBuffer(), error: null };
+}
+
+async function elevenTTS(text) {
+  const key = process.env.ELEVENLABS_API_KEY;
+  const voiceId = process.env.ELEVENLABS_VOICE_ID;
+  if (!key || !voiceId) {
+    return { buffer: null, error: 'ELEVENLABS_API_KEY or ELEVENLABS_VOICE_ID is missing' };
+  }
+
+  const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId.trim()}`, {
+    method: 'POST',
+    headers: {
+      'xi-api-key': key.trim(),
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text: text,
+      model_id: 'eleven_multilingual_v2',
+      voice_settings: {
+        stability: 0.5,
+        similarity_boost: 0.75,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    return { buffer: null, error: { source: 'elevenlabs', detail: error } };
+  }
+  return { buffer: await response.arrayBuffer(), error: null };
+}
+
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
@@ -15,89 +70,31 @@ export async function GET(req) {
       return Response.json({ error: 'Text parameter is required' }, { status: 400, headers: CORS_HEADERS });
     }
 
-    const rawProvider = process.env.TTS_PROVIDER || 'openai';
-    const provider = rawProvider.toLowerCase().trim();
-    const openaiApiKey = process.env.OPENAI_API_KEY;
+    const provider = (process.env.TTS_PROVIDER || 'openai').toLowerCase().trim();
 
-    if (provider === 'openai') {
-      if (!openaiApiKey) {
-        return Response.json({ error: 'OPENAI_API_KEY is missing' }, { status: 500, headers: CORS_HEADERS });
-      }
-
-      const voice = process.env.OPENAI_TTS_VOICE || 'nova';
-
-      const response = await fetch('https://api.openai.com/v1/audio/speech', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${openaiApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'tts-1',
-          input: text,
-          voice: voice,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        return Response.json({ error: 'OpenAI TTS failed', detail: error }, { status: response.status, headers: CORS_HEADERS });
-      }
-
-      const audioBuffer = await response.arrayBuffer();
-
-      return new Response(audioBuffer, {
-        headers: {
-          'Content-Type': 'audio/mpeg',
-          ...CORS_HEADERS
-        },
-      });
-    }
-
+    let result;
     if (provider === 'elevenlabs') {
-      const elevenApiKey = process.env.ELEVENLABS_API_KEY;
-      const voiceId = process.env.ELEVENLABS_VOICE_ID;
-
-      if (!elevenApiKey || !voiceId) {
-        return Response.json({ error: 'ELEVENLABS_API_KEY or ELEVENLABS_VOICE_ID is missing' }, { status: 500, headers: CORS_HEADERS });
+      result = await elevenTTS(text);
+      // ElevenLabs can refuse (e.g. free plan + library voice) — the voice
+      // must never go silent, so fall back to OpenAI TTS automatically
+      if (!result.buffer) {
+        console.warn('ElevenLabs TTS failed, falling back to OpenAI:', JSON.stringify(result.error));
+        result = await openaiTTS(text);
       }
-
-      const response = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId.trim()}`, {
-        method: 'POST',
-        headers: {
-          'xi-api-key': elevenApiKey.trim(),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text: text,
-          model_id: 'eleven_multilingual_v2',
-          voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
-        return Response.json({ error: 'ElevenLabs TTS failed', detail: error }, { status: response.status, headers: CORS_HEADERS });
-      }
-
-      const audioBuffer = await response.arrayBuffer();
-
-      return new Response(audioBuffer, {
-        headers: {
-          'Content-Type': 'audio/mpeg',
-          ...CORS_HEADERS
-        },
-      });
+    } else {
+      result = await openaiTTS(text);
     }
 
-    return Response.json({ 
-      error: 'Invalid TTS provider configuration', 
-      configured_provider: rawProvider,
-      expected: 'openai or elevenlabs' 
-    }, { status: 400, headers: CORS_HEADERS });
+    if (!result.buffer) {
+      return Response.json({ error: 'TTS failed', detail: result.error }, { status: 502, headers: CORS_HEADERS });
+    }
+
+    return new Response(result.buffer, {
+      headers: {
+        'Content-Type': 'audio/mpeg',
+        ...CORS_HEADERS
+      },
+    });
 
   } catch (error) {
     console.error('TTS API error:', error);

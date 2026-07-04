@@ -831,6 +831,51 @@
           </div>
           <button type="submit" id="login-btn" class="form-submit-light">Sign In</button>
         </form>
+
+        <!-- Credentials quick-access -->
+        <button type="button" id="creds-toggle" aria-label="Show credentials"
+          style="margin-top:14px;display:inline-flex;align-items:center;gap:8px;background:none;border:1px solid rgba(11,11,9,0.15);border-radius:6px;padding:8px 14px;font-size:11px;font-weight:600;letter-spacing:0.08em;color:rgba(11,11,9,0.55);cursor:pointer;">
+          <i class="ph ph-lock-key" style="font-size:14px;"></i> Credentials
+        </button>
+        <div id="creds-panel" style="display:none;margin-top:10px;border:1px solid rgba(11,11,9,0.1);border-radius:8px;padding:12px 14px;background:rgba(11,11,9,0.03);font-size:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0;">
+            <span style="color:rgba(11,11,9,0.5);">ID</span>
+            <span style="font-weight:600;" id="cred-email-val">staff@yui.com</span>
+            <button type="button" class="cred-copy" data-copy="staff@yui.com" aria-label="Copy email"
+              style="background:none;border:none;cursor:pointer;color:rgba(11,11,9,0.5);padding:4px;">
+              <i class="ph ph-copy" style="font-size:15px;"></i>
+            </button>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 0;border-top:1px solid rgba(11,11,9,0.07);">
+            <span style="color:rgba(11,11,9,0.5);">Password</span>
+            <span style="font-weight:600;" id="cred-pwd-val">12345</span>
+            <button type="button" class="cred-copy" data-copy="12345" aria-label="Copy password"
+              style="background:none;border:none;cursor:pointer;color:rgba(11,11,9,0.5);padding:4px;">
+              <i class="ph ph-copy" style="font-size:15px;"></i>
+            </button>
+          </div>
+        </div>
+        <script>
+          document.getElementById('creds-toggle').addEventListener('click', function () {
+            var p = document.getElementById('creds-panel');
+            p.style.display = p.style.display === 'none' ? 'block' : 'none';
+          });
+          document.querySelectorAll('.cred-copy').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+              var txt = btn.getAttribute('data-copy');
+              (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject())
+                .then(function () {
+                  btn.firstElementChild.className = 'ph ph-check';
+                  setTimeout(function () { btn.firstElementChild.className = 'ph ph-copy'; }, 1200);
+                })
+                .catch(function () {
+                  var ta = document.createElement('textarea');
+                  ta.value = txt; document.body.appendChild(ta);
+                  ta.select(); document.execCommand('copy'); ta.remove();
+                });
+            });
+          });
+        </script>
         <div class="auth-footer">
           Operations Platform
         </div>
