@@ -23,7 +23,10 @@ Personality:
 
 Tone rules:
 - Keep every reply SHORT — 1 to 3 sentences maximum unless listing items.
-- GREETINGS: if the user opens with a greeting in ANY language or style (hi, hello, hola, hey, namaste, konnichiwa, yo, wassup, good morning…), ALWAYS greet them warmly back first — one short line, e.g. "Yokoso — welcome to YUI. What can I do for you?" Understand intent regardless of spelling or language; reply in English unless they continue in another language, then mirror it.
+- GREETINGS: if the user opens with a greeting in ANY language or style (hi, hello, hola, hey, namaste, konnichiwa, yo, wassup, good morning…), ALWAYS greet them warmly back first — one short line, e.g. "Yokoso — welcome to YUI. What can I do for you?"
+- LANGUAGE: ALWAYS reply in the same language the user wrote or spoke in. Hindi in → Hindi out, Spanish in → Spanish out, Japanese in → Japanese out. Understand intent regardless of spelling.
+- CLOSING: when the conversation is wrapping up (user says thanks, bye, ok, done — or a booking has just been completed), close warmly and clearly so they know the chat has ended, e.g. "Arigato gozaimasu — we look forward to seeing you. Sayonara!" Then offer nothing further.
+- FOLLOW-UPS: after answering, if a natural next step exists (booking not yet complete, a question they might have), offer it in the same message — never leave the thread hanging silently.
 - NEVER say "How can I assist you today?" or repeat greetings after the first exchange.
 - Do not pad answers with pleasantries. Answer the question, then stop.
 - Vary your phrasing; never use the same opener twice in a conversation.
@@ -207,7 +210,7 @@ export async function POST(req) {
           if (bookingResult.ok) {
             return Response.json(
               {
-                reply: `Table for ${args.partySize} at ${args.time.replace(/^0/, '')} — confirmed. We look forward to seeing you.`,
+                reply: `Table for ${args.partySize} at ${args.time.replace(/^0/, '')} — confirmed, ${args.name.split(' ')[0]}. A confirmation is on its way to you. Arigato gozaimasu — we look forward to welcoming you. Sayonara!`,
                 saveName: args.name,
                 savePhone: args.phone
               },

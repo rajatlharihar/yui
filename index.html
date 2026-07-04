@@ -308,13 +308,13 @@
       <!-- Chef slides — stacked, crossfade driven by page scroll (works with Lenis) -->
       <div class="chef-slides-wrap">
         <div class="chef-slide active" data-index="0">
-          <img loading="lazy" decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+          <img decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
         </div>
         <div class="chef-slide" data-index="1">
-          <img loading="lazy" decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+          <img decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
         </div>
         <div class="chef-slide" data-index="2">
-          <img loading="lazy" decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+          <img decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
         </div>
       </div>
 
@@ -322,13 +322,13 @@
         <div class="minimap-wrapper">
           <div class="minimap-img-preview">
             <div class="minimap-img-item active" data-index="0">
-              <img loading="lazy" decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+              <img decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
             </div>
             <div class="minimap-img-item" data-index="1">
-              <img loading="lazy" decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+              <img decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
             </div>
             <div class="minimap-img-item" data-index="2">
-              <img loading="lazy" decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+              <img decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
             </div>
           </div>
           <div class="minimap-info-list">
@@ -2063,7 +2063,9 @@
     modalClose.addEventListener('click', closeModal);
     modalBg.addEventListener('click', closeModal);
 
-    // Phone: sway the tray when it first appears — signals "swipe me"
+    // Phone: sway the tray when it first appears — signals "swipe me".
+    // Cancels only on an actual swipe of the tray — the old touchstart
+    // canceller was killing the hint while people merely scrolled past.
     const trayScroll = document.querySelector('.bento-tray-scroll');
     if (trayScroll && window.innerWidth <= 767) {
       new IntersectionObserver((entries, obs) => {
@@ -2071,8 +2073,8 @@
           trayScroll.classList.add('bento-hint');
           obs.disconnect();
         }
-      }, { threshold: 0.4 }).observe(trayScroll);
-      trayScroll.addEventListener('touchstart', () => trayScroll.classList.remove('bento-hint'), { once: true, passive: true });
+      }, { threshold: 0.25 }).observe(trayScroll);
+      trayScroll.addEventListener('scroll', () => trayScroll.classList.remove('bento-hint'), { once: true, passive: true });
     }
 
     document.addEventListener('keydown', e => {
@@ -2667,8 +2669,10 @@
       const ih = img && (img.naturalHeight || img.height);
       if (!img || !img._ready || !iw) { paintWhite(); return; }
       const w = canvas.width, h = canvas.height;
-      // Phones: cover (fill + crop) so the footage scales up instead of letterboxing
-      const useCover = window.innerWidth <= 768;
+      // Cover (fill + crop) on phone, tablet AND laptop — the ultra-wide
+      // frames letterboxed into a small strip below ~1680px. Only very
+      // large desktops keep the full-frame contain fit.
+      const useCover = window.innerWidth <= 1680;
       const scale = useCover
         ? Math.max(w / iw, h / ih)
         : Math.min(w / iw, h / ih);

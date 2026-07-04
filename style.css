@@ -6681,6 +6681,12 @@
     width: 76px !important;
     height: 75px !important;
   }
+
+  /* Artisans card: smaller and lifted at laptop heights so "The Artisans"
+     title never touches it */
+  .minimap {
+    transform: translate(-50%, -54%) scale(0.76);
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -6847,9 +6853,9 @@
    PHONE EXTRAS: bento sway hint + dish dropdown chevrons
    ═══════════════════════════════════════════════════════════════ */
 @media (max-width: 767px) {
-  /* The tray sways twice when it first appears — "you can swipe me" */
+  /* The tray sways when it first appears — "you can swipe me" */
   .bento-tray-scroll.bento-hint .bento-tray-wrapper {
-    animation: bentoSway 2.2s ease-in-out 0.4s 2;
+    animation: bentoSway 2.4s ease-in-out 0.5s 3;
   }
 
   /* Chevron on every dish name — tap opens the description */
