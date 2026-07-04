@@ -10,7 +10,21 @@
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    @import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+    /* Site fonts: Restora for display, Outfit for UI */
+    @font-face {
+      font-family: 'Restora';
+      src: url('fonts/Restora-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Restora';
+      src: url('fonts/Restora-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-display: swap;
+    }
 
     :root {
       --bg: #FFFFFF;
@@ -22,7 +36,8 @@
       --red-deep: #A01E1E;
       --cream: #EEE2D4;
       --border: rgba(26, 22, 18, 0.08);
-      --ff: 'Satoshi', system-ui, sans-serif;
+      --ff: 'Outfit', system-ui, sans-serif;
+      --ff-serif: 'Restora', Georgia, serif;
       --shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
       --ease: cubic-bezier(.16, 1, .3, 1);
       accent-color: var(--red);
@@ -46,6 +61,11 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+    }
+
+    /* Display type uses the site's Restora serif */
+    h1, h2, .login-title, .brand-title-light {
+      font-family: var(--ff-serif);
     }
 
     /* Manual Form Redesign */
@@ -968,9 +988,9 @@
           <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
             <div style="display: flex; gap: 12px; align-items: center;">
               <div class="filter-pills" id="date-toggles">
-                <button class="pill" data-date="today">Today</button>
+                <button class="pill active" data-date="today">Today</button>
                 <button class="pill" data-date="tomorrow">Tomorrow</button>
-                <button class="pill active" data-date="all">All Dates</button>
+                <button class="pill" data-date="all">All Dates</button>
               </div>
               <div style="width: 1px; height: 24px; background: var(--border); margin: 0 8px;"></div>
               <div class="custom-date-picker" id="fDatePickerContainer" style="width: auto;">
@@ -1157,6 +1177,37 @@
           </div>
         </div>
 
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 24px;">
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              Avg Party Size</h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-avg-party">-</div>
+          </div>
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              No-Show Rate</h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-noshow">-</div>
+          </div>
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              Busiest Day</h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-busy-day">-</div>
+          </div>
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              Est. Revenue <span style="opacity:.5;text-transform:none;letter-spacing:0;">(₹1,400/cover)</span></h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-revenue">-</div>
+          </div>
+        </div>
+
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px;">
           <!-- Volume Trend Chart -->
           <div class="chart-card"
@@ -1183,6 +1234,32 @@
               <canvas id="sourceChart"></canvas>
             </div>
           </div>
+
+          <!-- Peak Hours -->
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 48px; border-radius: 12px; background: var(--surface);">
+            <div style="margin-bottom: 32px;">
+              <h3
+                style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted);">
+                Covers by Hour of Service</h3>
+            </div>
+            <div style="height: 280px; width: 100%;">
+              <canvas id="hoursChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Status Breakdown -->
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 48px; border-radius: 12px; background: var(--surface);">
+            <div style="margin-bottom: 32px;">
+              <h3
+                style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted);">
+                Booking Status Breakdown</h3>
+            </div>
+            <div style="height: 280px; width: 100%;">
+              <canvas id="statusChart"></canvas>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1195,27 +1272,56 @@
           </div>
         </div>
 
-        <div style="margin-top: 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px;">
+        <div style="margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px 64px;">
           <div>
             <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600;">Service Capacity</h3>
-            <p style="color: var(--muted); margin-bottom: 32px; font-size: 14px; line-height: 1.6;">Manage maximum
-              covers per service interval to prevent overbooking via the digital widget.</p>
+            <p style="color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.6;">Maximum covers per
+              service — today's covers are measured against this in the stats bar.</p>
             <div class="form-group" style="max-width: 240px; margin-bottom: 24px;">
-              <label>Max Covers per Slot</label>
-              <input type="number" value="40" disabled>
+              <label>Max Covers per Service</label>
+              <input type="number" id="set-capacity" min="1" value="40">
             </div>
-            <button class="btn btn-secondary" disabled>Update Limits</button>
+            <button class="btn btn-secondary" id="set-capacity-save">Update Limit</button>
+          </div>
+
+          <div>
+            <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600;">Live Sync</h3>
+            <p style="color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.6;">How often the
+              reservation list refreshes, and whether new bookings chime.</p>
+            <div class="form-group" style="max-width: 240px; margin-bottom: 20px;">
+              <label>Refresh Every</label>
+              <select id="set-refresh" class="filter-dropdown" style="width: 100%;">
+                <option value="5000">5 seconds</option>
+                <option value="10000" selected>10 seconds</option>
+                <option value="30000">30 seconds</option>
+                <option value="60000">60 seconds</option>
+              </select>
+            </div>
+            <label style="display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer;">
+              <input type="checkbox" id="set-sound" style="width: 16px; height: 16px; accent-color: var(--red);">
+              Chime when a new booking arrives
+            </label>
+          </div>
+
+          <div>
+            <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600;">Data Export</h3>
+            <p style="color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.6;">Download every
+              reservation on record as a spreadsheet-ready CSV file.</p>
+            <button class="btn btn-secondary" id="set-export">Export Reservations CSV</button>
+            <div id="set-export-count" style="margin-top: 12px; font-size: 12px; color: var(--muted);"></div>
           </div>
 
           <div>
             <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600;">Blackout Dates</h3>
-            <p style="color: var(--muted); margin-bottom: 32px; font-size: 14px; line-height: 1.6;">Temporarily suspend
-              online bookings for private events or public holidays.</p>
-            <div id="blackout-list"
-              style="color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; border: 1px dashed var(--border); padding: 48px; text-align: center; opacity: 0.5;">
-              No active blackout periods.
+            <p style="color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.6;">Mark dates the
+              team should refuse bookings for (reference list, saved on this device).</p>
+            <div style="display: flex; gap: 10px; margin-bottom: 16px; max-width: 320px;">
+              <input type="date" id="set-blackout-date" style="flex: 1; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; font-family: var(--ff); font-size: 13px;">
+              <button class="btn btn-secondary" id="set-blackout-add" style="white-space: nowrap;">Add</button>
             </div>
-            <button class="btn btn-secondary" disabled>Add Blackout Date</button>
+            <div id="blackout-list"
+              style="font-size: 13px; border: 1px dashed var(--border); border-radius: 12px; padding: 16px; min-height: 60px;">
+            </div>
           </div>
         </div>
       </section>
@@ -1270,6 +1376,8 @@
 
     let volumeChartInst = null;
     let sourceChartInst = null;
+    let hoursChartInst = null;
+    let statusChartInst = null;
 
     const toYYYYMMDD = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 
@@ -1332,6 +1440,100 @@
     });
 
     // ── Dashboard Logic ──────────────────────────────────────────────
+    // ── Settings: persisted per device, all functional ──
+    let refreshTimer = null;
+    function startAutoRefresh() {
+      if (refreshTimer) clearInterval(refreshTimer);
+      const ms = parseInt(localStorage.getItem('yui-set-refresh')) || 10000;
+      refreshTimer = setInterval(fetchReservations, ms);
+    }
+
+    function playBookingChime() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = 880;
+        g.gain.setValueAtTime(0.12, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+        o.start(); o.stop(ctx.currentTime + 0.5);
+      } catch (e) { /* audio not available */ }
+    }
+
+    function renderBlackouts() {
+      const listEl = document.getElementById('blackout-list');
+      if (!listEl) return;
+      const dates = JSON.parse(localStorage.getItem('yui-set-blackouts') || '[]');
+      if (!dates.length) {
+        listEl.innerHTML = '<span style="color: var(--muted); opacity: 0.6;">No active blackout periods.</span>';
+        return;
+      }
+      listEl.innerHTML = dates.sort().map(d =>
+        `<span style="display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:999px;padding:6px 8px 6px 14px;margin:0 8px 8px 0;font-weight:600;">
+          ${d}
+          <button data-bd="${d}" class="bd-remove" style="background:none;border:none;cursor:pointer;color:var(--red);font-size:14px;line-height:1;padding:2px;">✕</button>
+        </span>`).join('');
+      listEl.querySelectorAll('.bd-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const next = JSON.parse(localStorage.getItem('yui-set-blackouts') || '[]').filter(x => x !== btn.dataset.bd);
+          localStorage.setItem('yui-set-blackouts', JSON.stringify(next));
+          renderBlackouts();
+        });
+      });
+    }
+
+    function initSettings() {
+      const capEl = document.getElementById('set-capacity');
+      const capSave = document.getElementById('set-capacity-save');
+      const refEl = document.getElementById('set-refresh');
+      const soundEl = document.getElementById('set-sound');
+      const expEl = document.getElementById('set-export');
+      const bdAdd = document.getElementById('set-blackout-add');
+      if (!capEl) return;
+
+      capEl.value = localStorage.getItem('yui-set-capacity') || 40;
+      refEl.value = localStorage.getItem('yui-set-refresh') || '10000';
+      soundEl.checked = localStorage.getItem('yui-set-sound') === '1';
+
+      capSave.addEventListener('click', () => {
+        localStorage.setItem('yui-set-capacity', Math.max(1, parseInt(capEl.value) || 40));
+        showToast('Capacity limit updated');
+        window.__yuiRenderSig = null;
+        render();
+      });
+      refEl.addEventListener('change', () => {
+        localStorage.setItem('yui-set-refresh', refEl.value);
+        startAutoRefresh();
+        showToast('Refresh interval updated');
+      });
+      soundEl.addEventListener('change', () => {
+        localStorage.setItem('yui-set-sound', soundEl.checked ? '1' : '0');
+        if (soundEl.checked) playBookingChime();
+      });
+      expEl.addEventListener('click', () => {
+        const cols = ['id', 'name', 'phone', 'date', 'time', 'party_size', 'status', 'source', 'note', 'created_at'];
+        const esc = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
+        const csv = [cols.join(',')]
+          .concat(reservationsData.map(r => cols.map(c => esc(r[c])).join(',')))
+          .join('\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        a.download = `yui-reservations-${toYYYYMMDD(new Date())}.csv`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        document.getElementById('set-export-count').textContent = `${reservationsData.length} records exported.`;
+      });
+      bdAdd.addEventListener('click', () => {
+        const v = document.getElementById('set-blackout-date').value;
+        if (!v) return;
+        const dates = JSON.parse(localStorage.getItem('yui-set-blackouts') || '[]');
+        if (!dates.includes(v)) dates.push(v);
+        localStorage.setItem('yui-set-blackouts', JSON.stringify(dates));
+        renderBlackouts();
+      });
+      renderBlackouts();
+    }
+
     function initDashboard() {
       // Set defaults for manual form
       const today = new Date();
@@ -1413,6 +1615,10 @@
         });
       });
 
+      // Open on TODAY by default
+      const todayPill = document.querySelector('#date-toggles .pill[data-date="today"]');
+      if (todayPill) todayPill.click();
+
       // Handle Filter Listeners
       document.getElementById('res-search').addEventListener('input', (e) => {
         state.search = e.target.value.toLowerCase();
@@ -1454,7 +1660,8 @@
 
       initCharts();
       fetchReservations();
-      setInterval(fetchReservations, 10000);
+      startAutoRefresh();
+      initSettings();
     }
 
     async function fetchReservations() {
@@ -1475,7 +1682,13 @@
         console.error("Fetch err:", error);
         return;
       }
+      const prevCount = reservationsData.length;
       reservationsData = data || [];
+      // Chime on newly arrived bookings (if enabled in Settings)
+      if (prevCount > 0 && reservationsData.length > prevCount &&
+          localStorage.getItem('yui-set-sound') === '1') {
+        playBookingChime();
+      }
       render();
     }
 
@@ -1486,7 +1699,7 @@
       if (volumeChartInst) volumeChartInst.destroy();
       if (sourceChartInst) sourceChartInst.destroy();
 
-      Chart.defaults.font.family = 'Satoshi, sans-serif';
+      Chart.defaults.font.family = 'Outfit, sans-serif';
       Chart.defaults.color = '#7A7470';
 
 
@@ -1514,6 +1727,33 @@
           scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#F0F0F0', tickLength: 0 }, border: { display: false, dash: [4, 4] } } }
         }
       });
+
+      const hrsEl = document.getElementById('hoursChart');
+      if (hrsEl) {
+        if (hoursChartInst) hoursChartInst.destroy();
+        hoursChartInst = new Chart(hrsEl.getContext('2d'), {
+          type: 'bar',
+          data: { labels: [], datasets: [{ label: 'Covers', data: [], backgroundColor: 'rgba(210, 43, 43, 0.75)', borderRadius: 6, maxBarThickness: 26 }] },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#F0F0F0', tickLength: 0 }, border: { display: false, dash: [4, 4] } } }
+          }
+        });
+      }
+
+      const stEl = document.getElementById('statusChart');
+      if (stEl) {
+        if (statusChartInst) statusChartInst.destroy();
+        statusChartInst = new Chart(stEl.getContext('2d'), {
+          type: 'doughnut',
+          data: { labels: [], datasets: [{ data: [], backgroundColor: ['#D2A02B', '#4A8C4A', '#2B6DAE', '#1A1612', '#D22B2B', '#8A8580'], borderWidth: 0 }] },
+          options: {
+            responsive: true, maintainAspectRatio: false, cutout: '68%',
+            plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, boxHeight: 6 } } }
+          }
+        });
+      }
     }
 
     function updateCharts() {
@@ -1598,13 +1838,59 @@
       if (volumeChartInst) {
         volumeChartInst.data.labels = sortedKeys;
         volumeChartInst.data.datasets[0].data = sortedKeys.map(k => volMap[k]);
-        volumeChartInst.update();
+        volumeChartInst.update('none');
       }
       if (sourceChartInst) {
         sourceChartInst.data.labels = sortedKeys;
         sourceChartInst.data.datasets[0].data = sortedKeys.map(k => webMap[k]);
         sourceChartInst.data.datasets[1].data = sortedKeys.map(k => recMap[k]);
-        sourceChartInst.update();
+        sourceChartInst.update('none');
+      }
+
+      // ── Extended intelligence ──
+      let partySum = 0, partyN = 0, noShows = 0, totalRes = 0;
+      const dayCounts = {}, statusCounts = {}, hourCovers = {};
+      const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      reservationsData.forEach(r => {
+        totalRes++;
+        statusCounts[r.status || 'pending'] = (statusCounts[r.status || 'pending'] || 0) + 1;
+        if (r.status === 'no-show') noShows++;
+        if (['cancelled', 'no-show'].includes(r.status)) return;
+        const p = parseInt(r.party_size) || 0;
+        partySum += p; partyN++;
+        if (r.date) {
+          const dow = new Date(r.date + 'T12:00:00').getDay();
+          dayCounts[dow] = (dayCounts[dow] || 0) + 1;
+        }
+        if (r.time) {
+          const h = parseInt(r.time.split(':')[0]);
+          hourCovers[h] = (hourCovers[h] || 0) + p;
+        }
+      });
+      const avgParty = partyN ? (partySum / partyN).toFixed(1) : '-';
+      const noShowRate = totalRes ? Math.round((noShows / totalRes) * 100) + '%' : '-';
+      let busyDay = '-', busyMax = 0;
+      Object.keys(dayCounts).forEach(d => { if (dayCounts[d] > busyMax) { busyMax = dayCounts[d]; busyDay = dayNames[d]; } });
+      const estRevenue = '₹' + (totalCovers * 1400).toLocaleString('en-IN');
+
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      set('a-avg-party', avgParty);
+      set('a-noshow', noShowRate);
+      set('a-busy-day', busyDay);
+      set('a-revenue', estRevenue);
+
+      if (hoursChartInst) {
+        const hrs = [];
+        for (let h = 11; h <= 23; h++) hrs.push(h);
+        hoursChartInst.data.labels = hrs.map(h => String(h).padStart(2, '0') + ':00');
+        hoursChartInst.data.datasets[0].data = hrs.map(h => hourCovers[h] || 0);
+        hoursChartInst.update('none');
+      }
+      if (statusChartInst) {
+        const order = ['pending', 'confirmed', 'seated', 'completed', 'cancelled', 'no-show'];
+        statusChartInst.data.labels = order.map(s => s.charAt(0).toUpperCase() + s.slice(1));
+        statusChartInst.data.datasets[0].data = order.map(s => statusCounts[s] || 0);
+        statusChartInst.update('none');
       }
     }
 
@@ -1628,7 +1914,8 @@
       document.getElementById('s-pending').textContent = sPen;
       document.getElementById('s-confirmed').textContent = sCon;
       document.getElementById('s-completed').textContent = sCom;
-      document.getElementById('s-covers').textContent = sCov;
+      const capSetting = parseInt(localStorage.getItem('yui-set-capacity')) || 0;
+      document.getElementById('s-covers').textContent = capSetting ? `${sCov} / ${capSetting}` : sCov;
 
       // Apply UI filters ONLY to active reservations (excluding completed)
       const activeReservations = reservationsData.filter(r => r.status !== 'completed');
@@ -1654,6 +1941,12 @@
 
       const activeList = document.getElementById('res-list-active');
       const histList = document.getElementById('res-list-history');
+
+      // Seamless refresh: skip the DOM wipe entirely when nothing changed —
+      // the 10s poll was blanking and rebuilding the lists (visible blink)
+      const renderSig = JSON.stringify([filteredActive, filteredHistory]);
+      if (renderSig === window.__yuiRenderSig) return;
+      window.__yuiRenderSig = renderSig;
 
       if (activeList) activeList.innerHTML = '';
       if (histList) histList.innerHTML = '';

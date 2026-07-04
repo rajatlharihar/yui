@@ -2380,19 +2380,21 @@
     const FRAME_COUNT = 90;
     const FPS = 24;
     const INTERVAL = 1000 / FPS;
-    const frames = new Array(FRAME_COUNT).fill(null);
-    let loadedCount = 0;
+    const FRAME_W = 160, FRAME_H = 158, SPRITE_COLS = 10;
 
-    function pad(n) { return n.toString().padStart(2, '0'); }
+    // All 90 frames live in ONE sprite sheet — a single high-priority
+    // request instead of 90, so the reveal starts almost immediately
+    const spriteImg = new Image();
+    spriteImg.fetchPriority = 'high';
+    let spriteReady = false;
+    spriteImg.onload = () => { spriteReady = true; };
+    spriteImg.src = 'images/yui/logo-frames/logo_sprite.png';
 
-    // Pre-load all frames — the first ones (and the final lockup, which the
-    // phone shows statically) jump the network queue
-    for (let i = 0; i < FRAME_COUNT; i++) {
-      const img = new Image();
-      if (i < 12 || i === FRAME_COUNT - 1) img.fetchPriority = 'high';
-      img.onload = () => { frames[i] = img; loadedCount++; };
-      img.onerror = () => { loadedCount++; };
-      img.src = `images/yui/logo-frames/logo_reveal${pad(i)}.png`;
+    // draw frame idx from the sprite onto ctx at dw×dh
+    function drawSpriteFrame(ctx, idx, dw, dh) {
+      const sx = (idx % SPRITE_COLS) * FRAME_W;
+      const sy = Math.floor(idx / SPRITE_COLS) * FRAME_H;
+      ctx.drawImage(spriteImg, sx, sy, FRAME_W, FRAME_H, 0, 0, dw, dh);
     }
 
     // ── LOGO ANIMATION — plays directly in nav position ──
@@ -2401,12 +2403,10 @@
       const navCtx = navCanvas.getContext('2d');
       let frame = 0, playing = false, lastTime = 0;
 
-      // Source-crop to the knot mark only — katakana "ソリー" sits at x>=110 in the frame
       function drawNav(idx) {
-        const img = frames[idx];
-        if (!img) return;
+        if (!spriteReady) return;
         navCtx.clearRect(0, 0, navCanvas.width, navCanvas.height);
-        navCtx.drawImage(img, 0, 0, navCanvas.width, navCanvas.height);
+        drawSpriteFrame(navCtx, idx, navCanvas.width, navCanvas.height);
       }
 
       function startPlay() {
@@ -2421,13 +2421,14 @@
         if (frame >= FRAME_COUNT - 1) { drawNav(FRAME_COUNT - 1); return; }
         if (now - lastTime >= INTERVAL) {
           lastTime = now;
-          if (frames[frame]) { drawNav(frame); frame++; }
+          drawNav(frame);
+          frame++;
         }
         requestAnimationFrame(tick);
       }
 
       function waitAndStart() {
-        if (frames[0]) { drawNav(0); startPlay(); }
+        if (spriteReady) { drawNav(0); startPlay(); }
         else requestAnimationFrame(waitAndStart);
       }
       // 0.5s delay — the reveal plays together with the hero video
@@ -2524,10 +2525,9 @@
       }
 
       function drawFy(idx) {
-        const img = frames[idx];
-        if (!img) return;
+        if (!spriteReady) return;
         fyCtx.clearRect(0, 0, fyCssW, fyCssH);
-        fyCtx.drawImage(img, 0, 0, fyCssW, fyCssH);
+        drawSpriteFrame(fyCtx, idx, fyCssW, fyCssH);
       }
 
       function fyTick(now) {
@@ -2536,7 +2536,7 @@
           fyPlaying = false;
           return;
         }
-        if (now - fyLastTime >= INTERVAL) { fyLastTime = now; if (frames[fyFrame]) drawFy(fyFrame); fyFrame++; }
+        if (now - fyLastTime >= INTERVAL) { fyLastTime = now; drawFy(fyFrame); fyFrame++; }
         requestAnimationFrame(fyTick);
       }
 
@@ -2548,7 +2548,7 @@
       }
 
       function fyWait() {
-        if (frames[0]) { setupFyCanvas(); drawFy(0); }
+        if (spriteReady) { setupFyCanvas(); drawFy(0); }
         else requestAnimationFrame(fyWait);
       }
       fyWait();
