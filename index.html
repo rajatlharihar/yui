@@ -12,6 +12,10 @@
   <link rel="icon" type="image/svg+xml" href="images/yui/yui-logo-mark.svg.svg" media="(prefers-color-scheme: light)">
   <link rel="icon" type="image/svg+xml" href="images/yui/Main_Logo_Illustrations 2.svg" media="(prefers-color-scheme: dark)">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+  <!-- Resource hints: sprite + video start downloading immediately -->
+  <link rel="preload" href="images/yui/logo-frames/logo_sprite.png" as="image" fetchpriority="high">
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
   <!-- Lenis Smooth Scroll Library -->
   <script src="https://unpkg.com/@studio-freight/lenis@1.0.36/dist/lenis.min.js"></script>
   <style>
@@ -235,7 +239,7 @@
 
   <section id="home" class="hero">
     <div class="hero-sticky-track">
-      <video id="heroVideo" muted preload="auto" playsinline>
+      <video id="heroVideo" muted preload="auto" playsinline fetchpriority="high">
         <source src="videos/Box.mp4" type="video/mp4">
       </video>
       <div class="hero-content" id="heroContent">
@@ -304,13 +308,13 @@
       <!-- Chef slides — stacked, crossfade driven by page scroll (works with Lenis) -->
       <div class="chef-slides-wrap">
         <div class="chef-slide active" data-index="0">
-          <img src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+          <img loading="lazy" decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
         </div>
         <div class="chef-slide" data-index="1">
-          <img src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+          <img loading="lazy" decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
         </div>
         <div class="chef-slide" data-index="2">
-          <img src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+          <img loading="lazy" decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
         </div>
       </div>
 
@@ -318,13 +322,13 @@
         <div class="minimap-wrapper">
           <div class="minimap-img-preview">
             <div class="minimap-img-item active" data-index="0">
-              <img src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+              <img loading="lazy" decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
             </div>
             <div class="minimap-img-item" data-index="1">
-              <img src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+              <img loading="lazy" decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
             </div>
             <div class="minimap-img-item" data-index="2">
-              <img src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+              <img loading="lazy" decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
             </div>
           </div>
           <div class="minimap-info-list">
@@ -392,7 +396,7 @@
 
     <div class="bento-tray-scroll">
       <div class="bento-tray-wrapper">
-        <img class="bento-tray-frame" src="images/yui/bento-layout-1.jpg" alt="Bento tray">
+        <img class="bento-tray-frame" loading="lazy" decoding="async" src="images/yui/bento-layout-1.jpg" alt="Bento tray">
         <div class="bento-tray-slots" id="bentoGrid"></div>
       </div>
     </div>

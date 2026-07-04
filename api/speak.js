@@ -10,19 +10,35 @@ async function openaiTTS(text) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) return { buffer: null, error: 'OPENAI_API_KEY is missing' };
 
-  const voice = process.env.OPENAI_TTS_VOICE || 'nova';
-  const response = await fetch('https://api.openai.com/v1/audio/speech', {
+  const voice = process.env.OPENAI_TTS_VOICE || 'sage';
+
+  // gpt-4o-mini-tts accepts voice instructions — this is what gives Yui
+  // her gentle Japanese-hostess delivery
+  let response = await fetch('https://api.openai.com/v1/audio/speech', {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${key}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'tts-1',
+      model: 'gpt-4o-mini-tts',
       input: text,
       voice: voice,
+      instructions: 'You are Yui, the gracious hostess of a fine Japanese restaurant. Speak warmly and softly with a gentle, natural Japanese accent and an unhurried pace. Pronounce Japanese words (yokoso, omakase, hai) natively and with care.',
     }),
   });
+
+  // Fall back to the plain tts-1 model if the instructed model is unavailable
+  if (!response.ok) {
+    response = await fetch('https://api.openai.com/v1/audio/speech', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ model: 'tts-1', input: text, voice: 'nova' }),
+    });
+  }
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));

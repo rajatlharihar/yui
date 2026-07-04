@@ -852,15 +852,14 @@
           <button type="submit" id="login-btn" class="form-submit-light">Sign In</button>
         </form>
 
-        <!-- Credentials quick-access — dark ACCESS pill + demo card -->
-        <div style="display:flex;justify-content:center;">
+        <!-- Credentials quick-access — floats OUTSIDE the login card -->
+        <div id="creds-float" style="position:fixed;right:44px;top:38%;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
           <button type="button" id="creds-toggle" aria-label="Show credentials"
-            style="margin-top:16px;display:inline-flex;align-items:center;gap:10px;background:#1b1b1b;border:1px solid rgba(255,255,255,0.08);border-radius:999px;padding:12px 24px;font-size:12px;font-weight:700;letter-spacing:0.18em;color:#f5f5f5;cursor:pointer;">
+            style="display:inline-flex;align-items:center;gap:10px;background:#1b1b1b;border:1px solid rgba(255,255,255,0.08);border-radius:999px;padding:12px 24px;font-size:12px;font-weight:700;letter-spacing:0.18em;color:#f5f5f5;cursor:pointer;box-shadow:0 12px 32px rgba(0,0,0,0.4);">
             <i class="ph ph-lock-simple" style="font-size:16px;color:#E3452F;"></i> ACCESS
           </button>
-        </div>
         <div id="creds-panel"
-          style="display:none;margin:12px auto 0;max-width:340px;background:#161616;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px 20px 18px;box-shadow:0 24px 60px rgba(0,0,0,0.45);text-align:left;">
+          style="display:none;width:320px;background:#161616;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:20px 20px 18px;box-shadow:0 24px 60px rgba(0,0,0,0.45);text-align:left;">
           <div style="font-size:12px;font-weight:700;letter-spacing:0.2em;color:#f5f5f5;margin-bottom:16px;">DEMO CREDENTIALS</div>
           <div style="font-size:10px;font-weight:600;letter-spacing:0.18em;color:rgba(255,255,255,0.4);margin-bottom:6px;">EMAIL ADDRESS</div>
           <div style="display:flex;align-items:center;gap:8px;background:#0d0d0d;border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:10px 6px 10px 14px;margin-bottom:14px;">
@@ -879,6 +878,7 @@
             </button>
           </div>
         </div>
+        </div><!-- /creds-float -->
         <script>
           document.getElementById('creds-toggle').addEventListener('click', function () {
             var p = document.getElementById('creds-panel');
