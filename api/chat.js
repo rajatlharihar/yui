@@ -206,7 +206,7 @@ export async function POST(req) {
           if (bookingResult.ok) {
             return Response.json(
               {
-                reply: `Table for ${args.partySize} at ${args.time.replace(/^0/, ‘’)} — confirmed. We look forward to seeing you.`,
+                reply: `Table for ${args.partySize} at ${args.time.replace(/^0/, '')} — confirmed. We look forward to seeing you.`,
                 saveName: args.name,
                 savePhone: args.phone
               },
