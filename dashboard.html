@@ -1,0 +1,2050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yui Operations Dashboard</title>
+  <!-- Libraries -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    @import url('https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap');
+
+    :root {
+      --bg: #FFFFFF;
+      --bg-warm: #FDFCFB;
+      --surface: #FFFFFF;
+      --text: #1A1612;
+      --muted: #7A7470;
+      --red: #D22B2B;
+      --red-deep: #A01E1E;
+      --cream: #EEE2D4;
+      --border: rgba(26, 22, 18, 0.08);
+      --ff: 'Satoshi', system-ui, sans-serif;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
+      --ease: cubic-bezier(.16, 1, .3, 1);
+      accent-color: var(--red);
+    }
+
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: var(--ff);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Manual Form Redesign */
+    #manual-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+
+    .form-group-full {
+      grid-column: 1 / -1;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      background: #FCFCFC;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--text);
+      font-family: inherit;
+      transition: .3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--red);
+      background: var(--surface);
+      box-shadow: 0 0 0 4px rgba(210, 43, 43, 0.05);
+    }
+
+    /* Button Styling */
+    .btn {
+      padding: 14px 28px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: .2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: white;
+      border-color: var(--red);
+    }
+
+    .btn-primary:hover {
+      background: var(--red-deep);
+      border-color: var(--red-deep);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(210, 43, 43, 0.2);
+    }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-warm);
+    }
+
+    /* Status Dot */
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .status-dot.active {
+      background: #4A8C4A;
+    }
+
+    .status-dot.pending {
+      background: #D2A02B;
+    }
+
+    .status-dot.cancelled {
+      background: var(--red);
+    }
+
+    .dash-grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    [data-hidden="true"] {
+      display: none !important;
+    }
+
+    /* ── Login Overlay ───────────────────────── */
+    #login-screen {
+      position: fixed;
+      inset: 0;
+      background: #0D0C0A;
+      /* Deep architectural dark */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 24px;
+    }
+
+    #login-screen .dash-grain {
+      opacity: 0.1;
+      filter: invert(1);
+    }
+
+    .login-wrap {
+      width: 100%;
+      max-width: 420px;
+      padding: 56px;
+      background: var(--surface);
+      border-radius: 24px;
+      box-shadow: 0 20px 80px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-logo {
+      width: 32px;
+      height: 52px;
+      margin: 0 auto 40px;
+    }
+
+    .brand-header {
+      margin-bottom: 40px;
+    }
+
+    .brand-title-light {
+      font-size: 28px;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .brand-sub-light {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .form-group-light {
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .form-helper-light {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .form-input-light {
+      width: 100%;
+      background: #F9F9F9;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 14px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s var(--ease);
+    }
+
+    .form-input-light:focus {
+      border-color: var(--red);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(210, 43, 43, 0.05);
+    }
+
+    .form-submit-light {
+      width: 100%;
+      background: var(--red);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      transition: 0.2s var(--ease);
+      margin-top: 12px;
+    }
+
+    .form-submit-light:hover:not(:disabled) {
+      background: var(--red-deep);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(210, 43, 43, 0.15);
+    }
+
+    .login-error-light {
+      background: rgba(210, 43, 43, 0.05);
+      border: 1px solid rgba(210, 43, 43, 0.1);
+      color: var(--red);
+      font-size: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .auth-footer {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--muted);
+      opacity: 0.6;
+    }
+
+    /* ── Main App Layout ─────────────────────── */
+    #app-container {
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Branded Header */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 800;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      background: rgba(255, 255, 255, .96);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-logo {
+      display: block;
+      width: 22px;
+      height: 38px;
+    }
+
+    .nav-logo svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .nav-links {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+
+    .nav-link {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: .2s;
+      padding: 8px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-link:hover {
+      color: var(--text);
+    }
+
+    .nav-link.active {
+      color: var(--text);
+    }
+
+    .nav-link.active::after {
+      content: '';
+      width: 4px;
+      height: 4px;
+      background: var(--red);
+      border-radius: 50%;
+      display: block;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .staff-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .staff-badge span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4A8C4A;
+    }
+
+    #logout-btn {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    #logout-btn:hover {
+      color: var(--red);
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      padding: 64px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 64px;
+      max-width: 1440px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Chips UI */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      font-family: var(--ff);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: .2s;
+      cursor: pointer;
+    }
+
+    .chip.active,
+    .chip:hover {
+      background: var(--bg-warm);
+      border-color: var(--text);
+    }
+
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: 64px;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+    }
+
+    .stat-card {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 400;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    /* Filters Section */
+    .filters-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-wrapper {
+      position: relative;
+      width: 320px;
+    }
+
+    .search-wrapper input {
+      width: 100%;
+      padding: 12px 0;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      transition: .3s;
+    }
+
+    .search-wrapper input:focus {
+      outline: none;
+      border-color: var(--text);
+    }
+
+    .date-filter {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .date-input {
+      border: none;
+      background: var(--bg-warm);
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      border-radius: 4px;
+    }
+
+    /* New Advanced Filters */
+    .filter-pills {
+      display: flex;
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .pill {
+      background: transparent;
+      border: none;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: .2s;
+    }
+
+    .pill.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .filter-dropdown {
+      appearance: none;
+      background: var(--bg-warm);
+      border: 1px solid var(--border);
+      padding: 8px 32px 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+    }
+
+    /* Reservation Table/List Styling */
+    .res-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .res-list-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 150px;
+      padding: 16px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .res-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 1fr 150px;
+      padding: 24px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      transition: .2s var(--ease);
+      animation: resFadeIn 0.4s var(--ease) backwards;
+    }
+
+    .res-row.history-item {
+      opacity: 0.6;
+    }
+
+    .res-row.history-item:hover {
+      opacity: 1;
+    }
+
+    @keyframes resFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .res-row:hover {
+      background: var(--bg-warm);
+    }
+
+    .res-guest {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .res-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .res-contact {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .res-time,
+    .res-party,
+    .res-source {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-flex;
+      padding: 4px 10px;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      border-radius: 20px;
+    }
+
+    .status-confirmed {
+      background: rgba(74, 140, 74, 0.08);
+      color: #2D5A2D;
+    }
+
+    .status-pending {
+      background: rgba(210, 160, 43, 0.08);
+      color: #8C6A1D;
+    }
+
+    .status-cancelled {
+      background: rgba(210, 43, 43, 0.08);
+      color: var(--red);
+    }
+
+    .action-dots {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--muted);
+      border-radius: 50%;
+      transition: .2s;
+    }
+
+    .action-dots:hover {
+      background: var(--border);
+      color: var(--text);
+    }
+
+    /* Settings View */
+    .view-section {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+    }
+
+    .settings-panel {
+      max-width: 800px;
+    }
+
+    .settings-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 48px;
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .settings-card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .settings-card p {
+      line-height: 1.6;
+    }
+
+    /* Custom Dropdowns (Time & Date) */
+    .custom-time-picker, .custom-date-picker { position: relative; }
+    .time-trigger, .date-trigger { 
+      cursor: pointer; display: flex; align-items: center; justify-content: space-between; 
+      min-height: 44px; border: 1px solid var(--border); border-radius: 8px; 
+      padding: 14px 16px; background: #FCFCFC; font-size: 15px; color: var(--text); transition: .3s;
+    }
+    .time-trigger:hover, .date-trigger:hover { border-color: var(--red); background: #fff; }
+
+    .time-dropdown, .date-dropdown {
+      position: absolute; top: 100%; left: 0; right: 0; background: white;
+      border: 1px solid var(--border); border-radius: 12px;
+      z-index: 2000; display: none;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08); margin-top: 8px;
+      overflow: hidden;
+      animation: dropIn 0.3s var(--ease);
+    }
+    .time-dropdown { max-height: 280px; overflow-y: auto; overscroll-behavior: contain; }
+
+    @keyframes dropIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .time-dropdown.show, .date-dropdown.show { display: block; }
+    .custom-date-picker.is-active, .custom-time-picker.is-active { z-index: 3001; }
+
+    .time-slot {
+      padding: 12px 20px; cursor: pointer; font-size: 14px; transition: all 0.2s;
+      color: var(--text); text-align: center; font-variant-numeric: tabular-nums;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+    }
+    .time-slot:last-child { border-bottom: none; }
+    .time-slot:hover { background: #FDF2F2; color: var(--red); }
+    .time-slot.active { background: var(--red) !important; color: white !important; font-weight: 600; }
+
+    /* Date Dropdown / Calendar Specifics */
+    .date-dropdown { width: 320px; padding: 20px; }
+    @media(max-width: 480px) { .date-dropdown { width: 100%; } }
+
+    .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .cal-title { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: 0.02em; }
+    .cal-nav { display: flex; gap: 4px; }
+    .cal-btn { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s; color: var(--muted); border: none; background: transparent; cursor: pointer; }
+    .cal-btn:hover { background: #F5EFE4; color: var(--text); }
+    .cal-btn svg { width: 14px; height: 14px; }
+
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+    .cal-day-lbl { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; text-align: center; padding-bottom: 10px; letter-spacing: 0.05em; }
+    .cal-day {
+      aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--text); border-radius: 50%; cursor: pointer;
+      transition: all 0.2s; position: relative;
+    }
+    .cal-day:hover:not(.disabled) { background: #FDF2F2; color: var(--red); }
+    .cal-day.today::after { content: ''; position: absolute; bottom: 4px; width: 3px; height: 3px; background: var(--red); border-radius: 50%; }
+    .cal-day.selected { background: var(--red) !important; color: white !important; font-weight: 700; }
+    .cal-day.disabled { color: rgba(26,22,18,0.15); cursor: default; }
+    .cal-day.other-month { opacity: 0.3; }
+  </style>
+  <link rel="icon" type="image/svg+xml" href="images/yui/yui-logo-mark.svg.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/svg+xml" href="images/yui/Main_Logo_Illustrations 2.svg" media="(prefers-color-scheme: dark)">
+</head>
+
+<body>
+  <div class="dash-grain"></div>
+
+  <!-- Authentication Hook Overlay -->
+  <div id="login-screen">
+    <div class="login-ribbon">
+      <svg viewBox="0 0 160 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M130.89 255.14C127.43 262.43 125.74 270.68 126.06 278.91C126.07 279.27 126.11 279.64 126.14 280H132.07C132.03 279.45 131.98 278.91 131.96 278.36C131.67 270.91 133.1 264.24 136.46 257.36L136.52 257.24C136.81 256.69 143.5 244.05 158.17 237.62C158.76 237.36 159.38 237.09 160.01 236.81V231.96C156.37 233.59 152.78 235.24 149.6 236.78C137.96 242.42 131.18 254.62 130.9 255.14H130.89Z"
+          fill="#FFFFFF" />
+        <path
+          d="M147.89 263.14C145.53 268 144.56 272.57 144.76 277.87C144.79 278.58 144.84 279.29 144.91 280H150.99C153.51 280 155.79 278.96 157.42 277.29C157.24 272.82 156.24 268.9 154.27 264.98L153.8 264.04L154.4 263.18C155.76 261.26 157.56 259.52 159.98 257.83V251.06C152.01 255.77 148.06 262.8 147.87 263.13L147.89 263.14Z"
+          fill="#FFFFFF" />
+        <path
+          d="M45.79 35.8102C55.54 51.4502 65.51 59.4602 81.34 64.3902L81.72 64.5202C81.92 64.6002 97.48 70.3902 114.75 65.0302C125.53 61.6802 134.01 57.2402 140.67 51.4602L141.24 50.9702L141.99 51.0402C145.07 51.3402 148.15 51.6402 151.2 51.9302C152.09 52.0202 153.06 52.1202 154.08 52.2302L157.5 52.6002L155.19 55.1502C149.35 61.5802 139.2 70.8802 118.55 77.2802C111.68 79.4102 105.09 80.1502 99.26 80.1502C87.47 80.1502 78.83 77.1302 77.33 76.5702C58.58 70.6902 46.29 60.8502 34.91 42.6002C26.48 29.0702 23.97 13.5502 27.22 0.000214843H21.11C20.65 2.13021 20.31 4.31021 20.12 6.54022C19.04 19.3402 22.48 32.9402 30.05 45.8602C40.23 63.2402 57.61 77.1202 75.39 82.0702C94.06 87.2702 111.36 86.6202 128.28 80.1002C141.25 75.1002 151.89 67.7302 159.99 58.1702V47.0602C157.2 46.8102 154.36 46.5602 151.87 46.3502L148.76 46.0802C144 45.6702 138.61 45.2002 131.52 44.4702L128.98 44.2102L133.82 34.7102C134.07 34.2002 134.32 33.6502 134.57 33.1002L135.08 31.9502L136.34 32.0702C141.58 32.5902 145.95 32.9702 149.81 33.3002C153.07 33.5802 156.38 33.8702 159.99 34.2202V28.7302C158.61 28.5502 157.31 28.3502 156.04 28.1602C154.3 27.8902 152.65 27.6402 151.1 27.5002C147.97 27.2102 144.5 26.8902 139.15 26.3402L137.14 26.1302L137.63 24.1702C138.36 21.2902 138.87 18.2802 139.17 15.2202L139.34 13.4702L141.09 13.6502C146.02 14.1502 149.31 14.4602 152.27 14.7302C153.43 14.8402 154.79 14.9202 156.2 15.0002C157.45 15.0802 158.72 15.1602 159.97 15.2602V8.98021C159.97 4.01021 155.94 -0.0197852 150.97 -0.0197852H133.45C134.11 5.62021 134.81 18.9102 128.92 31.2702C124.84 39.8402 119.06 50.7202 114.92 58.3502L114.6 58.9502L113.96 59.1702C110.48 60.3802 106.25 61.1202 101.72 61.3202L98.61 61.4502L100.12 58.7202C102.75 53.9602 111.75 37.5302 117.36 25.7602C122.59 14.7802 120.84 1.97021 120.52 -0.00978516H114.38C114.51 0.490215 114.64 0.970215 114.76 1.48021L114.79 1.61021C114.91 2.22021 117.59 16.2702 110.15 30.4502C105.89 38.5702 98.83 51.9502 94.54 60.0702L93.98 61.1202L92.8 60.9902C89.42 60.6102 86.12 59.9502 82.97 59.0202L80.92 58.4102L81.92 56.5202C85.93 48.9302 94.08 33.4802 98.8 24.4902C103.97 14.6302 102.29 4.53022 102.22 4.11022C101.89 2.65022 101.48 1.28021 101 -0.0297852H86.79C89.5 2.86021 92.48 5.01022 96.08 6.67022L97.03 7.11022L97.09 8.15021C97.28 11.1502 96.7 14.3702 95.27 18.2602L94.65 19.9602L92.97 19.2902C86.2 16.5702 80.86 12.7702 76.16 7.35021C74.16 5.04022 72.4 2.57021 70.9 -0.0197852H64.21C66.13 3.90021 68.56 7.59021 71.48 10.9702C76.63 16.9202 83.17 21.6602 90.4 24.6802L92.14 25.4102L91.28 27.0902C90.13 29.3402 88.76 31.9002 86.84 35.3902L86.07 36.7802L84.61 36.1402C75.9 32.3502 68.01 26.5502 61.78 19.3602C56.67 13.4602 52.85 6.89021 50.26 -0.0297852H40.46C36.69 10.9802 38.56 24.2502 45.75 35.7802L45.79 35.8102Z"
+          fill="#FFFFFF" />
+        <path
+          d="M57.7002 258.85C57.7202 256.45 58.1102 253.09 58.8602 248.65L59.0402 247.57L60.0902 247.26C63.3802 246.29 66.7302 245.1 70.0402 243.71L73.0802 242.44L72.4302 245.67C71.9002 248.34 71.4602 250.75 71.1402 252.82C70.8302 255.02 70.6102 257.19 70.4802 259.24V260.94H70.3902C70.1102 267.49 70.6102 273.88 71.8502 280H77.8302C75.2302 266.92 75.3302 256.38 78.1602 245.95L78.3602 245.26C78.8802 243.42 79.6202 241.27 80.5202 239.01L80.7402 238.44L81.2702 238.14C88.0302 234.24 94.2902 229.55 99.8602 224.2L102.36 226.64C98.8502 230.47 95.1402 236.82 92.4302 243.62C92.3102 243.93 91.9902 244.75 91.9502 244.85C88.2402 255.01 87.8202 265 90.5402 278.22C90.6602 278.82 90.8002 279.41 90.9402 280H113.28C113.28 279.8 113.25 279.6 113.24 279.4C112.84 269.07 114.98 258.7 119.41 249.43L119.5 249.25C119.86 248.56 128.18 232.91 143.99 225.25C148.8 222.92 154.5 220.35 159.98 217.95V203.09C155.65 202.32 151.48 202 147.44 202.17L146.69 202.2L146.15 201.68C143.99 199.58 141.82 197.47 139.67 195.39L139.51 195.23C138.87 194.6 138.17 193.92 137.45 193.2L135.01 190.78L138.4 190.24C143.6 189.41 150.71 188.76 159.97 190.13V184.21C150.23 182.95 140.74 183.54 131.62 186.02L130.3 186.42L125.41 181.76L125.7 180.74C126.21 178.97 126.7 177.06 127.19 174.9L127.43 173.87L128.45 173.6C132.86 172.42 137.45 171.59 142.09 171.16C147.98 170.61 153.96 170.66 159.97 171.32V76.1801C152.16 82.8001 143.08 88.1501 132.88 92.0801C121.95 96.3001 110.91 98.4001 99.5702 98.4001C90.5902 98.4001 81.4002 97.0801 71.9402 94.4401C51.0702 88.6301 30.7702 72.5101 18.9702 52.3601C10.0802 37.1201 6.05023 20.9101 7.35023 5.47006C7.50023 3.64006 7.74023 1.84006 8.05023 0.0600586C3.53023 0.530059 0.000234375 4.35006 0.000234375 9.00006V65.1801C2.07023 64.5201 4.18023 63.9301 6.32023 63.4001C8.62023 62.7101 11.9502 62.0801 16.4102 61.5001L17.4902 61.3601L18.0902 62.2701C19.9902 65.1301 22.1202 67.9801 24.4202 70.7201L26.5302 73.2501L23.2502 73.5901C20.5302 73.8701 18.1002 74.1701 16.0402 74.4701C13.8302 74.8301 11.6702 75.2601 9.66023 75.7501L9.23023 75.8501C6.05023 76.6401 2.97023 77.6101 -0.00976562 78.7401V85.0001C8.51023 81.2801 16.3802 79.4401 24.6802 79.1501L25.3002 79.1301H25.3202C27.2502 79.0901 29.5402 79.1701 32.0102 79.3501L32.6202 79.4001L33.0702 79.8101C38.7902 85.1101 45.1302 89.7001 51.8902 93.4501L50.3002 96.5601C45.6002 94.3401 38.4402 92.6701 31.1502 92.0901C30.8202 92.0701 29.9302 92.0001 29.8302 92.0001C19.8002 91.4901 10.7402 93.6701 0.0202344 99.2001V123.74C1.04023 123.32 2.08023 122.92 3.13023 122.56C12.8802 119.13 23.4202 118.1 33.5802 119.59L33.7802 119.62C34.5502 119.76 51.9602 123.08 63.9602 135.93C70.4402 142.86 78.4502 152.23 84.0302 158.87L84.4702 159.39L84.4402 160.07C84.2902 163.75 83.4302 167.96 81.9502 172.25L80.9302 175.2L78.9402 172.8C75.4802 168.62 63.4902 154.22 54.5902 144.68C45.7602 135.23 32.1002 132.36 31.5202 132.24C23.5302 131.09 15.1502 131.91 7.39023 134.65C4.85023 135.55 2.39023 136.66 0.0302344 137.94V144.8C3.04023 142.89 6.27023 141.3 9.66023 140.11C16.6902 137.63 23.4902 137.03 31.0502 138.2L31.1802 138.22C31.8002 138.33 45.8502 140.99 56.3302 153.1C62.3302 160.04 72.1902 171.51 78.1802 178.47L78.9602 179.37L78.4002 180.42C76.8102 183.42 74.9902 186.26 72.9702 188.85L71.6602 190.54L70.2702 188.92C64.6702 182.41 53.2902 169.16 46.6502 161.48C39.3702 153.06 29.3602 150.92 28.9402 150.83C23.6002 150.02 18.9402 150.43 13.9402 152.19C9.56023 153.73 5.60023 156.09 2.18023 159.19L1.49023 159.81L0.590234 159.59C0.400234 159.55 0.230234 159.48 0.0502344 159.44V165.48C5.99023 166.67 12.2202 166.24 18.1502 164.15C22.4102 162.65 25.8802 160.53 29.0702 157.47L29.8302 156.75L30.8302 157.07C33.6902 158 36.4702 159.71 39.5702 162.46L40.9202 163.66L39.6802 164.97C34.6702 170.27 29.1802 173.85 22.4102 176.24C17.2502 178.06 11.9302 178.96 6.63023 178.96C4.43023 178.96 2.23023 178.79 0.0502344 178.48V184.32C7.89023 185.43 16.0902 184.74 24.0602 181.93C31.4802 179.32 38.2902 174.97 43.7502 169.34L45.0702 167.98L46.3202 169.4C47.9902 171.29 49.8702 173.5 52.4102 176.57L53.4302 177.8L52.3002 178.93C45.5902 185.64 37.2902 190.86 28.3202 194.02C21.4002 196.46 14.2402 197.67 7.11023 197.67C4.75023 197.67 2.40023 197.54 0.0602344 197.27V204.45C8.85023 213.63 23.0902 217.65 37.7402 214.95C55.8602 211.6 66.9702 205.26 77.3502 192.34L77.6202 192.03C77.7602 191.87 88.8502 179.5 90.1902 161.48C91.0302 150.23 90.0002 140.71 87.0602 132.39L86.8102 131.68L87.1502 131.01C88.4702 128.42 89.7902 125.82 91.1002 123.25L91.3502 122.76C91.7602 121.96 92.2002 121.1 92.6802 120.19L94.2802 117.15L95.8002 120.23C99.6502 128.02 104.58 140.87 102.98 162.43C101.37 184.14 88.8202 198.74 87.2302 200.52C74.8902 215.81 61.2302 223.64 40.0802 227.55C36.3302 228.24 32.5902 228.58 28.9302 228.58C18.3402 228.58 8.33023 225.78 0.0702344 220.72V227.56C0.420234 227.74 0.760234 227.93 1.11023 228.11C12.6202 233.8 26.5302 235.59 41.3402 233.27C61.2502 230.16 80.5202 219.08 91.6402 204.34C103.32 188.87 109.05 172.54 109.18 154.4C109.29 138.63 105.47 124.53 97.8402 112.5L97.0702 111.36L100.08 105.31L101.14 105.29C102.99 105.25 104.95 105.15 107.16 104.99L108.21 104.91L108.77 105.8C111.21 109.67 113.35 113.81 115.13 118.11C119.78 129.28 122.08 141.52 121.99 154.48C121.84 175.47 115.26 194.3 101.86 212.05C88.8102 229.34 66.3702 242.32 43.3002 245.92C38.4402 246.68 33.6502 247.05 28.9602 247.05C18.6702 247.05 8.90023 245.23 0.0502344 241.65V270.97C0.0502344 275.94 4.08024 279.97 9.05023 279.97H58.8702C57.7002 273.16 57.3202 266.07 57.7402 258.82L57.7002 258.85ZM63.0802 124.6L62.1502 126.4L60.5102 125.22C58.1002 123.49 55.4902 121.91 52.7502 120.51L51.1802 119.71L51.9902 118.15C54.2702 113.74 55.7502 110.8 57.0902 108.14C57.6102 107.1 58.1902 105.87 58.7802 104.58C59.5502 102.93 60.3402 101.22 61.1402 99.6701L61.8802 98.2401L63.3702 98.8601C65.6502 99.8101 69.0902 101.15 72.6502 101.84L74.9502 102.29L73.8702 104.37C72.8702 106.29 71.9002 107.95 70.9602 109.56C70.0802 111.08 69.2402 112.52 68.5402 113.91C67.1302 116.71 65.5602 119.82 63.0902 124.6H63.0802ZM92.6202 107.61C90.6202 111.47 88.2602 116.23 86.3602 120.06L84.9602 122.89C82.8202 127.19 80.3902 132.07 77.1402 138.34L75.9702 140.6L68.9002 132.62C68.5102 132.2 68.1002 131.77 67.6802 131.34L66.8002 130.44L67.3802 129.32C69.8102 124.58 71.7602 120.65 73.4902 117.18C75.4102 113.32 77.4002 109.33 79.7602 104.79L80.3502 103.66L81.6102 103.88C84.8302 104.43 88.0602 104.83 91.2002 105.06L93.8502 105.25L92.6302 107.61H92.6202ZM118.62 198.9C120.1 195.99 121.43 193.02 122.58 190.08L123.55 187.61L125.44 189.48C128.53 192.53 132.39 196.2 135.48 199.14L137.77 201.32C141.23 204.62 145.15 208.36 150.22 213.35L152.04 215.14L142.32 219.53C141.8 219.78 141.27 220.04 140.73 220.32L139.61 220.9L138.71 220.02C134.96 216.36 131.8 213.35 129.01 210.68L128.92 210.59C125.96 207.77 122.6 204.56 118.94 200.94L118.03 200.04L118.61 198.9H118.62ZM108.44 214.83C110.02 212.93 112.31 210.04 114.03 206.85L115.14 204.79L116.8 206.44C118.34 207.96 119.64 209.38 120.9 210.75C122.09 212.04 123.22 213.27 124.34 214.35L124.47 214.48C126.7 216.63 129.18 219.02 132.94 222.72L134.38 224.14L132.77 225.36C130.41 227.15 128.12 229.18 125.98 231.38L124.75 232.64L123.5 231.41C119.98 227.95 117.61 225.66 115.47 223.6C114.61 222.77 113.6 221.86 112.55 220.91C111.2 219.69 109.8 218.43 108.56 217.2L107.41 216.07L108.44 214.83Z"
+          fill="#FFFFFF" />
+      </svg>
+    </div>
+    <div class="login-content">
+      <div class="login-wrap">
+        <div class="brand-header">
+          <h1 class="brand-title-light">Staff Access</h1>
+          <p class="brand-sub-light">Use your Yui account to manage reservations and operational settings.</p>
+        </div>
+        <div id="login-error" class="login-error-light" data-hidden="true"></div>
+        <form id="login-form">
+          <div class="form-group-light">
+            <span class="form-helper-light">Staff Email Address</span>
+            <input type="email" id="login-email" class="form-input-light" required />
+          </div>
+          <div class="form-group-light">
+            <label class="form-helper-light">Password</label>
+            <input type="password" id="login-password" class="form-input-light" required />
+          </div>
+          <button type="submit" id="login-btn" class="form-submit-light">Sign In</button>
+        </form>
+        <div class="auth-footer">
+          Operations Platform
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Application Wrapper -->
+  <div id="app-container" data-hidden="true">
+
+    <!-- Top Branded Header -->
+    <header class="top-nav">
+      <div class="nav-left">
+        <a href="#" class="nav-logo">
+          <svg width="160" height="280" viewBox="0 0 160 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path
+              d="M130.89 255.14C127.43 262.43 125.74 270.68 126.06 278.91C126.07 279.27 126.11 279.64 126.14 280H132.07C132.03 279.45 131.98 278.91 131.96 278.36C131.67 270.91 133.1 264.24 136.46 257.36L136.52 257.24C136.81 256.69 143.5 244.05 158.17 237.62C158.76 237.36 159.38 237.09 160.01 236.81V231.96C156.37 233.59 152.78 235.24 149.6 236.78C137.96 242.42 131.18 254.62 130.9 255.14H130.89Z"
+              fill="#1A1612" />
+            <path
+              d="M147.89 263.14C145.53 268 144.56 272.57 144.76 277.87C144.79 278.58 144.84 279.29 144.91 280H150.99C153.51 280 155.79 278.96 157.42 277.29C157.24 272.82 156.24 268.9 154.27 264.98L153.8 264.04L154.4 263.18C155.76 261.26 157.56 259.52 159.98 257.83V251.06C152.01 255.77 148.06 262.8 147.87 263.13L147.89 263.14Z"
+              fill="#1A1612" />
+            <path
+              d="M45.79 35.8102C55.54 51.4502 65.51 59.4602 81.34 64.3902L81.72 64.5202C81.92 64.6002 97.48 70.3902 114.75 65.0302C125.53 61.6802 134.01 57.2402 140.67 51.4602L141.24 50.9702L141.99 51.0402C145.07 51.3402 148.15 51.6402 151.2 51.9302C152.09 52.0202 153.06 52.1202 154.08 52.2302L157.5 52.6002L155.19 55.1502C149.35 61.5802 139.2 70.8802 118.55 77.2802C111.68 79.4102 105.09 80.1502 99.26 80.1502C87.47 80.1502 78.83 77.1302 77.33 76.5702C58.58 70.6902 46.29 60.8502 34.91 42.6002C26.48 29.0702 23.97 13.5502 27.22 0.000214843H21.11C20.65 2.13021 20.31 4.31021 20.12 6.54022C19.04 19.3402 22.48 32.9402 30.05 45.8602C40.23 63.2402 57.61 77.1202 75.39 82.0702C94.06 87.2702 111.36 86.6202 128.28 80.1002C141.25 75.1002 151.89 67.7302 159.99 58.1702V47.0602C157.2 46.8102 154.36 46.5602 151.87 46.3502L148.76 46.0802C144 45.6702 138.61 45.2002 131.52 44.4702L128.98 44.2102L133.82 34.7102C134.07 34.2002 134.32 33.6502 134.57 33.1002L135.08 31.9502L136.34 32.0702C141.58 32.5902 145.95 32.9702 149.81 33.3002C153.07 33.5802 156.38 33.8702 159.99 34.2202V28.7302C158.61 28.5502 157.31 28.3502 156.04 28.1602C154.3 27.8902 152.65 27.6402 151.1 27.5002C147.97 27.2102 144.5 26.8902 139.15 26.3402L137.14 26.1302L137.63 24.1702C138.36 21.2902 138.87 18.2802 139.17 15.2202L139.34 13.4702L141.09 13.6502C146.02 14.1502 149.31 14.4602 152.27 14.7302C153.43 14.8402 154.79 14.9202 156.2 15.0002C157.45 15.0802 158.72 15.1602 159.97 15.2602V8.98021C159.97 4.01021 155.94 -0.0197852 150.97 -0.0197852H133.45C134.11 5.62021 134.81 18.9102 128.92 31.2702C124.84 39.8402 119.06 50.7202 114.92 58.3502L114.6 58.9502L113.96 59.1702C110.48 60.3802 106.25 61.1202 101.72 61.3202L98.61 61.4502L100.12 58.7202C102.75 53.9602 111.75 37.5302 117.36 25.7602C122.59 14.7802 120.84 1.97021 120.52 -0.00978516H114.38C114.51 0.490215 114.64 0.970215 114.76 1.48021L114.79 1.61021C114.91 2.22021 117.59 16.2702 110.15 30.4502C105.89 38.5702 98.83 51.9502 94.54 60.0702L93.98 61.1202L92.8 60.9902C89.42 60.6102 86.12 59.9502 82.97 59.0202L80.92 58.4102L81.92 56.5202C85.93 48.9302 94.08 33.4802 98.8 24.4902C103.97 14.6302 102.29 4.53022 102.22 4.11022C101.89 2.65022 101.48 1.28021 101 -0.0297852H86.79C89.5 2.86021 92.48 5.01022 96.08 6.67022L97.03 7.11022L97.09 8.15021C97.28 11.1502 96.7 14.3702 95.27 18.2602L94.65 19.9602L92.97 19.2902C86.2 16.5702 80.86 12.7702 76.16 7.35021C74.16 5.04022 72.4 2.57021 70.9 -0.0197852H64.21C66.13 3.90021 68.56 7.59021 71.48 10.9702C76.63 16.9202 83.17 21.6602 90.4 24.6802L92.14 25.4102L91.28 27.0902C90.13 29.3402 88.76 31.9002 86.84 35.3902L86.07 36.7802L84.61 36.1402C75.9 32.3502 68.01 26.5502 61.78 19.3602C56.67 13.4602 52.85 6.89021 50.26 -0.0297852H40.46C36.69 10.9802 38.56 24.2502 45.75 35.7802L45.79 35.8102Z"
+              fill="#1A1612" />
+            <path
+              d="M57.7002 258.85C57.7202 256.45 58.1102 253.09 58.8602 248.65L59.0402 247.57L60.0902 247.26C63.3802 246.29 66.7302 245.1 70.0402 243.71L73.0802 242.44L72.4302 245.67C71.9002 248.34 71.4602 250.75 71.1402 252.82C70.8302 255.02 70.6102 257.19 70.4802 259.24V260.94H70.3902C70.1102 267.49 70.6102 273.88 71.8502 280H77.8302C75.2302 266.92 75.3302 256.38 78.1602 245.95L78.3602 245.26C78.8802 243.42 79.6202 241.27 80.5202 239.01L80.7402 238.44L81.2702 238.14C88.0302 234.24 94.2902 229.55 99.8602 224.2L102.36 226.64C98.8502 230.47 95.1402 236.82 92.4302 243.62C92.3102 243.93 91.9902 244.75 91.9502 244.85C88.2402 255.01 87.8202 265 90.5402 278.22C90.6602 278.82 90.8002 279.41 90.9402 280H113.28C113.28 279.8 113.25 279.6 113.24 279.4C112.84 269.07 114.98 258.7 119.41 249.43L119.5 249.25C119.86 248.56 128.18 232.91 143.99 225.25C148.8 222.92 154.5 220.35 159.98 217.95V203.09C155.65 202.32 151.48 202 147.44 202.17L146.69 202.2L146.15 201.68C143.99 199.58 141.82 197.47 139.67 195.39L139.51 195.23C138.87 194.6 138.17 193.92 137.45 193.2L135.01 190.78L138.4 190.24C143.6 189.41 150.71 188.76 159.97 190.13V184.21C150.23 182.95 140.74 183.54 131.62 186.02L130.3 186.42L125.41 181.76L125.7 180.74C126.21 178.97 126.7 177.06 127.19 174.9L127.43 173.87L128.45 173.6C132.86 172.42 137.45 171.59 142.09 171.16C147.98 170.61 153.96 170.66 159.97 171.32V76.1801C152.16 82.8001 143.08 88.1501 132.88 92.0801C121.95 96.3001 110.91 98.4001 99.5702 98.4001C90.5902 98.4001 81.4002 97.0801 71.9402 94.4401C51.0702 88.6301 30.7702 72.5101 18.9702 52.3601C10.0802 37.1201 6.05023 20.9101 7.35023 5.47006C7.50023 3.64006 7.74023 1.84006 8.05023 0.0600586C3.53023 0.530059 0.000234375 4.35006 0.000234375 9.00006V65.1801C2.07023 64.5201 4.18023 63.9301 6.32023 63.4001C8.62023 62.7101 11.9502 62.0801 16.4102 61.5001L17.4902 61.3601L18.0902 62.2701C19.9902 65.1301 22.1202 67.9801 24.4202 70.7201L26.5302 73.2501L23.2502 73.5901C20.5302 73.8701 18.1002 74.1701 16.0402 74.4701C13.8302 74.8301 11.6702 75.2601 9.66023 75.7501L9.23023 75.8501C6.05023 76.6401 2.97023 77.6101 -0.00976562 78.7401V85.0001C8.51023 81.2801 16.3802 79.4401 24.6802 79.1501L25.3002 79.1301H25.3202C27.2502 79.0901 29.5402 79.1701 32.0102 79.3501L32.6202 79.4001L33.0702 79.8101C38.7902 85.1101 45.1302 89.7001 51.8902 93.4501L50.3002 96.5601C45.6002 94.3401 38.4402 92.6701 31.1502 92.0901C30.8202 92.0701 29.9302 92.0001 29.8302 92.0001C19.8002 91.4901 10.7402 93.6701 0.0202344 99.2001V123.74C1.04023 123.32 2.08023 122.92 3.13023 122.56C12.8802 119.13 23.4202 118.1 33.5802 119.59L33.7802 119.62C34.5502 119.76 51.9602 123.08 63.9602 135.93C70.4402 142.86 78.4502 152.23 84.0302 158.87L84.4702 159.39L84.4402 160.07C84.2902 163.75 83.4302 167.96 81.9502 172.25L80.9302 175.2L78.9402 172.8C75.4802 168.62 63.4902 154.22 54.5902 144.68C45.7602 135.23 32.1002 132.36 31.5202 132.24C23.5302 131.09 15.1502 131.91 7.39023 134.65C4.85023 135.55 2.39023 136.66 0.0302344 137.94V144.8C3.04023 142.89 6.27023 141.3 9.66023 140.11C16.6902 137.63 23.4902 137.03 31.0502 138.2L31.1802 138.22C31.8002 138.33 45.8502 140.99 56.3302 153.1C62.3302 160.04 72.1902 171.51 78.1802 178.47L78.9602 179.37L78.4002 180.42C76.8102 183.42 74.9902 186.26 72.9702 188.85L71.6602 190.54L70.2702 188.92C64.6702 182.41 53.2902 169.16 46.6502 161.48C39.3702 153.06 29.3602 150.92 28.9402 150.83C23.6002 150.02 18.9402 150.43 13.9402 152.19C9.56023 153.73 5.60023 156.09 2.18023 159.19L1.49023 159.81L0.590234 159.59C0.400234 159.55 0.230234 159.48 0.0502344 159.44V165.48C5.99023 166.67 12.2202 166.24 18.1502 164.15C22.4102 162.65 25.8802 160.53 29.0702 157.47L29.8302 156.75L30.8302 157.07C33.6902 158 36.4702 159.71 39.5702 162.46L40.9202 163.66L39.6802 164.97C34.6702 170.27 29.1802 173.85 22.4102 176.24C17.2502 178.06 11.9302 178.96 6.63023 178.96C4.43023 178.96 2.23023 178.79 0.0502344 178.48V184.32C7.89023 185.43 16.0902 184.74 24.0602 181.93C31.4802 179.32 38.2902 174.97 43.7502 169.34L45.0702 167.98L46.3202 169.4C47.9902 171.29 49.8702 173.5 52.4102 176.57L53.4302 177.8L52.3002 178.93C45.5902 185.64 37.2902 190.86 28.3202 194.02C21.4002 196.46 14.2402 197.67 7.11023 197.67C4.75023 197.67 2.40023 197.54 0.0602344 197.27V204.45C8.85023 213.63 23.0902 217.65 37.7402 214.95C55.8602 211.6 66.9702 205.26 77.3502 192.34L77.6202 192.03C77.7602 191.87 88.8502 179.5 90.1902 161.48C91.0302 150.23 90.0002 140.71 87.0602 132.39L86.8102 131.68L87.1502 131.01C88.4702 128.42 89.7902 125.82 91.1002 123.25L91.3502 122.76C91.7602 121.96 92.2002 121.1 92.6802 120.19L94.2802 117.15L95.8002 120.23C99.6502 128.02 104.58 140.87 102.98 162.43C101.37 184.14 88.8202 198.74 87.2302 200.52C74.8902 215.81 61.2302 223.64 40.0802 227.55C36.3302 228.24 32.5902 228.58 28.9302 228.58C18.3402 228.58 8.33023 225.78 0.0702344 220.72V227.56C0.420234 227.74 0.760234 227.93 1.11023 228.11C12.6202 233.8 26.5302 235.59 41.3402 233.27C61.2502 230.16 80.5202 219.08 91.6402 204.34C103.32 188.87 109.05 172.54 109.18 154.4C109.29 138.63 105.47 124.53 97.8402 112.5L97.0702 111.36L100.08 105.31L101.14 105.29C102.99 105.25 104.95 105.15 107.16 104.99L108.21 104.91L108.77 105.8C111.21 109.67 113.35 113.81 115.13 118.11C119.78 129.28 122.08 141.52 121.99 154.48C121.84 175.47 115.26 194.3 101.86 212.05C88.8102 229.34 66.3702 242.32 43.3002 245.92C38.4402 246.68 33.6502 247.05 28.9602 247.05C18.6702 247.05 8.90023 245.23 0.0502344 241.65V270.97C0.0502344 275.94 4.08024 279.97 9.05023 279.97H58.8702C57.7002 273.16 57.3202 266.07 57.7402 258.82L57.7002 258.85ZM63.0802 124.6L62.1502 126.4L60.5102 125.22C58.1002 123.49 55.4902 121.91 52.7502 120.51L51.1802 119.71L51.9902 118.15C54.2702 113.74 55.7502 110.8 57.0902 108.14C57.6102 107.1 58.1902 105.87 58.7802 104.58C59.5502 102.93 60.3402 101.22 61.1402 99.6701L61.8802 98.2401L63.3702 98.8601C65.6502 99.8101 69.0902 101.15 72.6502 101.84L74.9502 102.29L73.8702 104.37C72.8702 106.29 71.9002 107.95 70.9602 109.56C70.0802 111.08 69.2402 112.52 68.5402 113.91C67.1302 116.71 65.5602 119.82 63.0902 124.6H63.0802ZM92.6202 107.61C90.6202 111.47 88.2602 116.23 86.3602 120.06L84.9602 122.89C82.8202 127.19 80.3902 132.07 77.1402 138.34L75.9702 140.6L68.9002 132.62C68.5102 132.2 68.1002 131.77 67.6802 131.34L66.8002 130.44L67.3802 129.32C69.8102 124.58 71.7602 120.65 73.4902 117.18C75.4102 113.32 77.4002 109.33 79.7602 104.79L80.3502 103.66L81.6102 103.88C84.8302 104.43 88.0602 104.83 91.2002 105.06L93.8502 105.25L92.6302 107.61H92.6202ZM118.62 198.9C120.1 195.99 121.43 193.02 122.58 190.08L123.55 187.61L125.44 189.48C128.53 192.53 132.39 196.2 135.48 199.14L137.77 201.32C141.23 204.62 145.15 208.36 150.22 213.35L152.04 215.14L142.32 219.53C141.8 219.78 141.27 220.04 140.73 220.32L139.61 220.9L138.71 220.02C134.96 216.36 131.8 213.35 129.01 210.68L128.92 210.59C125.96 207.77 122.6 204.56 118.94 200.94L118.03 200.04L118.61 198.9H118.62ZM108.44 214.83C110.02 212.93 112.31 210.04 114.03 206.85L115.14 204.79L116.8 206.44C118.34 207.96 119.64 209.38 120.9 210.75C122.09 212.04 123.22 213.27 124.34 214.35L124.47 214.48C126.7 216.63 129.18 219.02 132.94 222.72L134.38 224.14L132.77 225.36C130.41 227.15 128.12 229.18 125.98 231.38L124.75 232.64L123.5 231.41C119.98 227.95 117.61 225.66 115.47 223.6C114.61 222.77 113.6 221.86 112.55 220.91C111.2 219.69 109.8 218.43 108.56 217.2L107.41 216.07L108.44 214.83Z"
+              fill="#1A1612" />
+          </svg>
+        </a>
+        <nav class="nav-links">
+          <div class="nav-link active" data-tab="reservations">Reservations</div>
+          <div class="nav-link" data-tab="analytics">Analytics</div>
+          <div class="nav-link" data-tab="settings">Settings</div>
+        </nav>
+      </div>
+      <div class="nav-right">
+        <div class="staff-badge"><span></span> Staff Portal</div>
+        <div id="logout-btn">Sign Out</div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Tab: Reservations -->
+      <section id="view-reservations">
+        <div class="header" style="border:none; padding-bottom: 0;">
+          <div class="header-title">
+            <h1 style="font-size: 48px; font-weight: 400; letter-spacing: -0.03em;">Manage Reservations</h1>
+            <p style="margin-top: 12px; margin-bottom: 24px; color: var(--muted); font-size: 15px;">Front of house
+              oversight and manual booking</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="add-res-btn">
+              <i class="ph ph-plus"></i> New Reservation
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Summary Section -->
+        <div class="stats-bar" style="margin-top: 64px;">
+          <div class="stat-card">
+            <span class="stat-label">Total Today</span>
+            <span class="stat-value" id="s-total">-</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Pending</span>
+            <span class="stat-value" id="s-pending" style="color: #D29B2B;">-</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Confirmed</span>
+            <span class="stat-value" id="s-confirmed" style="color: #4A8C4A;">-</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Completed</span>
+            <span class="stat-value" id="s-completed" style="color: var(--text);">0</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Total Covers</span>
+            <span class="stat-value" id="s-covers">-</span>
+          </div>
+        </div>
+
+        <div class="filters-section"
+          style="margin-top: 64px; flex-direction: column; gap: 24px; align-items: flex-start;">
+          <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <div class="filter-pills" id="date-toggles">
+                <button class="pill" data-date="today">Today</button>
+                <button class="pill" data-date="tomorrow">Tomorrow</button>
+                <button class="pill active" data-date="all">All Dates</button>
+              </div>
+              <div style="width: 1px; height: 24px; background: var(--border); margin: 0 8px;"></div>
+              <div class="custom-date-picker" id="fDatePickerContainer" style="width: auto;">
+                <div class="date-trigger hov" id="fDateTrigger" onclick="toggleFDateDropdown()" 
+                     style="background: transparent; border: 1px solid var(--border); font-size: 13px; font-weight: 600; padding: 10px 16px; min-height: 38px;">All Dates</div>
+                <div class="date-dropdown" id="fDateDropdown" onclick="event.stopPropagation()" style="left: auto; right: 0; min-width: 320px;"></div>
+                <input type="hidden" id="res-date-filter">
+              </div>
+            </div>
+            <div class="search-wrapper">
+              <i class="ph ph-magnifying-glass"
+                style="position: absolute; left: 0; top: 14px; color: var(--muted);"></i>
+              <input type="text" id="res-search" placeholder="Search guests..." style="padding-left: 28px;">
+            </div>
+          </div>
+          <div
+            style="display: flex; gap: 16px; align-items: center; border-top: 1px solid var(--border); padding-top: 24px; width: 100%;">
+            <span class="stat-label" style="font-size: 10px;">Filters:</span>
+            <select id="res-status-filter" class="filter-dropdown">
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="seated">Seated</option>
+            </select>
+            <select id="res-source-filter" class="filter-dropdown">
+              <option value="all">All Sources</option>
+              <option value="website">Website</option>
+              <option value="reception">Reception</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="res-list-container" style="margin-bottom: 48px;">
+          <h3 style="font-size: 16px; font-weight: 500; margin-bottom: 24px;">Active Reservations</h3>
+          <div class="res-list-header">
+            <div>Guest</div>
+            <div>Time</div>
+            <div>Party</div>
+            <div>Source</div>
+            <div>Status</div>
+            <div style="text-align: right;">Actions</div>
+          </div>
+          <div id="res-list-active">
+            <!-- Dynamic rows -->
+          </div>
+        </div>
+
+        <div class="res-list-container" style="padding-top: 48px; border-top: 1px solid var(--border);">
+          <h3 style="font-size: 16px; font-weight: 500; margin-bottom: 24px; color: var(--muted);">History</h3>
+          <div class="res-list-header">
+            <div>Guest</div>
+            <div>Time</div>
+            <div>Party</div>
+            <div>Source</div>
+            <div>Status</div>
+            <div style="text-align: right;">Actions</div>
+          </div>
+          <div id="res-list-history"></div>
+        </div>
+
+        <!-- Manual Booking Modal -->
+        <div id="manual-booking-modal"
+          style="display:none; position: fixed; inset: 0; background: rgba(253,252,251,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+          <div
+            style="background: var(--surface); padding: 56px; max-width: 720px; width: 90%; position: relative; border-radius: 24px; box-shadow: 0 24px 80px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border);">
+            <div id="close-modal"
+              style="position: absolute; top: 24px; right: 24px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; color: var(--text); font-size: 20px; transition: .2s; background: var(--bg-warm); border: 1px solid var(--border);">
+              <i class="ph ph-x"></i>
+            </div>
+
+            <div style="margin-bottom: 40px;">
+              <h2 style="font-size: 28px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 8px;">Internal
+                Override</h2>
+              <p style="color: var(--muted); font-size: 14px; line-height: 1.5;">Manual front-of-house booking entry.
+                Bypasses availability checks.</p>
+            </div>
+
+            <div id="manual-error" class="login-error-light" style="display:none; margin-bottom: 24px;"></div>
+
+            <form id="manual-form">
+              <div class="form-group">
+                <label>Guest Name</label>
+                <input type="text" id="m-name" placeholder="Full name" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="m-phone" placeholder="+1..." required>
+              </div>
+              <div class="form-group custom-date-picker" id="mDatePickerContainer">
+                <label>Service Date</label>
+                <div class="date-trigger hov" id="mDateTrigger" onclick="toggleMDateDropdown()">Select Date</div>
+                <div class="date-dropdown" id="mDateDropdown" onclick="event.stopPropagation()"></div>
+                <input type="hidden" id="m-date" required>
+              </div>
+              <div class="form-group custom-time-picker" id="mTimePickerContainer">
+                <label>Service Time</label>
+                <div class="time-trigger hov" id="mTimeTrigger" onclick="toggleMTimeDropdown()">19:00</div>
+                <div class="time-dropdown" id="mTimeDropdown"></div>
+                <input type="hidden" id="m-time" value="19:00" required>
+              </div>
+
+              <div class="form-group form-group-full">
+                <label>Party Size</label>
+                <div class="chips" id="m-party-chips">
+                  <div class="chip" data-value="1">1</div>
+                  <div class="chip active" data-value="2">2</div>
+                  <div class="chip" data-value="3">3</div>
+                  <div class="chip" data-value="4">4</div>
+                  <div class="chip" data-value="5">5</div>
+                  <div class="chip" data-value="6">6</div>
+                  <div class="chip" data-value="7">7</div>
+                  <div class="chip" data-value="8">8+</div>
+                </div>
+                <input type="hidden" id="m-party" value="2">
+              </div>
+
+              <div class="form-group form-group-full">
+                <label>Occasion</label>
+                <div class="chips" id="m-occasion-chips">
+                  <div class="chip active" data-value="">None</div>
+                  <div class="chip" data-value="Birthday">Birthday</div>
+                  <div class="chip" data-value="Anniversary">Anniversary</div>
+                  <div class="chip" data-value="Date Night">Date</div>
+                  <div class="chip" data-value="Business">Business</div>
+                </div>
+                <input type="hidden" id="m-occasion" value="">
+              </div>
+
+              <div class="form-group form-group-full">
+                <label>Internal Note</label>
+                <input type="text" id="m-note" placeholder="VIP requests, allergies, special occasions, etc.">
+              </div>
+
+              <div class="form-group-full"
+                style="margin-top: 16px; display: flex; gap: 16px; align-items: center; justify-content: flex-end;">
+                <div
+                  style="cursor: pointer; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 14px 24px;"
+                  onclick="document.getElementById('manual-booking-modal').style.display='none'">Cancel</div>
+                <button type="submit" id="m-submit" class="btn btn-primary">Create Booking</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: Analytics -->
+      <section id="view-analytics" data-hidden="true">
+        <div class="header" style="border:none; padding-bottom: 0;">
+          <div class="header-title">
+            <h1 style="font-size: 48px; font-weight: 400; letter-spacing: -0.03em;">Intelligence</h1>
+            <p style="margin-top: 12px; margin-bottom: 24px; color: var(--muted); font-size: 15px;">Historical trends
+              and cover analysis</p>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px;">
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              Total Covers</h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-tot-covers">-</div>
+          </div>
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              Peak Service Hour</h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-peak-hour">-</div>
+          </div>
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              Top Channel</h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-top-source">-</div>
+          </div>
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
+            <h4
+              style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin-bottom: 12px;">
+              Web / Reception</h4>
+            <div style="font-size: 32px; font-weight: 500; letter-spacing: -0.02em;" id="a-tot-split">-</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px;">
+          <!-- Volume Trend Chart -->
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 48px; border-radius: 12px; background: var(--surface);">
+            <div style="margin-bottom: 32px;">
+              <h3
+                style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted);">
+                Cover Volume Trend (30 Days)</h3>
+            </div>
+            <div style="height: 280px; width: 100%;">
+              <canvas id="volumeChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Source Over Time Chart -->
+          <div class="chart-card"
+            style="border: 1px solid var(--border); padding: 48px; border-radius: 12px; background: var(--surface);">
+            <div style="margin-bottom: 32px;">
+              <h3
+                style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted);">
+                Channel Growth</h3>
+            </div>
+            <div style="height: 280px; width: 100%;">
+              <canvas id="sourceChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab: Settings -->
+      <section id="view-settings" data-hidden="true">
+        <div class="header">
+          <div class="header-title">
+            <h1 style="font-size: 48px; font-weight: 400; letter-spacing: -0.03em;">Operations</h1>
+            <p>System configuration and blackout management</p>
+          </div>
+        </div>
+
+        <div style="margin-top: 64px; display: grid; grid-template-columns: 1fr 1fr; gap: 64px;">
+          <div>
+            <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600;">Service Capacity</h3>
+            <p style="color: var(--muted); margin-bottom: 32px; font-size: 14px; line-height: 1.6;">Manage maximum
+              covers per service interval to prevent overbooking via the digital widget.</p>
+            <div class="form-group" style="max-width: 240px; margin-bottom: 24px;">
+              <label>Max Covers per Slot</label>
+              <input type="number" value="40" disabled>
+            </div>
+            <button class="btn btn-secondary" disabled>Update Limits</button>
+          </div>
+
+          <div>
+            <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600;">Blackout Dates</h3>
+            <p style="color: var(--muted); margin-bottom: 32px; font-size: 14px; line-height: 1.6;">Temporarily suspend
+              online bookings for private events or public holidays.</p>
+            <div id="blackout-list"
+              style="color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; border: 1px dashed var(--border); padding: 48px; text-align: center; opacity: 0.5;">
+              No active blackout periods.
+            </div>
+            <button class="btn btn-secondary" disabled>Add Blackout Date</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    // INITIALIZATION & CONFIG
+    // ══════════════════════════════════════════════════════════════════
+    function showToast(message) {
+      let toast = document.getElementById('toast-msg');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast-msg';
+        document.body.appendChild(toast);
+      }
+      toast.textContent = message;
+      toast.style.position = 'fixed';
+      toast.style.top = '20px';
+      toast.style.left = '50%';
+      toast.style.transform = 'translateX(-50%)';
+      toast.style.background = '#dc2626';
+      toast.style.color = 'white';
+      toast.style.padding = '12px 20px';
+      toast.style.borderRadius = '8px';
+      toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+      toast.style.zIndex = '9999';
+      toast.style.fontWeight = '600';
+      toast.style.transition = 'opacity 0.3s var(--ease)';
+      toast.style.opacity = '1';
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+      }, 3000);
+    }
+    const SUPABASE_URL = 'https://jzjojcahbvkjxlkqgxiv.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp6am9qY2FoYnZranhsa3FneGl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MTUyNDIsImV4cCI6MjA5MDE5MTI0Mn0.JvUpVGMmh7tWmhhMCnF-2gGsIYQ6xTtHX9iWtZhX6Cs';
+
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Globals
+    let reservationsData = [];
+    let state = {
+      dateTab: 'all',
+      dateCustom: '',
+      status: 'all',
+      source: 'all',
+      search: ''
+    };
+
+    let volumeChartInst = null;
+    let sourceChartInst = null;
+
+    const toYYYYMMDD = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+    const STATUS_THEMES = {
+      'pending': { color: '#D29B2B', bg: '#FEF9EB', border: '#F8E8C0' },
+      'confirmed': { color: '#4A8C4A', bg: '#F2FAF2', border: '#D5E6D5' },
+      'seated': { color: '#2B6DAE', bg: '#F0F7FF', border: '#D1E3F7' },
+      'completed': { color: '#7A7470', bg: '#F5F5F5', border: '#E0E0E0' },
+      'cancelled': { color: '#D22B2B', bg: '#FFF5F5', border: '#FFE0E0' },
+      'no-show': { color: '#8E44AD', bg: '#F9F2FB', border: '#ECD9F2' },
+    };
+
+    // ── Auth Handling ────────────────────────────────────────────────
+    db.auth.onAuthStateChange((event, session) => {
+      if (session) {
+        document.getElementById('login-screen').setAttribute('data-hidden', 'true');
+        document.getElementById('app-container').removeAttribute('data-hidden');
+        initDashboard();
+      } else {
+        document.getElementById('app-container').setAttribute('data-hidden', 'true');
+        document.getElementById('login-screen').removeAttribute('data-hidden');
+      }
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim();
+      const pwd = document.getElementById('login-password').value;
+      const btn = document.getElementById('login-btn');
+      const errBox = document.getElementById('login-error');
+
+      btn.textContent = "Authenticating...";
+      btn.disabled = true;
+      errBox.setAttribute('data-hidden', 'true');
+
+      const { error } = await db.auth.signInWithPassword({ email, password: pwd });
+
+      if (error) {
+        errBox.textContent = error.message;
+        errBox.removeAttribute('data-hidden');
+        btn.textContent = "Sign In";
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+      await db.auth.signOut();
+    });
+
+    // ── Dashboard Logic ──────────────────────────────────────────────
+    function initDashboard() {
+      // Set defaults for manual form
+      const today = new Date();
+      const todayStr = toYYYYMMDD(today);
+
+      const dateFilterEl = document.getElementById('res-date-filter');
+      if (dateFilterEl) dateFilterEl.value = '';
+
+      const mDateEl = document.getElementById('m-date');
+      if (mDateEl) {
+        const d = new Date();
+        selectMDate(d.getDate(), d.getMonth(), d.getFullYear());
+      }
+
+      const mPartyEl = document.getElementById('m-party');
+      if (mPartyEl) mPartyEl.value = 2;
+
+      // Handle Tab Switching
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+
+          const tab = link.getAttribute('data-tab');
+          ['reservations', 'analytics', 'settings'].forEach(t => {
+            const el = document.getElementById(`view-${t}`);
+            if (el) {
+              if (t === tab) el.removeAttribute('data-hidden');
+              else el.setAttribute('data-hidden', 'true');
+            }
+          });
+        });
+      });
+
+      // Handle Modal
+      document.getElementById('add-res-btn').addEventListener('click', () => {
+        // Clear manual form ID if making new
+        document.getElementById('manual-form').removeAttribute('data-edit-id');
+        document.getElementById('m-name').value = '';
+        document.getElementById('m-phone').value = '';
+        
+        // Reset date to today
+        const d = new Date();
+        selectMDate(d.getDate(), d.getMonth(), d.getFullYear());
+
+        document.getElementById('manual-booking-modal').style.display = 'flex';
+      });
+      document.getElementById('close-modal').addEventListener('click', () => {
+        document.getElementById('manual-booking-modal').style.display = 'none';
+      });
+
+      // Handle Date Pills
+      document.querySelectorAll('#date-toggles .pill').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          document.querySelectorAll('#date-toggles .pill').forEach(p => p.classList.remove('active'));
+          e.target.classList.add('active');
+          state.dateTab = e.target.getAttribute('data-date');
+          const dp = document.getElementById('res-date-filter');
+          const dt = document.getElementById('fDateTrigger');
+
+          if (state.dateTab === 'today') {
+            const d = new Date();
+            dp.value = toYYYYMMDD(d);
+            dt.textContent = "Today";
+            selectFDate(d.getDate(), d.getMonth(), d.getFullYear(), true);
+          } else if (state.dateTab === 'tomorrow') {
+            const tmr = new Date();
+            tmr.setDate(tmr.getDate() + 1);
+            dp.value = toYYYYMMDD(tmr);
+            dt.textContent = "Tomorrow";
+            selectFDate(tmr.getDate(), tmr.getMonth(), tmr.getFullYear(), true);
+          } else {
+            dp.value = ''; // all dates
+            dt.textContent = "All Dates";
+            fSelectedDate = null;
+            renderFCalendar();
+          }
+          render();
+        });
+      });
+
+      // Handle Filter Listeners
+      document.getElementById('res-search').addEventListener('input', (e) => {
+        state.search = e.target.value.toLowerCase();
+        render();
+      });
+      document.getElementById('res-date-filter').addEventListener('change', (e) => {
+        state.dateCustom = e.target.value;
+        if (e.target.value) {
+          document.querySelectorAll('#date-toggles .pill').forEach(p => p.classList.remove('active'));
+          state.dateTab = 'custom';
+        } else {
+          document.querySelector('#date-toggles .pill[data-date="all"]').click();
+        }
+        render();
+      });
+      document.getElementById('res-status-filter').addEventListener('change', (e) => {
+        state.status = e.target.value;
+        render();
+      });
+      document.getElementById('res-source-filter').addEventListener('change', (e) => {
+        state.source = e.target.value;
+        render();
+      });
+
+      // Handle Chips
+      document.querySelectorAll('.chips').forEach(container => {
+        const chips = container.querySelectorAll('.chip');
+        const inputId = container.getAttribute('id').replace('-chips', '');
+        const hiddenInput = document.getElementById(inputId);
+
+        chips.forEach(chip => {
+          chip.addEventListener('click', () => {
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            if (hiddenInput) hiddenInput.value = chip.getAttribute('data-value');
+          });
+        });
+      });
+
+      initCharts();
+      fetchReservations();
+      setInterval(fetchReservations, 10000);
+    }
+
+    async function fetchReservations() {
+      console.log('fetchReservations running');
+      const activeList = document.getElementById('res-list-active');
+      if (activeList && !activeList.innerHTML.trim()) {
+        activeList.innerHTML = `
+          <div style="padding: 120px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-top: none; border-radius: 12px;">
+            <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.6;">Syncing Records...</div>
+          </div>
+        `;
+      }
+
+      // We pull everything directly (RLS must protect records if needed)
+      // Actually normally we would limit to future dates, but for operations we pull recent history too.
+      const { data, error } = await db.from('reservations').select('*').order('date', { ascending: true }).order('time', { ascending: true });
+      if (error) {
+        console.error("Fetch err:", error);
+        return;
+      }
+      reservationsData = data || [];
+      render();
+    }
+
+    function initCharts() {
+      const volCtx = document.getElementById('volumeChart').getContext('2d');
+      const srcCtx = document.getElementById('sourceChart').getContext('2d');
+
+      if (volumeChartInst) volumeChartInst.destroy();
+      if (sourceChartInst) sourceChartInst.destroy();
+
+      Chart.defaults.font.family = 'Satoshi, sans-serif';
+      Chart.defaults.color = '#7A7470';
+
+
+      volumeChartInst = new Chart(volCtx, {
+        type: 'line',
+        data: { labels: [], datasets: [{ label: 'Covers', data: [], borderColor: '#D22B2B', borderWidth: 2, backgroundColor: 'rgba(210, 43, 43, 0.05)', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: '#D22B2B' }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#F0F0F0', tickLength: 0 }, border: { display: false, dash: [4, 4] } } }
+        }
+      });
+
+      sourceChartInst = new Chart(srcCtx, {
+        type: 'line',
+        data: {
+          labels: [], datasets: [
+            { label: 'Website', data: [], borderColor: '#1A1612', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 4, pointBackgroundColor: '#1A1612' },
+            { label: 'Reception', data: [], borderColor: '#D22B2B', borderWidth: 2, tension: 0.4, fill: false, pointRadius: 4, pointBackgroundColor: '#D22B2B' }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20, boxHeight: 6 } } },
+          scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: '#F0F0F0', tickLength: 0 }, border: { display: false, dash: [4, 4] } } }
+        }
+      });
+    }
+
+    function updateCharts() {
+      // Analytics considers ALL valid data, independent of the Reservations quick-filter
+      let volMap = {};
+      let webMap = {};
+      let recMap = {};
+      let totalCovers = 0;
+      let webTotal = 0;
+      let recTotal = 0;
+
+      // New analytical buckets
+      const hourCounts = {};
+      const sourceCounts = {};
+
+      reservationsData.forEach(r => {
+        if (['cancelled', 'no-show'].includes(r.status)) return;
+
+        const d = r.date || 'Unknown';
+        const partySize = parseInt(r.party_size) || 0;
+
+        if (!volMap[d]) { volMap[d] = 0; webMap[d] = 0; recMap[d] = 0; }
+        volMap[d] += partySize;
+        totalCovers += partySize;
+
+        // Source split mapping
+        if (r.source === 'reception') {
+          recMap[d]++;
+          recTotal++;
+        } else {
+          webMap[d]++;
+          webTotal++;
+        }
+
+        // Peak Hour Calculation
+        if (r.time) {
+          const hour = r.time.split(':')[0];
+          hourCounts[hour] = (hourCounts[hour] || 0) + 1;
+        }
+
+        // Source Frequency logic
+        const src = r.source || 'website';
+        sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+      });
+
+      // Find Peak Hour string
+      let peakHour = '-';
+      let maxHrCount = 0;
+      Object.keys(hourCounts).forEach(h => {
+        if (hourCounts[h] > maxHrCount) {
+          maxHrCount = hourCounts[h];
+          const hrInt = parseInt(h);
+          peakHour = `${String(hrInt).padStart(2, '0')}:00`;
+        }
+
+      });
+
+      // Find Top Channel
+      let topSource = '-';
+      let maxSrcCount = 0;
+      Object.keys(sourceCounts).forEach(s => {
+        if (sourceCounts[s] > maxSrcCount) {
+          maxSrcCount = sourceCounts[s];
+          topSource = s.charAt(0).toUpperCase() + s.slice(1);
+        }
+      });
+
+      // Update UI elements if they exist
+      const kpiCovers = document.getElementById('a-tot-covers');
+      const kpiPeak = document.getElementById('a-peak-hour');
+      const kpiSource = document.getElementById('a-top-source');
+      const kpiSplit = document.getElementById('a-tot-split');
+
+      if (kpiCovers) kpiCovers.textContent = totalCovers;
+      if (kpiPeak) kpiPeak.textContent = peakHour;
+      if (kpiSource) kpiSource.textContent = topSource;
+      if (kpiSplit) kpiSplit.innerHTML = `<span style="color:var(--text)">${webTotal}</span> <span style="font-size:18px; color:var(--muted); font-weight:400; margin:0 8px;">/</span> <span style="color:var(--red)">${recTotal}</span>`;
+
+      // Chart Update logic
+      const sortedKeys = Object.keys(volMap).sort().slice(-30);
+
+      if (volumeChartInst) {
+        volumeChartInst.data.labels = sortedKeys;
+        volumeChartInst.data.datasets[0].data = sortedKeys.map(k => volMap[k]);
+        volumeChartInst.update();
+      }
+      if (sourceChartInst) {
+        sourceChartInst.data.labels = sortedKeys;
+        sourceChartInst.data.datasets[0].data = sortedKeys.map(k => webMap[k]);
+        sourceChartInst.data.datasets[1].data = sortedKeys.map(k => recMap[k]);
+        sourceChartInst.update();
+      }
+    }
+
+    function render() {
+      const targetDateStr = document.getElementById('res-date-filter').value;
+
+      // Update Analytics first with all valid data
+      updateCharts();
+
+      // Stats Bar logic (Driven off target date, not the text search)
+      let sTot = 0, sPen = 0, sCon = 0, sCom = 0, sCov = 0;
+      reservationsData.forEach(r => {
+        if (state.dateTab !== 'all' && targetDateStr && r.date !== targetDateStr) return;
+        sTot++;
+        if (r.status === 'pending') sPen++;
+        if (r.status === 'pending' || r.status === 'confirmed') sCon++;
+        if (r.status === 'completed') sCom++;
+        if (!['cancelled', 'no-show'].includes(r.status)) sCov += (r.party_size || 0);
+      });
+      document.getElementById('s-total').textContent = sTot;
+      document.getElementById('s-pending').textContent = sPen;
+      document.getElementById('s-confirmed').textContent = sCon;
+      document.getElementById('s-completed').textContent = sCom;
+      document.getElementById('s-covers').textContent = sCov;
+
+      // Apply UI filters ONLY to active reservations (excluding completed)
+      const activeReservations = reservationsData.filter(r => r.status !== 'completed');
+      const historyReservations = reservationsData.filter(r => r.status === 'completed');
+
+      const filteredActive = activeReservations.filter(r => {
+        if (state.dateTab !== 'all') {
+          if (targetDateStr && r.date !== targetDateStr) return false;
+        }
+        if (state.status !== 'all' && r.status !== state.status) return false;
+        if (state.source !== 'all' && r.source !== state.source) return false;
+        if (state.search) {
+          const q = state.search.toLowerCase();
+          if (!r.name?.toLowerCase().includes(q) && !r.phone?.includes(q)) return false;
+        }
+        return true;
+      });
+
+      // History shows ALL completed reservations, bypassing any filters
+      // This guarantees users always see their completed items regardless of what Date they are viewing
+      const filteredHistory = historyReservations;
+
+
+      const activeList = document.getElementById('res-list-active');
+      const histList = document.getElementById('res-list-history');
+
+      if (activeList) activeList.innerHTML = '';
+      if (histList) histList.innerHTML = '';
+
+      if (filteredActive.length === 0) {
+        if (activeList) activeList.innerHTML = `<div style="padding: 120px; text-align: center; color: var(--muted); border: 1px dashed var(--border); border-radius: 12px; border-top: none;">No active reservations match your filters.</div>`;
+      }
+
+      if (filteredHistory.length === 0) {
+        if (histList) histList.innerHTML = `<div style="padding: 60px; text-align: center; color: var(--muted); opacity: 0.5;">No history to display.</div>`;
+      }
+
+      const buildRow = (r, isHistory) => {
+        const source = r.source || 'website';
+        let timeLabel = r.time || '--:--';
+        if (timeLabel && timeLabel.includes(':')) {
+          const [h, m] = timeLabel.split(':');
+          timeLabel = `${h}:${m}`; // Keep 24h
+        }
+
+
+        const row = document.createElement('div');
+        row.className = `res-row ${isHistory ? 'history-item' : ''}`;
+
+        let actionsHtml = '';
+        if (!isHistory) {
+          actionsHtml = `
+            <button class="action-btn done-btn" data-id="${r.id}" style="background:transparent; border:none; padding: 4px; color: var(--text); cursor:pointer;" title="Mark Done"><i class="ph ph-check-circle" style="font-size: 20px;"></i></button>
+            <button class="action-btn resched-btn" data-id="${r.id}" style="background:transparent; border:none; padding: 4px; color: var(--text); cursor:pointer;" title="Reschedule"><i class="ph ph-calendar-blank" style="font-size: 20px;"></i></button>
+          `;
+        } else {
+          actionsHtml = `<span style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--muted);">Archived</span>`;
+        }
+
+        row.innerHTML = `
+          <div class="res-guest">
+            <div class="res-name" style="font-weight: 500;">${r.name}</div>
+            <div class="res-contact" style="font-size: 13px; color: var(--muted); margin-top: 4px;">${r.phone || 'No phone'}</div>
+          </div>
+          <div class="res-time" style="font-weight: 500;">${timeLabel}</div>
+          <div class="res-party" style="font-size: 14px;">${r.party_size} Guests</div>
+          <div class="res-source" style="text-transform: capitalize; font-size: 14px; color: var(--muted);">${source}</div>
+          <div>
+            <select class="status-select" data-id="${r.id}" style="
+              appearance: none; border: none; background: transparent; font-size: 11px;
+              font-weight: 800; text-transform: uppercase; letter-spacing: .05em;
+              color: ${['cancelled', 'no-show'].includes(r.status) ? 'var(--red)' : (r.status === 'pending' ? '#D2A02B' : (r.status === 'seated' ? '#2B6DAE' : (r.status === 'completed' ? 'var(--text)' : '#4A8C4A')))};
+              cursor: pointer; outline: none;
+            ">
+              <option value="pending" ${r.status === 'pending' ? 'selected' : ''}>PENDING</option>
+              <option value="confirmed" ${r.status === 'confirmed' ? 'selected' : ''}>CONFIRMED</option>
+              <option value="seated" ${r.status === 'seated' ? 'selected' : ''}>SEATED</option>
+              <option value="completed" ${r.status === 'completed' ? 'selected' : ''}>COMPLETED</option>
+              <option value="cancelled" ${r.status === 'cancelled' ? 'selected' : ''}>CANCELLED</option>
+              <option value="no-show" ${r.status === 'no-show' ? 'selected' : ''}>NO-SHOW</option>
+            </select>
+          </div>
+          <div style="text-align: right; display:flex; justify-content:flex-end; gap: 8px;">
+            ${actionsHtml}
+          </div>
+        `;
+        return row;
+      };
+
+      if (activeList) filteredActive.forEach(r => activeList.appendChild(buildRow(r, false)));
+      if (histList) filteredHistory.forEach(r => histList.appendChild(buildRow(r, true)));
+
+      // Event Bindings for newly rendered items
+      document.querySelectorAll('.status-select').forEach(sel => {
+        sel.addEventListener('change', async (e) => {
+          const newStatus = e.target.value;
+          const rId = e.target.getAttribute('data-id');
+          await db.from('reservations').update({ status: newStatus }).eq('id', rId);
+          reservationsData = reservationsData.map(res => res.id === rId ? { ...res, status: newStatus } : res);
+          render();
+        });
+      });
+
+      document.querySelectorAll('.done-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const rId = e.currentTarget.getAttribute('data-id');
+          await db.from('reservations').update({ status: 'completed' }).eq('id', rId);
+          reservationsData = reservationsData.map(res => res.id === rId ? { ...res, status: 'completed' } : res);
+          render();
+        });
+      });
+
+      document.querySelectorAll('.resched-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const rId = e.currentTarget.getAttribute('data-id');
+          const r = reservationsData.find(x => x.id === rId);
+          if (r) {
+            document.getElementById('manual-form').setAttribute('data-edit-id', rId);
+            document.getElementById('m-name').value = r.name || '';
+            document.getElementById('m-phone').value = r.phone || '';
+            // Update custom date picker
+            if (r.date) {
+              const [y, m, d] = r.date.split('-').map(Number);
+              selectMDate(d, m - 1, y);
+            }
+            
+            // Update custom time picker
+            const timeVal = r.time ? r.time.slice(0, 5) : '19:00';
+            selectMTime(timeVal);
+
+            document.getElementById('m-party').value = r.party_size || 2;
+            document.querySelectorAll('#m-party-chips .chip').forEach(c => {
+              c.classList.remove('active');
+              if (c.getAttribute('data-value') == (r.party_size || 2)) c.classList.add('active');
+            });
+
+            document.getElementById('manual-booking-modal').style.display = 'flex';
+          }
+        });
+      });
+    }
+
+    // Main Date Filter Logic (Main Dashboard)
+    let fViewDate = new Date();
+    let fSelectedDate = null;
+
+    function renderFCalendar() {
+      const container = document.getElementById('fDateDropdown');
+      if(!container) return;
+      const year = fViewDate.getFullYear();
+      const month = fViewDate.getMonth();
+      const today = new Date(); today.setHours(0,0,0,0);
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      let html = `
+        <div class="cal-head">
+          <div class="cal-title">${monthNames[month]} ${year}</div>
+          <div class="cal-nav">
+            <button type="button" class="cal-btn" onclick="event.stopPropagation(); changeFMonth(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button type="button" class="cal-btn" onclick="event.stopPropagation(); changeFMonth(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day-lbl">Su</div><div class="cal-day-lbl">Mo</div><div class="cal-day-lbl">Tu</div><div class="cal-day-lbl">We</div><div class="cal-day-lbl">Th</div><div class="cal-day-lbl">Fr</div><div class="cal-day-lbl">Sa</div>
+      `;
+      for (let i = 0; i < firstDay; i++) html += `<div class="cal-day other-month"></div>`;
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cur = new Date(year, month, d);
+        const isSelected = fSelectedDate && cur.getTime() === fSelectedDate.getTime();
+        const isToday = cur.getTime() === today.getTime();
+        let cls = 'cal-day';
+        if (isSelected) cls += ' selected';
+        if (isToday) cls += ' today';
+        html += `<div class="${cls}" onclick="selectFDate(${d},${month},${year})">${d}</div>`;
+      }
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    window.changeFMonth = function(offset) {
+      fViewDate.setMonth(fViewDate.getMonth() + offset);
+      renderFCalendar();
+    }
+
+    window.toggleFDateDropdown = function() {
+      // Close all others first
+      document.getElementById('mTimeDropdown').classList.remove('show');
+      document.getElementById('mTimePickerContainer').classList.remove('is-active');
+      document.getElementById('mDateDropdown').classList.remove('show');
+      document.getElementById('mDatePickerContainer').classList.remove('is-active');
+      
+      const drop = document.getElementById('fDateDropdown');
+      const cont = document.getElementById('fDatePickerContainer');
+      drop.classList.toggle('show');
+      cont.classList.toggle('is-active');
+    }
+
+    window.selectFDate = function(d, m, y, fromPill = false) {
+      fSelectedDate = new Date(y, m, d);
+      const val = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const display = fSelectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      
+      document.getElementById('res-date-filter').value = val;
+      document.getElementById('fDateTrigger').textContent = display;
+      document.getElementById('fDateDropdown').classList.remove('show');
+      document.getElementById('fDatePickerContainer').classList.remove('is-active');
+      renderFCalendar();
+      if (!fromPill) {
+        document.querySelectorAll('#date-toggles .pill').forEach(p => p.classList.remove('active'));
+        state.dateTab = 'custom';
+        render();
+      }
+    }
+    renderFCalendar();
+
+    // Custom Date Picker Logic (Manual Form)
+    let mViewDate = new Date();
+    let mSelectedDate = null;
+    
+    function renderMCalendar() {
+      const container = document.getElementById('mDateDropdown');
+      if(!container) return;
+      
+      const year = mViewDate.getFullYear();
+      const month = mViewDate.getMonth();
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      
+      let html = `
+        <div class="cal-head">
+          <div class="cal-title">${monthNames[month]} ${year}</div>
+          <div class="cal-nav">
+            <button type="button" class="cal-btn" onclick="event.stopPropagation(); changeMMonth(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <button type="button" class="cal-btn" onclick="event.stopPropagation(); changeMMonth(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-day-lbl">Su</div><div class="cal-day-lbl">Mo</div><div class="cal-day-lbl">Tu</div><div class="cal-day-lbl">We</div><div class="cal-day-lbl">Th</div><div class="cal-day-lbl">Fr</div><div class="cal-day-lbl">Sa</div>
+      `;
+      
+      for (let i = 0; i < firstDay; i++) html += `<div class="cal-day other-month"></div>`;
+      
+      for (let d = 1; d <= daysInMonth; d++) {
+        const cur = new Date(year, month, d);
+        const isPast = cur < today;
+        const isSelected = mSelectedDate && cur.getTime() === mSelectedDate.getTime();
+        const isToday = cur.getTime() === today.getTime();
+        
+        let cls = 'cal-day';
+        if (isPast) cls += ' disabled';
+        if (isSelected) cls += ' selected';
+        if (isToday) cls += ' today';
+        
+        html += `<div class="${cls}" onclick="${isPast ? '' : `selectMDate(${d},${month},${year})`}">${d}</div>`;
+      }
+      html += `</div>`;
+      container.innerHTML = html;
+    }
+
+    window.changeMMonth = function(offset) {
+      mViewDate.setMonth(mViewDate.getMonth() + offset);
+      renderMCalendar();
+    }
+
+    window.toggleMDateDropdown = function() {
+      document.getElementById('mTimeDropdown').classList.remove('show');
+      document.getElementById('mTimePickerContainer').classList.remove('is-active');
+      const drop = document.getElementById('mDateDropdown');
+      const cont = document.getElementById('mDatePickerContainer');
+      drop.classList.toggle('show');
+      cont.classList.toggle('is-active');
+    }
+
+    window.selectMDate = function(d, m, y) {
+      mSelectedDate = new Date(y, m, d);
+      const val = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      const display = mSelectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      
+      document.getElementById('m-date').value = val;
+      document.getElementById('mDateTrigger').textContent = display;
+      document.getElementById('mDateDropdown').classList.remove('show');
+      document.getElementById('mDatePickerContainer').classList.remove('is-active');
+      renderMCalendar();
+    }
+
+    // Custom Time Picker Logic (Manual Form)
+    function generateMTimeSlots() {
+      const dropdown = document.getElementById('mTimeDropdown');
+      if(!dropdown) return;
+      const start = 8;
+      const end = 22;
+      const slots = [];
+      for (let h = start; h <= end; h++) {
+        const hh = String(h).padStart(2, '0');
+        slots.push(`${hh}:00`);
+        if (h < end) slots.push(`${hh}:30`);
+      }
+      dropdown.innerHTML = slots.map(s => `<div class="time-slot" data-value="${s}" onclick="selectMTime('${s}')">${s}</div>`).join('');
+    }
+    window.toggleMTimeDropdown = function() {
+      document.getElementById('mDateDropdown').classList.remove('show');
+      document.getElementById('mDatePickerContainer').classList.remove('is-active');
+      const drop = document.getElementById('mTimeDropdown');
+      const cont = document.getElementById('mTimePickerContainer');
+      drop.classList.toggle('show');
+      cont.classList.toggle('is-active');
+    }
+    window.selectMTime = function(val) {
+      document.getElementById('m-time').value = val;
+      document.getElementById('mTimeTrigger').textContent = val;
+      document.getElementById('mTimeDropdown').classList.remove('show');
+      document.getElementById('mTimePickerContainer').classList.remove('is-active');
+      document.querySelectorAll('#mTimeDropdown .time-slot').forEach(s => s.classList.toggle('active', s.dataset.value === val));
+    }
+    document.addEventListener('click', (e) => {
+      const timeCont = document.getElementById('mTimePickerContainer');
+      const dateCont = document.getElementById('mDatePickerContainer');
+      const filterCont = document.getElementById('fDatePickerContainer');
+      if (timeCont && !timeCont.contains(e.target)) {
+        document.getElementById('mTimeDropdown').classList.remove('show');
+        timeCont.classList.remove('is-active');
+      }
+      if (dateCont && !dateCont.contains(e.target)) {
+        document.getElementById('mDateDropdown').classList.remove('show');
+        dateCont.classList.remove('is-active');
+      }
+      if (filterCont && !filterCont.contains(e.target)) {
+        document.getElementById('fDateDropdown').classList.remove('show');
+        filterCont.classList.remove('is-active');
+      }
+    });
+
+    renderMCalendar();
+    generateMTimeSlots();
+    selectMTime('19:00');
+
+
+
+    document.getElementById('manual-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('m-submit') || e.target.querySelector('button[type="submit"]');
+      const errBox = document.getElementById('manual-error');
+
+      const originalText = btn.textContent;
+      btn.textContent = "Saving...";
+      btn.disabled = true;
+      errBox.setAttribute('data-hidden', 'true');
+      errBox.style.display = 'none';
+
+      const mPartySize = parseInt(document.getElementById('m-party').value);
+      let mTableType;
+      if (mPartySize <= 2) mTableType = 'two_top';
+      else if (mPartySize <= 6) mTableType = 'four_five';
+      else mTableType = 'private_room';
+
+      const timeVal = document.getElementById('m-time').value;
+      if (!timeVal) {
+        showToast("Please select a valid time.");
+        btn.textContent = originalText;
+        btn.disabled = false;
+        return;
+      }
+
+      const [mH, mM] = timeVal.split(':').map(Number);
+      if (mH < 8 || mH > 22 || (mH === 22 && mM > 0)) {
+        showToast("Bookings allowed only between 08:00 and 22:00");
+        btn.textContent = originalText;
+        btn.disabled = false;
+        return;
+      }
+
+      if (mM % 30 !== 0) {
+        showToast("Invalid time slot selected (must be 30-min interval)");
+        btn.textContent = originalText;
+        btn.disabled = false;
+        return;
+      }
+
+      const payload = {
+        name: document.getElementById('m-name').value.trim(),
+        phone: document.getElementById('m-phone').value.trim(),
+        date: document.getElementById('m-date').value,
+        time: timeVal,
+        party_size: mPartySize,
+        table_type: mTableType,
+        occasion: (document.getElementById('m-occasion') ? document.getElementById('m-occasion').value : null),
+        note: (document.getElementById('m-note') ? document.getElementById('m-note').value : null),
+      };
+
+      const editId = document.getElementById('manual-form').getAttribute('data-edit-id');
+
+      let resData, resError;
+
+      if (editId) {
+        // Update existing
+        const { data, error } = await db.from('reservations').update(payload).eq('id', editId).select();
+        resData = data; resError = error;
+      } else {
+        // Create new
+        payload.status = 'confirmed';
+        payload.source = 'reception';
+
+        // ── Normalizing Time (HH:MM to HH:MM:00) ────────────────────
+        if (payload.time && payload.time.split(':').length === 2) {
+          payload.time = payload.time + ':00';
+        }
+
+        // ── Availability Check ─────────────────────────────────────────
+        const derivedTableType = payload.party_size <= 2 ? 'two_top' : (payload.party_size <= 6 ? 'four_five' : 'private_room');
+        payload.table_type = derivedTableType;
+
+        const { data: inv } = await db.from('table_inventory').select('quantity').eq('table_type', derivedTableType).single();
+        const { data: existing } = await db.from('reservations').select('party_size')
+          .eq('date', payload.date)
+          .eq('time', payload.time)
+          .eq('table_type', derivedTableType)
+          .in('status', ['pending', 'confirmed', 'seated']);
+
+        const totalGuests = (existing || []).reduce((sum, r) => sum + (r.party_size || 0), 0);
+
+        // ── Capacity Calculation (quantity * seatsPerTable) ────────────────
+        let seatsPerTable = 2;
+        if (derivedTableType === 'four_five') seatsPerTable = 5;
+        if (derivedTableType === 'private_room') seatsPerTable = 10;
+        const maxCapacity = inv ? (inv.quantity * seatsPerTable) : 0;
+
+        if (inv && totalGuests + payload.party_size > maxCapacity) {
+          showToast("Selected time is fully booked. Please try a different time.");
+          btn.textContent = originalText;
+          btn.disabled = false;
+          return;
+        }
+
+        const { data, error } = await db.from('reservations').insert([payload]).select();
+        resData = data; resError = error;
+      }
+
+      btn.textContent = originalText;
+      btn.disabled = false;
+
+      if (resError) {
+        showToast(resError.message);
+      } else {
+        // Success
+        document.getElementById('manual-booking-modal').style.display = 'none';
+
+        // Reset form
+        document.getElementById('manual-form').removeAttribute('data-edit-id');
+        document.getElementById('m-name').value = '';
+        document.getElementById('m-phone').value = '';
+        if (document.getElementById('m-occasion')) {
+          document.getElementById('m-occasion').value = '';
+          document.querySelectorAll('#m-occasion-chips .chip').forEach(c => c.classList.remove('active'));
+          const defOcc = document.querySelector('#m-occasion-chips .chip[data-value=""]');
+          if (defOcc) defOcc.classList.add('active');
+        }
+        if (document.getElementById('m-note')) document.getElementById('m-note').value = '';
+
+        if (resData && resData.length > 0) {
+          if (editId) {
+            reservationsData = reservationsData.map(res => res.id === editId ? { ...res, ...resData[0] } : res);
+          } else {
+            reservationsData.push(resData[0]);
+          }
+          render();
+        } else {
+          fetchReservations();
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
