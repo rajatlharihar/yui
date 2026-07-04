@@ -64,7 +64,10 @@
       font-family: var(--ff-heading);
       background: #fff;
       color: var(--text);
+      /* clip, not hidden: hidden makes body a scroll container and kills
+         position: sticky on iOS Safari (hidden kept as legacy fallback) */
       overflow-x: hidden;
+      overflow-x: clip;
       cursor: none;
     }
 
@@ -181,12 +184,41 @@
       color: color-mix(in srgb, var(--text) calc(var(--nav-p) * 100%), #fff);
     }
 
-    /* When over a FlowArt menu card — card colour takes over */
+    /* When over a FlowArt menu card — card colour takes over.
+       Base holds the NEW colour; ::before carries the PREVIOUS colour and
+       retreats out of the way, so both scroll directions are symmetric
+       exits: down = old colour peels upward (reveal bottom→top),
+       up = old colour peels downward (reveal top→bottom). */
     .nav.menu-card-active {
       background: var(--nav-card-bg, rgba(255,255,255,0.97)) !important;
       color: var(--nav-card-color, var(--text)) !important;
       backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
+      /* Base colour must swap instantly under the wipe — transitioning the
+         background here makes the old colour flash through on each change */
+      transition: color 0.3s ease, transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .nav.menu-card-active::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--nav-card-bg-prev, transparent);
+      transform: scaleY(0);
+      will-change: transform;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .nav.menu-card-active.nav-wipe-up::before {
+      transform-origin: center top;
+      animation: navCardWipeOut 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .nav.menu-card-active.nav-wipe-down::before {
+      transform-origin: center bottom;
+      animation: navCardWipeOut 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes navCardWipeOut {
+      from { transform: scaleY(1); }
+      to   { transform: scaleY(0); }
     }
 
     /* Footer visible — slide nav off the top of the screen */
@@ -693,18 +725,13 @@
       align-items: center;
       gap: 12px;
     }
-    .yui-avatar {
-      width: 40px;
-      height: 40px;
-      background: rgba(255,253,254,0.1);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid rgba(255,253,254,0.12);
+    /* Main logo lockup (knot + YUI) — no box around it */
+    .yui-header-logo {
+      height: 44px;
+      width: auto;
+      display: block;
       flex-shrink: 0;
     }
-    .yui-avatar img { width: 22px; height: auto; display: block; }
     .yui-header-info { display: flex; flex-direction: column; gap: 3px; }
     .yui-name {
       font-size: 14px;
@@ -730,7 +757,7 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #4ade80;
+      background: #E32527;
       flex-shrink: 0;
     }
     .yui-status-text {
@@ -811,7 +838,7 @@
       justify-content: center;
       align-items: center;
       gap: 0;
-      background: #fafafa;
+      background: #ffffff;
       scrollbar-width: thin;
       scrollbar-color: rgba(0,0,0,0.08) transparent;
     }
@@ -827,17 +854,7 @@
       gap: 12px;
       padding: 16px 0;
     }
-    .yui-welcome-badge {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: rgba(11,11,9,0.28);
-      background: rgba(11,11,9,0.05);
-      border: 1px solid rgba(11,11,9,0.08);
-      border-radius: 3px;
-      padding: 5px 12px;
-    }
+    .yui-welcome-badge { display: none; }
     .yui-welcome-title {
       font-family: 'Restora', Georgia, serif;
       font-size: 24px;
@@ -954,7 +971,7 @@
       align-items: center;
       gap: 8px;
       background: #f4f4f4;
-      border-radius: 24px;
+      border-radius: 10px;
       padding: 6px 6px 6px 12px;
       border: 1.5px solid transparent;
       transition: border-color 0.25s ease, background 0.25s ease;
@@ -968,7 +985,7 @@
       width: 30px;
       height: 30px;
       background: none;
-      border: none;
+      border: 1.5px solid rgba(11,11,9,0.22);
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -979,7 +996,7 @@
       flex-shrink: 0;
       padding: 0;
     }
-    .yui-mic-pill:hover { color: #E32527; background: rgba(227,37,39,0.07); }
+    .yui-mic-pill:hover { color: #E32527; background: rgba(227,37,39,0.07); border-color: rgba(227,37,39,0.4); }
     .yui-mic-large { display: none; } /* old button hidden */
 
     .yui-text-input {
@@ -1044,7 +1061,8 @@
     }
 
     #heroVideo {
-      clip-path: inset(13% 0 10% 0);
+      /* deeper letterbox: top band reaches lower, bottom band higher */
+      clip-path: inset(18% 0 15% 0);
       transition: clip-path 0.1s linear;
     }
 
@@ -1052,10 +1070,12 @@
     .hero-jp-panel {
       position: absolute;
       right: clamp(32px, 3.5vw, 90px);
-      top: 50%;
+      top: 54%;
       transform: translateY(-50%);
       z-index: 10;
-      max-height: 85vh;
+      /* never taller than the space under the nav — on laptop heights the
+         85vh column was running up over the bar and the Reserve button */
+      max-height: min(72vh, calc(100vh - 260px));
       overflow: hidden;
     }
 
@@ -1351,7 +1371,7 @@
       #logoCanvas { width: 48px !important; height: auto !important; }
       .nav-hamburger { gap: 6px; }
 
-      /* ── HERO SHELL ── */
+      /* ── HERO SHELL — natural flow; the video autoplays on phone ── */
       .hero {
         height: auto;
         min-height: 100vh;
@@ -1361,6 +1381,7 @@
       /* Flex column: nav-spacer → video → content */
       .hero-sticky-track {
         position: relative !important;
+        top: auto;
         height: auto;
         min-height: 100vh;
         display: flex;
@@ -1378,12 +1399,12 @@
         flex-shrink: 0;
       }
 
-      /* Video: 48vh flow element, focal point shifted left */
+      /* Video: scaled-up flow element, focal point shifted left */
       #heroVideo {
         position: relative !important;
         flex-shrink: 0;
         width: 100%;
-        height: 48vh;
+        height: 58vh;
         object-fit: cover;
         object-position: 48% center;
         clip-path: none !important;
@@ -1397,7 +1418,7 @@
         position: absolute;
         right: 28px;
         top: 88px;
-        height: 48vh;
+        height: 58vh;
         transform: none;
         overflow: hidden;
         display: flex;
@@ -1701,68 +1722,99 @@
       height: 2px;
     }
 
-    /* Lines: all same width, middle slightly shorter */
+    /* Proper hamburger: all three lines the same width */
     .nav-hamburger span:nth-child(1),
+    .nav-hamburger span:nth-child(2),
     .nav-hamburger span:nth-child(3) { width: 22px; }
-    .nav-hamburger span:nth-child(2) { width: 16px; }
 
-    /* Active: animate into X */
-    .nav-hamburger.active span { background: var(--red); }
-    .nav-hamburger.active span:nth-child(1) { transform: translateY(8px) rotate(45deg); width: 22px; }
-    .nav-hamburger.active span:nth-child(2) { opacity: 0; width: 0; }
-    .nav-hamburger.active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); width: 22px; }
+    /* Active: bars fade out, an X fades in (no rotation morph) */
+    .nav-hamburger {
+      position: relative;
+    }
+    .nav-hamburger span { transition: opacity 0.45s ease; }
+    .nav-hamburger.active span { opacity: 0; }
+    .nav-hamburger::before,
+    .nav-hamburger::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 22px;
+      height: 2px;
+      border-radius: 2px;
+      background: #FFFDFE;
+      opacity: 0;
+      transition: opacity 0.45s ease;
+      pointer-events: none;
+    }
+    .nav-hamburger::before { transform: translate(-50%, -50%) rotate(45deg); }
+    .nav-hamburger::after  { transform: translate(-50%, -50%) rotate(-45deg); }
+    .nav-hamburger.active::before,
+    .nav-hamburger.active::after { opacity: 1; }
 
     /* MOBILE NAV DRAWER */
+    /* Gooey nav menu (21st.dev gooey-filter): pills melt out of the nav,
+       staggered, filtered through #gooey-nav-filter */
     .nav-drawer {
       display: none;
       position: fixed;
-      top: 64px;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, .98);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border-bottom: 1px solid var(--border);
-      padding: 20px 24px;
+      top: 102px;
+      right: 20px;
+      left: auto;
+      background: none;
+      border: none;
+      padding: 0;
       z-index: 799;
       flex-direction: column;
-      gap: 16px;
-      transform: translateY(-100%);
-      opacity: 0;
-      transition: transform .35s var(--ease), opacity .35s var(--ease)
+      align-items: flex-end;
+      gap: 0;
+      pointer-events: none;
+      filter: url(#gooey-nav-filter);
     }
-
-    .nav-drawer.open {
-      transform: translateY(0);
-      opacity: 1
-    }
+    /* circles overlap so the goo properly melts between them */
+    .nav-drawer a + a { margin-top: -7px; }
 
     .nav-drawer a {
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: .06em;
-      text-transform: lowercase;
-      color: var(--text);
-      padding: 12px 0;
-      border-bottom: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px;
+      height: 52px;
+      color: #FFFDFE;
+      background: #0D0C0A;
+      border-radius: 50%;
       position: relative;
+      opacity: 0;
+      transform: translateY(-24px) scale(0.55);
+      transition: transform .5s cubic-bezier(0.34, 1.3, 0.5, 1), opacity .3s ease;
     }
+    .nav-drawer a svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+    .nav-drawer a span { display: none; }
+    /* closing: bottom pill tucks in first */
+    .nav-drawer a:nth-child(1) { transition-delay: .15s; }
+    .nav-drawer a:nth-child(2) { transition-delay: .10s; }
+    .nav-drawer a:nth-child(3) { transition-delay: .05s; }
+    .nav-drawer a:nth-child(4) { transition-delay: 0s; }
+
+    .nav-drawer.open a {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    /* opening: top pill emerges first */
+    .nav-drawer.open a:nth-child(1) { transition-delay: 0s; }
+    .nav-drawer.open a:nth-child(2) { transition-delay: .06s; }
+    .nav-drawer.open a:nth-child(3) { transition-delay: .12s; }
+    .nav-drawer.open a:nth-child(4) { transition-delay: .18s; }
 
     .nav-drawer a.active {
-      color: var(--text);
+      color: #FFFDFE;
       font-weight: 700;
-      padding-left: 18px; /* Make space for the dot */
-    }
-
-    .nav-drawer a.active::before {
-      content: '●';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 5px;
-      color: var(--red);
-      line-height: 1
+      background: var(--red);
     }
 
     /* ── RESPONSIVE: TABLET (≤768px) ──────────────────── */
@@ -2549,7 +2601,9 @@
     /* RESERVATION SECTION — LUXURY REDESIGN */
     .res-section {
       background: var(--bg);
-      padding: clamp(100px, 12vh, 140px) clamp(60px, 6vw, 100px) clamp(100px, 12vh, 140px) clamp(20px, 1.5vw, 28px);
+      /* left padding matches the nav's 80px gutter so "Save your seat"
+         columns with the logo above it */
+      padding: clamp(100px, 12vh, 140px) clamp(60px, 6vw, 100px) clamp(100px, 12vh, 140px) 80px;
       min-height: 100vh;
       display: grid;
       grid-template-columns: 48% 1fr;
@@ -2694,7 +2748,7 @@
     }
     .fi-textarea {
       width: 100%;
-      font-size: 19px;
+      font-size: 12px;
       color: var(--text);
       background: rgba(26, 22, 18, 0.02);
       border: 1px solid rgba(26, 22, 18, 0.09);
@@ -2728,10 +2782,10 @@
     }
     .chip {
       font-family: var(--ff-heading);
-      font-size: 11.5px;
+      font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.06em;
-      text-transform: lowercase;
+      text-transform: capitalize;
       color: rgba(26, 22, 18, 0.52);
       background: transparent;
       border: 1px solid rgba(26, 22, 18, 0.14);
@@ -2755,7 +2809,7 @@
       height: 62px;
       gap: 10px;
       font-family: var(--ff-heading);
-      font-size: 15px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.22em;
       text-transform: uppercase;
@@ -3603,11 +3657,11 @@
 
 /* ── NEW CHEF PARALLAX SLIDER SECTION ──────────────────────── */
 
-#about {
-  background: #171717; /* Ink Black */
+.artisans-section {
+  background: #171717 !important; /* beats #about { background: #fafafa } */
   position: relative;
   width: 100%;
-  overflow: hidden;
+  overflow: visible !important; /* beats any id-level overflow: hidden */
 }
 
 .chef-transition-bar {
@@ -3625,16 +3679,17 @@
 /* Title overlay — sits on top of the full-screen image */
 .chef-title-overlay {
   position: absolute;
-  bottom: 64px;
+  bottom: 20px;
   left: calc(120px + 2vw);
   z-index: 10;
   cursor: crosshair;
 }
 
-/* Override glitch-hed defaults for dark background + bigger size */
+/* Override glitch-hed defaults for dark background — sized and pinned
+   low so the title never collides with the white card */
 .chef-title-overlay .chef-title-hed {
   color: #ffffff !important;
-  font-size: clamp(116px, 7.2vw, 170px) !important;
+  font-size: clamp(90px, 5.8vw, 140px) !important;
   white-space: nowrap;
   font-feature-settings: "liga" 1, "dlig" 1, "calt" 1, "salt" 1, "ss01" 1, "ordn" 1;
   font-variant-ligatures: common-ligatures discretionary-ligatures contextual;
@@ -3671,55 +3726,73 @@
   color: #ffffff;
 }
 
+/* Artisans section: 3×100vh scroll track so sticky container stays pinned per chef */
+.artisans-section {
+  height: 300vh;
+  overflow: visible;
+}
+
 .parallax-container {
-  position: relative;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
   width: 100%;
   height: 100vh;
   overflow: hidden;
   background: #171717;
 }
 
-.project-list {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.project {
+/* Slides wrapper — fills the sticky container */
+.chef-slides-wrap {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #171717;
-  overflow: hidden;
-  will-change: transform;
+  inset: 0;
 }
 
-.project img {
+/* Each chef slide fills the wrapper. The backdrop CROSSFADES per chef
+   (JS toggles .bg-on) — it never slides, so nothing shifts or parallaxes
+   behind the white card; only the card imagery moves. */
+.chef-slide {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #171717;
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  contain: layout paint;
+}
+
+/* Slide 1 doubles as the base layer so there is never a black flash */
+.chef-slide.bg-on,
+.chef-slide:first-child {
+  opacity: 1;
+}
+
+/* Heavy static blur + big scale-up: filter never animates, so the GPU caches
+   the blurred layer once and the swipe just moves the cached texture */
+.chef-slide img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  will-change: transform;
+  transform: scale(1.8);
+  filter: blur(9px) brightness(0.82);
 }
 
-/* Grain texture — flat opacity, no blend mode so compositor can cache the layer */
-.project::before {
+/* Minute black grain — noise is mapped to black-with-alpha (no blend mode)
+   and tiled at 220px so the SVG filter renders once, not at full 5K */
+.chef-slide::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.18;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0.55 0.55 0.55 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  background-repeat: repeat;
+  opacity: 0.4;
   pointer-events: none;
   z-index: 3;
 }
 
-/* Heavy dark overlay — bleeds to black, not white */
-.project::after {
+/* Dark gradient overlay per slide */
+.chef-slide::after {
   content: '';
   position: absolute;
   inset: 0;
@@ -3729,17 +3802,13 @@
   z-index: 2;
 }
 
-/* Subtle blur on chef background photos — keep at 1px for GPU compositing */
-.project img {
-  filter: blur(1px);
-}
-
 /* Minimap — Centered white info card */
 .minimap {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  /* card sized down so "The Artisans" title stays visible around it */
+  transform: translate(-50%, -50%) scale(0.82);
   width: 94vw;
   max-width: 1364px;
   height: 567px;
@@ -3769,6 +3838,8 @@
   z-index: 2;
 }
 
+/* Minimap images swipe with the same scroll-scrubbed transform as the
+   background slides (JS-driven) — no opacity crossfade */
 .minimap-img-item {
   position: absolute;
   top: 0;
@@ -3777,7 +3848,12 @@
   height: 567px;
   overflow: hidden;
   background: #171717;
+  transform: translate3d(100%, 0, 0);
   will-change: transform;
+}
+
+.minimap-img-item:first-child {
+  transform: translate3d(0, 0, 0);
 }
 
 .minimap-img-item img {
@@ -3804,8 +3880,12 @@
   justify-content: space-between;
   padding: 36px 52px;
   color: #171717;
-  will-change: transform;
-  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.minimap-item-info.active {
+  opacity: 1;
 }
 
 /* Left column: num, category, description stacked vertically */
@@ -3925,6 +4005,7 @@
   .minimap-info-list {
     position: relative;
     width: 100%;
+    height: 160px;
   }
 
   .minimap-item-info {
@@ -4068,6 +4149,7 @@
   .minimap-info-list {
     max-width: 480px;
     width: 100%;
+    height: 200px;
   }
 
   .minimap-item-info {
@@ -4408,6 +4490,7 @@
 @media (max-width: 480px) {
     html, body {
         overflow-x: hidden;
+        overflow-x: clip; /* keeps position: sticky alive on iOS Safari */
         position: relative;
         width: 100%;
     }
@@ -4453,13 +4536,13 @@
         pointer-events: auto !important;
     }
     .yui-back {
-        display: flex !important;
+        display: none !important;
     }
     .yui-header {
         padding: 14px 18px !important;
     }
     .yui-close {
-        display: none !important;
+        display: flex !important;
     }
     .yui-launcher {
         width: 56px !important;
@@ -5825,6 +5908,38 @@
   transform: translateY(-3px);
 }
 
+/* Floating variant — sits directly above the chat launcher, slightly tilted */
+.fy-scroll-top-float {
+  position: fixed;
+  right: 38px;               /* centred on the 60px launcher at right: 28px */
+  bottom: 104px;             /* 28px launcher bottom + 60px height + 16px gap */
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(10px) rotate(7deg);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease, border-color 0.25s ease;
+}
+.fy-scroll-top-float.visible {
+  opacity: 1;
+  transform: translateY(0) rotate(7deg);
+  pointer-events: auto;
+}
+.fy-scroll-top-float.visible:hover {
+  transform: translateY(-3px) rotate(7deg);
+}
+/* Hide while the chat panel is open (button sits between panel and launcher) */
+.yui-panel.open + .fy-scroll-top-float {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+/* Phones ≤480: launcher is 56px at right/bottom 20 — centre the 40px arrow on it */
+@media (max-width: 480px) {
+  .fy-scroll-top-float {
+    right: 28px;
+    bottom: 92px;
+  }
+}
+
 /* BOTTOM ROW */
 .fy-bottom {
   display: flex;
@@ -5911,3 +6026,756 @@
   .fy-bottom { flex-direction: column; align-items: flex-start; }
   .fy-bottom-right { align-items: flex-start; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   5K / ULTRA-LARGE DESKTOP (≥2200px, e.g. 5120×2880)
+   Fixed-pixel components scale up so they don't look miniature
+   ═══════════════════════════════════════════════════════════════ */
+@media (min-width: 2200px) {
+
+  /* Artisans minimap card — ~1.55× */
+  .minimap {
+    max-width: 2120px;
+    height: 880px;
+  }
+  .minimap-img-preview,
+  .minimap-img-item {
+    width: 669px;
+    height: 880px;
+  }
+  .minimap-item-info {
+    height: 880px;
+    padding: 56px 80px;
+  }
+  .minimap-desc { font-size: 28px; max-width: 420px; }
+  .minimap-title { font-size: 28px; }
+  .minimap-num { font-size: 20px; }
+  .minimap-category, .minimap-year { font-size: 17px; }
+
+  /* Artisans title can grow past its 170px cap */
+  .chef-title-overlay .chef-title-hed {
+    font-size: clamp(170px, 5.2vw, 280px) !important;
+  }
+
+  /* Precision section copy (overrides inline-styled clamps) */
+  .precision-right .precision-typewriter {
+    font-size: 24px;
+    max-width: 46ch;
+  }
+  .precision-right .precision-reserve-cta {
+    font-size: 15px;
+    padding: 20px 40px;
+  }
+
+  /* Chatbot — panel, type, launcher all scale */
+  .yui-panel { width: 560px; height: 780px; }
+  .yui-header-logo { height: 54px; }
+  .yui-welcome-title { font-size: 32px; }
+  .yui-welcome-sub { font-size: 16px; max-width: 320px; }
+  .yui-msg { font-size: 17px; }
+  .yui-text-input { font-size: 17px; }
+  .yui-chip { font-size: 15px; }
+  .yui-btn-send { width: 46px; height: 46px; }
+  .yui-mic-pill { width: 38px; height: 38px; }
+  .yui-launcher { width: 78px; height: 78px; }
+
+  /* Floating back-to-top rides above the bigger launcher */
+  .fy-scroll-top-float {
+    width: 52px;
+    height: 52px;
+    right: 41px;
+    bottom: 130px;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PHONE POLISH PASS (≤767px)
+   Section rhythm, hero-scale headings everywhere, menu redesign
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+  /* ── Hero: both CTAs visible side by side ── */
+  .hero-cta-group {
+    flex-direction: row !important;
+    gap: 10px !important;
+  }
+  .hero-cta-group .nav-cta,
+  .hero-cta-group .fc-link {
+    width: auto !important;
+    min-width: 0 !important; /* beats the 200px global CTA floor — two must fit */
+    flex: 1;
+    height: 52px !important;
+    font-size: 12px !important;
+    letter-spacing: 0.08em !important;
+    padding: 0 8px !important;
+    border-radius: 6px !important;
+  }
+
+  /* Headline + button anchored at the bottom — the content box stretches,
+     so children must be pushed to its bottom edge, not just padded */
+  .hero-content {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: 76px !important;
+  }
+
+  /* Hamburger nudged slightly in from the edge */
+  .nav-hamburger { margin-right: 6px; }
+
+  /* Logo stays full-size over the hero — no scroll-driven shrink/fade */
+  .nav-logo-full {
+    opacity: 1 !important;
+    transform: translateY(-50%) !important;
+  }
+
+  /* Chips step aside while the bento gallery modal is open (its close X
+     sits exactly where the hamburger lives) */
+  .nav.nav--modal-open {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.25s ease;
+  }
+
+  /* Nav reserve pill: hair to the right, sized like the Explore Menu pill */
+  .nav .nav-cta {
+    transform: translateX(2px);
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 24px !important;
+  }
+
+  /* Only Explore Menu stays below the headline, sized like the nav pill */
+  .hero-cta-group .nav-cta { display: none !important; }
+  .hero-cta-group .fc-link {
+    flex: none !important;
+    width: auto !important;
+    height: 40px !important;
+    padding: 0 24px !important;
+    align-self: flex-start;
+  }
+
+  /* Nav logo must never vanish — keep the animated canvas up at all times.
+     (The desktop crossfade hands off to a mark that mobile hides.) */
+  .nav-logo-full { opacity: 1 !important; }
+  /* Cream logo needs contrast over light menu cards */
+  .nav.menu-card-active:not(.nav--dark) #logoCanvas { filter: brightness(0); }
+
+  /* ── Section rhythm: kill the oversized gaps ── */
+  .whispers { padding: 56px 0; }
+  .whispers-top { padding: 0 24px 36px; }
+
+  /* ── Bento "The Space Within" — heading at Fifth Flavor scale ── */
+  .bento-gallery-section { padding: 56px 24px; }
+  .bento-section-intro {
+    padding-left: 0;
+    margin-bottom: 28px;
+    gap: 14px;
+  }
+  .bento-section-hed { font-size: clamp(48px, 13vw, 60px); }
+  .bento-gallery-section .gallery-subtitle { font-size: 13px; max-width: 100%; }
+
+  /* Tray: scaled way up, pushed right (half visible), swipe to explore */
+  .bento-tray-scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin: 0 -24px;
+    padding: 0 24px;
+  }
+  .bento-tray-scroll::-webkit-scrollbar { display: none; }
+  .bento-tray-wrapper {
+    width: 185vw;
+    margin: 0;
+  }
+
+  /* ── Artisans: cream card over blurred backdrop (per design mock) ──
+     Card: name/role header → face window (faces slide vertically) →
+     description → kanji + number bottom row. Title sits bottom-left. */
+  /* Pinned track: two swipes + dwell, then the NEXT section slides over
+     the still-pinned view — the artisans never visibly scrolls away */
+  .artisans-section {
+    height: 340vh;
+    z-index: 1;
+  }
+  .bento-gallery-section {
+    position: relative;
+    z-index: 5;
+    margin-top: -100vh;
+  }
+  .chef-title-overlay {
+    left: 24px;
+    right: auto;
+    top: auto;
+    bottom: 28px;
+  }
+  .chef-title-overlay .chef-title-hed {
+    font-size: clamp(44px, 12vw, 56px) !important;
+    white-space: normal;
+  }
+  /* Cream-mask reveal is a desktop flourish — on phone its clip-path
+     animation re-fires at the chef-3 boundary and flashes on scroll-up */
+  .chef-title-overlay .chef-title-hed .cream-mask {
+    display: none !important;
+  }
+  /* Pre-JS resting state matches the vertical swipe (no horizontal flash) */
+  .minimap-img-item {
+    transform: translate3d(0, 100%, 0);
+  }
+  .minimap-img-item:first-child {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .minimap {
+    top: 48%;
+    bottom: auto;
+    left: 24px;
+    right: 24px;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    min-height: 0;
+    transform: translateY(-50%);
+    background: #F5EDE3;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 6px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    padding: 0;
+  }
+  .minimap-wrapper {
+    overflow: hidden;
+    border-radius: 6px;
+    background: transparent;
+    height: auto;
+  }
+
+  /* Backdrop crossfades per chef instead of scrubbing — no per-frame
+     transforms on three full-screen filtered layers means the phone GPU
+     only works during the brief fade, not on every scroll tick */
+  .chef-slide {
+    transform: none !important;
+    opacity: 0;
+    transition: opacity 0.55s ease;
+  }
+  .chef-slide.bg-on {
+    opacity: 1;
+  }
+  .chef-slide img {
+    transform: scale(1.15);
+    filter: blur(4px) brightness(0.78);
+  }
+  .chef-slide::before { display: none; } /* grain layer off on phone */
+  .chef-slide::after {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.7) 100%);
+  }
+
+  /* Face window — re-shown on phone, spans the card, faces slide inside.
+     Sits ABOVE the sliding text panels so texts pass behind it cleanly */
+  .minimap-img-preview {
+    display: block;
+    position: absolute;
+    top: 88px;
+    left: 0;
+    right: 0;
+    transform: none;
+    width: 100%;
+    height: 232px;
+    overflow: hidden;
+    z-index: 4;
+    background: #171717;
+  }
+  .minimap-img-item {
+    width: 100%;
+    height: 100%;
+  }
+
+  .minimap-info-list { height: 560px; }
+  /* Texts swipe up with the faces (JS-scrubbed transform, no crossfade) */
+  .minimap-item-info {
+    height: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 0;
+    padding: 20px 20px 18px;
+    color: #171717;
+    opacity: 1 !important;
+    transition: none;
+    transform: translate3d(0, 100%, 0);
+    will-change: transform;
+    background: #F5EDE3; /* panel carries the card colour as it slides */
+  }
+  .minimap-item-info:first-child {
+    transform: translate3d(0, 0, 0);
+  }
+  /* Header above the face window */
+  .minimap-right {
+    order: -1;
+    align-items: flex-start;
+    text-align: left;
+    gap: 3px;
+    max-width: 100%;
+    margin-bottom: 268px; /* clears the 232px face window */
+    flex-direction: column;
+  }
+  .minimap-title {
+    color: #171717;
+    font-size: 22px;
+    text-align: left;
+    letter-spacing: 0.04em;
+  }
+  .minimap-year {
+    position: static;
+    transform: none;
+    text-align: left;
+    color: #555;
+    font-size: 12px;
+  }
+  /* Body: description, then kanji left + number right on the bottom row */
+  .minimap-left {
+    flex: 1;
+    max-width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    align-content: space-between;
+    gap: 0;
+  }
+  .minimap-desc {
+    flex-basis: 100%;
+    order: -1;
+    font-size: 14px;
+    line-height: 1.6;
+    max-width: 100%;
+    color: #171717;
+    text-align: left;
+  }
+  .minimap-category {
+    order: 1;
+    font-size: 13px;
+    color: #333;
+  }
+  .minimap-num {
+    order: 2;
+    font-size: 22px;
+    font-weight: 600;
+    color: #171717;
+  }
+
+  /* ── Menu cards: dish names on top, food photo full-bleed at the bottom ── */
+  .mf-body,
+  .mf-body--flip {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .mf-hero { display: contents; }
+  .mf-hed {
+    order: -3;
+    font-size: clamp(48px, 13vw, 60px);
+    margin: 0;
+  }
+  .mf-note { order: -2; margin: -10px 0 2px; }
+  .mf-section .mf-items-col {
+    order: 1;
+    padding: 0 !important;
+  }
+  .mf-section .mfi-left {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+  .mf-section .mfi-prices { margin-right: 0 !important; }
+  .mf-section .mf-qty-head { margin-right: 0 !important; }
+  .mf-section .mf-qty-cols { margin-right: 0 !important; }
+  /* .mf-section prefix outranks the desktop flip-card clamps that were
+     throwing the Nigiri/Ramen photos off-position */
+  .mf-section .mf-img-bleed {
+    order: 2;
+    position: relative;
+    inset: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: calc(100% + 48px);
+    height: 240px;
+    min-height: 0;
+    margin: 10px -24px 0;
+    overflow: hidden;
+  }
+  /* Same treatment on every card photo (matched to the approved
+     Appetizers placement): 1.96× zoom, pushed 10% down */
+  .mf-section .mf-img {
+    transform: scale(1.96) translateY(10%);
+    transform-origin: center;
+    object-position: center;
+  }
+
+  /* "Menu" intro heading at the same scale + placement as the other titles */
+  .menu-intro-header {
+    padding: 48px 24px 20px;
+    background: #fff;
+  }
+  .menu-intro-title {
+    font-size: clamp(48px, 13vw, 60px);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  /* Menu cards stack like desktop: each pins, the next clips over it —
+     also closes the gap that showed between Appetizers and Nigiri.
+     Transparent section bg: the sliver exposed while a card rolls in
+     shows the pinned card behind it instead of flashing white. */
+  .mf-section {
+    position: sticky;
+    top: 0;
+    /* lvh: cover the LARGEST viewport — with 100svh, hiding the browser
+       UI mid-scroll exposed a white strip under the card */
+    height: 100svh;
+    height: 100lvh;
+    min-height: 100svh;
+    overflow: hidden;
+    background: transparent;
+  }
+  /* +2px overdraw kills the white hairline under each pinned card */
+  .mf-inner { height: calc(100% + 2px); overflow: hidden; }
+  .mf-section .mf-img-bleed {
+    margin-top: auto; /* photo hugs the bottom of the pinned card */
+    flex-shrink: 0;
+  }
+  /* Card titles always left — flip cards (Nigiri, Ramen) inherit a
+     right-side alignment from the desktop layout */
+  .mf-hed { text-align: left !important; }
+  /* The hairline hugging the card titles goes — including the first row's
+     top border, which sat flush under "Ramen" */
+  .mf-rule { display: none; }
+  .mf-section .mf-item:first-of-type { border-top: none; }
+
+  /* Tap a dish to open its description */
+  .mf-item.open .mfi-desc {
+    display: block;
+    font-size: 12px;
+    line-height: 1.6;
+    margin-top: 6px;
+    opacity: 0.85;
+  }
+
+  /* Dark backing behind the card stack — any sliver that ever peeks
+     through reads as ink, never white */
+  .menu-flow { background: #0B0B09; }
+
+  /* Menu type matches the rest of the site — clean rows per design mock:
+     bold name + small JP left, price right, thin dividers, no blurbs */
+  .mfi-name { font-size: 16px; }
+  .mfi-name .mfi-jp { font-size: 10px; }
+  .mfi-desc,
+  .mfi-tags { display: none; }
+  .mfi-pv { font-size: 14px; }
+  .mf-item {
+    margin-right: 0 !important; /* was bleeding rows past the edge, clipping prices */
+    padding: 16px 0;
+    align-items: center;
+  }
+  .mf-qty-lbl { font-size: 10px; }
+  /* Photos multiplied into the card colour once the dark hero box was
+     removed on phone — render them plainly at the bottom instead */
+  .mf-section .mf-img {
+    mix-blend-mode: normal !important;
+  }
+
+  /* ── Reservation: occasion chips, note, submit — all 12px ── */
+  .chip {
+    font-size: 12px;
+    padding: 10px 18px;
+    text-transform: capitalize; /* Birthday, Anniversary… */
+  }
+  .fl { font-size: 12px; }
+  .fi-textarea { font-size: 12px; min-height: 96px; }
+  .cf-submit { font-size: 12px; height: 54px; }
+
+  /* ── Footer: breathing room between the logo and Reserve Now ── */
+  .fy-logo-row { margin-top: 26px; }
+
+  /* ── Bento modal: stacked scroll-cards gallery (21st.dev scroll-cards) ── */
+  .bento-dock { display: none !important; }
+  .bento-dots { display: none !important; }
+
+  .bento-modal-overlay.cards-mode .bento-modal-panel {
+    position: absolute;
+    inset: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    transform: none;
+    padding: 0;
+    background: transparent;
+  }
+  .bento-modal-overlay.cards-mode .bento-modal-img,
+  .bento-modal-overlay.cards-mode .bento-modal-caption,
+  .bento-modal-overlay.cards-mode .bento-nav-hint {
+    display: none !important;
+  }
+  .bento-modal-overlay.cards-mode .bento-modal-close {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    z-index: 30;
+  }
+  .bento-modal-overlay.cards-mode .bento-cards-scroll {
+    display: block;
+    position: absolute;
+    inset: 72px 0 0;
+    overflow-y: auto;
+    padding: 0 20px 70px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-y;         /* the finger scrolls this, nothing else */
+    overscroll-behavior: contain; /* don't hand the scroll to the page */
+  }
+  .bento-cards-scroll::-webkit-scrollbar { display: none; }
+  .bento-scroll-card {
+    position: sticky;
+    margin-bottom: 22px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #1b1b1b;
+    box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.5);
+  }
+  .bento-scroll-card img {
+    width: 100%;
+    height: 44vh;
+    object-fit: cover;
+    display: block;
+  }
+  .bsc-cap { padding: 14px 16px 18px; }
+  .bsc-cap h3 {
+    font-family: 'Restora', Georgia, serif;
+    font-size: 19px;
+    color: #FFFDFE;
+    margin: 0 0 4px;
+  }
+  .bsc-cap p {
+    font-size: 12px;
+    line-height: 1.55;
+    color: rgba(255, 253, 254, 0.65);
+    margin: 0;
+  }
+
+  /* ── Minimal nav past the hero: logo chip left, hamburger chip right ── */
+  .nav.nav--minimal {
+    background: transparent !important;
+    border-bottom: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none;
+  }
+  /* The black bar lives on ::before so it can SWIPE UP out of view when
+     the nav goes minimal (this also replaces the menu-card wipe layer,
+     which is pointless on phone). The gradient ::after stays dead. */
+  .nav {
+    background: transparent !important;
+    border-bottom: none !important;
+  }
+  .nav::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: #0D0C0A !important;
+    transform: translateY(0) !important;
+    transform-origin: center !important;
+    animation: none !important;
+    display: block !important;
+    z-index: -1 !important;
+    pointer-events: none !important;
+    transition: transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .nav.nav--minimal::before {
+    transform: translateY(-102%) !important;
+  }
+  .nav.nav--minimal::after {
+    display: none !important;
+  }
+  /* Bar contents ride up with the bar; chips (logo/hamburger) stay put */
+  .nav > * {
+    transition: opacity 0.4s ease, transform 0.7s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+  .nav.nav--minimal > *:not(.nav-logo):not(.nav-hamburger) {
+    transform: translateY(-160%);
+  }
+  .nav-hamburger {
+    transition: background 0.35s ease, box-shadow 0.35s ease;
+  }
+  .nav.nav--minimal > *:not(.nav-logo):not(.nav-hamburger) {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .nav.nav--minimal .nav-hamburger {
+    pointer-events: auto;
+    background: #FFFDFE;
+    border-radius: 50%;
+    width: 48px !important;
+    height: 48px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+  }
+  /* Past the hero the logo bows out — it returns (white) only over the
+     artisans section, where the dark backdrop carries it */
+  .nav.nav--minimal .nav-logo {
+    pointer-events: none;
+    opacity: 0;
+    width: 52px !important;
+    height: 52px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-radius: 0;
+    transition: opacity 0.35s ease;
+  }
+  .nav.nav--minimal.nav--on-dark .nav-logo {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Knot mark only — the canvas lockup (with YUI text) is swapped out */
+  .nav.nav--minimal .nav-logo-full { opacity: 0 !important; pointer-events: none; }
+  .nav.nav--minimal .nav-logo-mark {
+    opacity: 1 !important;
+    position: relative;
+    top: auto;   /* base rule's top:50% would offset a relative box */
+    left: auto;
+    transform: none;
+    pointer-events: none;
+  }
+  .nav.nav--minimal .nav-logo-mark img {
+    width: 26px;
+    filter: brightness(0);
+    transition: filter 0.45s ease;
+  }
+  .nav.nav--minimal.nav--on-dark .nav-logo-mark img {
+    filter: brightness(0) invert(1);
+  }
+  /* Reservation section ending — the floating logo bows out */
+  .nav.nav--minimal.nav--logo-hidden .nav-logo {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+  .nav.nav--minimal .nav-hamburger { padding: 0; gap: 4px; }
+  .nav.nav--minimal .nav-hamburger span { background: #0D0C0A; }
+  .nav.nav--minimal .nav-hamburger::before,
+  .nav.nav--minimal .nav-hamburger::after { background: #0D0C0A; }
+}
+
+/* Scroll-cards exist only in the phone modal */
+.bento-cards-scroll { display: none; }
+@media (min-width: 768px) {
+  .bento-dots { display: none; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LAPTOP DESKTOPS (768–1920px): the menu-card photos were sized for
+   5K and blow up to half the screen at laptop widths — tame them
+   ═══════════════════════════════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1920px) {
+  /* Light cards (Appetizers / Sushi / Curry): photo big, low, left */
+  .mf-img-bleed {
+    width: clamp(280px, 30vw, 540px);
+    height: clamp(280px, 30vw, 540px);
+    bottom: clamp(0px, 2vh, 60px);
+    left: clamp(40px, 6vw, 150px);
+  }
+  /* shifted right/up so the food stays in the visible crop at this zoom */
+  .mf-img { transform: translate(60%, -30%) rotate(10deg) scale(2.74); }
+
+  /* Flip cards (Nigiri / Ramen): photo big, pushed to the bottom right */
+  .mf-body--flip .mf-img-bleed {
+    left: auto;
+    right: clamp(60px, 8vw, 180px);
+    bottom: clamp(30px, 6vh, 130px);
+  }
+  .mf-body--flip .mf-img { transform: translate(-50%, -50%) rotate(-5deg) scale(2.81); }
+
+  /* The dark hero backing plate reads as a stray black box at laptop
+     sizes — the title stands on the card colour alone */
+  .mf-section[data-mf-idx="1"] .mf-hero,
+  .mf-section[data-mf-idx="3"] .mf-hero {
+    background: transparent !important;
+  }
+
+  /* Nav logo was poking out under the hero's black band */
+  .nav-logo {
+    width: 76px !important;
+    height: 74px !important;
+  }
+  #logoCanvas {
+    width: 76px !important;
+    height: 75px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   NAV OVER THE ARTISANS SECTION (all sizes): bar goes transparent,
+   contents go white against the dark backdrop
+   ═══════════════════════════════════════════════════════════════ */
+.nav.nav--over-artisans {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: #FFFDFE !important;
+}
+.nav.nav--over-artisans::after { opacity: 0 !important; }
+.nav.nav--over-artisans .nav-center a { color: rgba(255, 253, 254, 0.72) !important; }
+.nav.nav--over-artisans .nav-center a.active,
+.nav.nav--over-artisans .nav-center a:hover { color: #FFFDFE !important; }
+.nav.nav--over-artisans .nav-center a.active::before { color: rgba(255, 253, 254, 0.7) !important; }
+.nav.nav--over-artisans .nav-logo-mark img { filter: brightness(0) invert(1) !important; }
+.nav.nav--over-artisans #logoCanvas { filter: brightness(0) invert(1); }
+
+/* ═══════════════════════════════════════════════════════════════
+   CHATBOT: time-of-day header + welcome artwork
+   morning (5–12) white · afternoon (12–19) red · night black
+   ═══════════════════════════════════════════════════════════════ */
+.yui-panel.tod-morning .yui-header {
+  background: #FFFDFE;
+  border-bottom: 1px solid rgba(11, 11, 9, 0.08);
+}
+.yui-panel.tod-morning .yui-header-logo { filter: brightness(0); }
+.yui-panel.tod-morning .yui-status-text { color: rgba(11, 11, 9, 0.55) !important; }
+.yui-panel.tod-morning .yui-close {
+  background: rgba(11, 11, 9, 0.06);
+  color: rgba(11, 11, 9, 0.6);
+}
+.yui-panel.tod-morning .yui-close:hover {
+  background: rgba(11, 11, 9, 0.12);
+  color: #0B0B09;
+}
+
+.yui-panel.tod-afternoon .yui-header { background: #E32527; }
+.yui-panel.tod-afternoon .yui-header-logo { filter: brightness(0) invert(1); }
+.yui-panel.tod-afternoon .yui-status-text { color: rgba(255, 253, 254, 0.85) !important; }
+.yui-panel.tod-afternoon .yui-online-dot { background: #FFFDFE; }
+
+/* night = the existing black header, no overrides needed */
+
+/* Welcome backdrop — the knot artwork sits faintly behind the greeting */
+.yui-messages { position: relative; }
+.yui-messages::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  background: url('images/yui/chat-welcome-bg.svg') center 30% / 150% auto no-repeat;
+  opacity: 0.1;
+  pointer-events: none;
+}
+.yui-panel.has-messages .yui-messages::before { display: none; }
+.yui-empty-state { position: relative; z-index: 1; }

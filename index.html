@@ -100,9 +100,12 @@
       color: #0B0B09;
       text-decoration: none;
       pointer-events: auto;
-      border: 1.5px solid rgba(11,11,9,0.25);
-      border-radius: 3px;
+      border: 2px solid #0B0B09;
+      border-radius: 4px;
       padding: 14px 28px;
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       transition: background 0.28s ease, color 0.28s ease, border-color 0.28s ease;
     }
     .precision-reserve-cta::after {
@@ -116,15 +119,38 @@
       border-color: #E32527;
     }
     @media (max-width: 768px) {
+      /* Body copy on top; Reserve CTA sits just above the bottom headline */
       .precision-left {
-        left: clamp(20px, 5vw, 32px);
-        bottom: 0;
+        left: 24px;
+        right: 24px;
+        bottom: 10vh;
       }
       .precision-right {
-        top: clamp(20px, 5vw, 32px);
-        left: clamp(20px, 5vw, 32px);
+        position: static; /* children position against .precision-content */
       }
-      #precisionHeadline { font-size: clamp(48px, 14vw, 96px) !important; }
+      .precision-typewriter {
+        position: absolute;
+        top: 110px;
+        left: 24px;
+        right: 24px;
+        font-size: 12px;
+        line-height: 1.6;
+        max-width: 100%;
+      }
+      .precision-reserve-cta {
+        position: absolute;
+        left: 24px;
+        bottom: calc(10vh + 102px);
+        font-size: 11px;
+        padding: 12px 22px;
+        background: rgba(255, 255, 255, 0.72);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-color: #0B0B09;
+        border-radius: 4px;
+      }
+      #precisionHeadline { font-size: clamp(48px, 13vw, 60px) !important; }
+      /* Short pinned track — quick to move through on a phone */
       .precision-section { height: 140vh !important; }
     }
 
@@ -179,11 +205,33 @@
     </div>
   </nav>
   <div class="nav-drawer" id="navDrawer">
-    <a href="#home" class="active">Home</a>
-    <a href="#about">About</a>
-    <a href="#menu">Menu</a>
-    <a href="#reservation">Reservation</a>
+    <a href="#home" class="active" aria-label="Home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h5v-6h4v6h5V9.5"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="#about" aria-label="About">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M5 21a7 7 0 0 1 14 0"/></svg>
+      <span>About</span>
+    </a>
+    <a href="#menu" aria-label="Menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v7a2 2 0 0 0 2 2 2 2 0 0 0 2-2V3"/><path d="M6 12v9"/><path d="M19 3a4 4 0 0 0-3 4v5h3v9"/></svg>
+      <span>Menu</span>
+    </a>
+    <a href="#reservation" aria-label="Reservation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="17" rx="2"/><path d="M8 2v5M16 2v5M3 10h18"/></svg>
+      <span>Reservation</span>
+    </a>
   </div>
+  <!-- Gooey filter for the mobile nav (21st.dev gooey-filter menu) -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute">
+    <defs>
+      <filter id="gooey-nav-filter" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+        <feColorMatrix in="blur" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo"/>
+        <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+      </filter>
+    </defs>
+  </svg>
 
   <section id="home" class="hero">
     <div class="hero-sticky-track">
@@ -242,7 +290,7 @@
   </section>
 
   <!-- NEW CHEF PARALLAX SLIDER SECTION -->
-  <section id="about">
+  <section id="about" class="artisans-section">
     <div class="parallax-container">
       <!-- Title overlay on top of image — glitch heading -->
       <div class="glitch-hed-wrapper chef-title-overlay">
@@ -253,21 +301,70 @@
         </h2>
       </div>
 
-      <ul class="project-list">
-        <!-- Virtualized elements will be dynamically generated here -->
-      </ul>
+      <!-- Chef slides — stacked, crossfade driven by page scroll (works with Lenis) -->
+      <div class="chef-slides-wrap">
+        <div class="chef-slide active" data-index="0">
+          <img src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+        </div>
+        <div class="chef-slide" data-index="1">
+          <img src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+        </div>
+        <div class="chef-slide" data-index="2">
+          <img src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+        </div>
+      </div>
 
       <div class="minimap">
         <div class="minimap-wrapper">
           <div class="minimap-img-preview">
-            <!-- Virtualized elements will be dynamically generated here -->
+            <div class="minimap-img-item active" data-index="0">
+              <img src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+            </div>
+            <div class="minimap-img-item" data-index="1">
+              <img src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+            </div>
+            <div class="minimap-img-item" data-index="2">
+              <img src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+            </div>
           </div>
           <div class="minimap-info-list">
-            <!-- Virtualized elements will be dynamically generated here -->
+            <div class="minimap-item-info active" data-index="0">
+              <div class="minimap-left">
+                <p class="minimap-num">01</p>
+                <p class="minimap-category">中村 春人</p>
+                <p class="minimap-desc">With over three decades of mastery in Kyoto, Chef Nakamura brings a philosophy where the knife is an extension of the soul.</p>
+              </div>
+              <div class="minimap-right">
+                <p class="minimap-title">Haruto Nakamura</p>
+                <p class="minimap-year">Head Chef</p>
+              </div>
+            </div>
+            <div class="minimap-item-info" data-index="1">
+              <div class="minimap-left">
+                <p class="minimap-num">02</p>
+                <p class="minimap-category">田中 陽菜</p>
+                <p class="minimap-desc">Honoring the source is the cornerstone of Chef Tanaka&#8217;s craft. From Tsukiji to local harvests, his role is to highlight nature&#8217;s perfection.</p>
+              </div>
+              <div class="minimap-right">
+                <p class="minimap-title">Hina Tanaka</p>
+                <p class="minimap-year">Chef de Cuisine</p>
+              </div>
+            </div>
+            <div class="minimap-item-info" data-index="2">
+              <div class="minimap-left">
+                <p class="minimap-num">03</p>
+                <p class="minimap-category">佐藤 健司</p>
+                <p class="minimap-desc">For Chef Sato, dining is a silent conversation spoken through the medium of umami, bringing the serenity of Kyoto to life.</p>
+              </div>
+              <div class="minimap-right">
+                <p class="minimap-title">Kenji Sato</p>
+                <p class="minimap-year">Senior Chef</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      
+
       <!-- Bottom center scroll indicator -->
       <div class="chef-scroll-indicator">
         <span>scroll</span>
@@ -293,9 +390,11 @@
       </div>
     </div>
 
-    <div class="bento-tray-wrapper">
-      <img class="bento-tray-frame" src="images/yui/bento-layout-1.jpg" alt="Bento tray">
-      <div class="bento-tray-slots" id="bentoGrid"></div>
+    <div class="bento-tray-scroll">
+      <div class="bento-tray-wrapper">
+        <img class="bento-tray-frame" src="images/yui/bento-layout-1.jpg" alt="Bento tray">
+        <div class="bento-tray-slots" id="bentoGrid"></div>
+      </div>
     </div>
 
     <!-- Modal overlay -->
@@ -736,11 +835,6 @@
         <div class="fy-logo-wrap" data-fy-reveal data-fy-delay="0">
           <canvas id="fyLogoCanvas" width="140" height="140"></canvas>
           <div class="fy-logo-row">
-            <button class="fy-scroll-top" id="fyScrollTop" aria-label="Back to top">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7 11V3M3 7l4-4 4 4" stroke="#FFFDFE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
             <a href="#reservation" class="fy-footer-reserve">Reserve Now<span class="fy-footer-reserve-arr"> →</span></a>
           </div>
         </div>
@@ -939,11 +1033,8 @@
       <!-- Header -->
       <div class="yui-header">
         <div class="yui-header-left">
-          <div class="yui-avatar">
-            <img src="images/yui/Main_Logo_Illustrations%202.svg" alt="Yui" style="width:22px;height:auto;filter:brightness(0) invert(1);">
-          </div>
+          <img class="yui-header-logo" src="images/yui/logo-frames/logo_reveal89.png" alt="Yui">
           <div class="yui-header-info">
-            <div class="yui-name">yui <span class="yui-jp">結</span></div>
             <div class="yui-status-area">
               <span class="yui-online-dot"></span>
               <div class="yui-status-text" id="yui-status-text">ようこそ · Online</div>
@@ -970,7 +1061,7 @@
         <!-- Empty / welcome state -->
         <div class="yui-empty-state">
           <div class="yui-welcome-badge">YUI · 結</div>
-          <p class="yui-welcome-title">Good evening.<br>How can I help?</p>
+          <p class="yui-welcome-title" id="yui-welcome-title">Good evening.<br>I&#8217;m Yui, how can I help?</p>
           <p class="yui-welcome-sub">Ask me about our menu, reservations,<br>or anything about the experience.</p>
         </div>
 
@@ -993,16 +1084,18 @@
       <!-- Input Row -->
       <div class="yui-action-area">
         <div class="yui-input-wrapper">
+          <input type="text" id="yui-input" class="yui-text-input" placeholder="Ask anything…" autocomplete="off">
           <button class="yui-mic-pill" id="yui-btn-mic-main" aria-label="Voice input">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15">
-              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
-              <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 10v1a7 7 0 0 0 14 0v-1"/>
+              <path d="M12 18v4"/>
             </svg>
           </button>
-          <input type="text" id="yui-input" class="yui-text-input" placeholder="Ask anything…" autocomplete="off">
           <button id="yui-btn-send" class="yui-btn-send" aria-label="Send">
-            <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
-              <path d="M3 10l14-7-5 7 5 7-14-7z" fill="currentColor"/>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+              <path d="M22 2 11 13"/>
+              <path d="M22 2 15 22l-4-9-9-4z"/>
             </svg>
           </button>
         </div>
@@ -1010,6 +1103,13 @@
       </div>
 
     </div>
+
+    <!-- Back to top — floats above the chat launcher -->
+    <button class="fy-scroll-top fy-scroll-top-float" id="fyScrollTop" aria-label="Back to top">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 11V3M3 7l4-4 4 4" stroke="#FFFDFE" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
 
     <!-- Floating Launcher -->
     <button class="yui-launcher" id="yui-btn-toggle" aria-label="Open Yui Assistant">
@@ -1038,6 +1138,17 @@
           const statusText = document.getElementById('yui-status-text');
           const sendInput = document.getElementById('yui-input');
           const sendBtn = document.getElementById('yui-btn-send');
+
+          // Greeting + header colour follow the visitor's local time zone:
+          // morning = white header, afternoon→sunset = red, night = black
+          const welcomeTitle = document.getElementById('yui-welcome-title');
+          {
+            const h = new Date().getHours();
+            const greet = h < 5 ? 'Good evening' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+            if (welcomeTitle) welcomeTitle.innerHTML = greet + '.<br>I’m Yui, how can I help?';
+            const tod = (h >= 5 && h < 12) ? 'tod-morning' : (h >= 12 && h < 19) ? 'tod-afternoon' : 'tod-night';
+            panel.classList.add(tod);
+          }
           const backBtn = document.getElementById('yui-btn-back');
 
           let isRecording = false;
@@ -1860,6 +1971,35 @@
       dock.appendChild(t);
     });
 
+    // ── Dots (phone) — one per photo, swipe or tap to move ──
+    const dotsWrap = document.createElement('div');
+    dotsWrap.className = 'bento-dots';
+    SLOTS.forEach(s => {
+      const d = document.createElement('span');
+      d.className = 'bento-dot';
+      d.dataset.id = s.id;
+      d.addEventListener('click', e => { e.stopPropagation(); switchSlot(s); });
+      dotsWrap.appendChild(d);
+    });
+    const modalPanel = modal.querySelector('.bento-modal-panel');
+    if (modalPanel) modalPanel.appendChild(dotsWrap);
+
+    // ── Phone: stacked scroll-cards gallery (cards pile up as you scroll) ──
+    const cardsWrap = document.createElement('div');
+    cardsWrap.className = 'bento-cards-scroll';
+    cardsWrap.setAttribute('data-lenis-prevent', ''); // keep Lenis off this scroller
+    SLOTS.forEach((s, i) => {
+      const c = document.createElement('div');
+      c.className = 'bento-scroll-card';
+      c.style.top = (i * 10) + 'px'; // staggered stack offsets
+      c.dataset.id = s.id;
+      c.innerHTML = `
+        <img src="${s.url}" alt="${s.title}" loading="lazy">
+        <div class="bsc-cap"><h3>${s.title}</h3><p>${s.desc}</p></div>`;
+      cardsWrap.appendChild(c);
+    });
+    if (modalPanel) modalPanel.appendChild(cardsWrap);
+
     let activeId = null;
     modalImg.style.transition = 'opacity 0.11s ease';
 
@@ -1872,14 +2012,43 @@
       modalDesc.textContent  = s.desc;
       dock.querySelectorAll('.bento-dock-thumb').forEach(t =>
         t.classList.toggle('active', +t.dataset.id === s.id));
+      dotsWrap.querySelectorAll('.bento-dot').forEach(d =>
+        d.classList.toggle('active', +d.dataset.id === s.id));
     }
+
+    // ── Swipe through photos (phone) ──
+    let touchX = null;
+    modal.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
+    modal.addEventListener('touchend', e => {
+      if (touchX === null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) < 40) return;
+      const idx = SLOTS.findIndex(s => s.id === activeId);
+      if (dx < 0) switchSlot(SLOTS[(idx + 1) % SLOTS.length]);
+      else switchSlot(SLOTS[(idx - 1 + SLOTS.length) % SLOTS.length]);
+    }, { passive: true });
 
     function openModal(s) {
       switchSlot(s);
       modal.setAttribute('aria-hidden', 'false');
       modal.classList.add('open');
+      // Phone: stacked scroll-cards view, opened at the tapped photo
+      if (window.innerWidth <= 767) {
+        modal.classList.add('cards-mode');
+        requestAnimationFrame(() => {
+          const card = cardsWrap.querySelector('[data-id="' + s.id + '"]');
+          if (card) cardsWrap.scrollTop = card.offsetTop;
+        });
+      } else {
+        modal.classList.remove('cards-mode');
+      }
       if (window.lenis) window.lenis.stop();
       document.body.style.overflow = 'hidden';
+      // Phone: hide the floating nav chips — the modal X sits where the
+      // hamburger lives
+      var navEl = document.getElementById('nav');
+      if (navEl && window.innerWidth <= 767) navEl.classList.add('nav--modal-open');
     }
 
     function closeModal() {
@@ -1887,6 +2056,8 @@
       modal.setAttribute('aria-hidden', 'true');
       if (window.lenis) window.lenis.start();
       document.body.style.overflow = '';
+      var navEl = document.getElementById('nav');
+      if (navEl) navEl.classList.remove('nav--modal-open');
     }
 
     modalClose.addEventListener('click', closeModal);
@@ -2071,527 +2242,104 @@
   })();
   </script>
 
-  <!-- Chef Parallax Slider Code -->
+  <!-- Artisans slide driver — scroll-scrubbed swipe, works transparently with Lenis -->
   <script>
-  window.addEventListener('load', () => {
-    'use strict';
+  (function() {
+    const aboutSection = document.querySelector('.artisans-section');
+    const container = aboutSection && aboutSection.querySelector('.parallax-container');
+    if (!aboutSection || !container) return;
 
-    const PROJECT_DATA = [
-      {
-        title: "Haruto Nakamura",
-        image: "images/yui/Chef%20I.jpg",
-        category: "中村 春人",
-        year: "Head Chef",
-        description: "With over three decades of mastery in Kyoto, Chef Nakamura brings a philosophy where the knife is an extension of the soul."
-      },
-      {
-        title: "Hina Tanaka",
-        image: "images/yui/Chef%20II.jpg",
-        category: "田中 陽菜",
-        year: "Chef de Cuisine",
-        description: "Honoring the source is the cornerstone of Chef Tanaka's craft. From Tsukiji to local harvests, his role is to highlight nature's perfection."
-      },
-      {
-        title: "Kenji Sato",
-        image: "images/yui/Chef%20III.jpg",
-        category: "佐藤 健司",
-        year: "Senior Chef",
-        description: "For Chef Sato, dining is a silent conversation spoken through the medium of umami, bringing the serenity of Kyoto to life."
-      }
-    ];
+    const SLIDE_COUNT = 3;
+    const SWIPE_ZONE = 0.45; // last 45% of each segment is the swipe window
+    const chefSlides  = Array.from(container.querySelectorAll('.chef-slide'));
+    const minimapImgs = Array.from(container.querySelectorAll('.minimap-img-item'));
+    const minimapInfos = container.querySelectorAll('.minimap-item-info');
+    let lastIdx = -1;
+    let targetP = 0, currentP = 0, rafId = null;
 
-    const CONFIG = {
-      SCROLL_SPEED: 0.75,
-      LERP_FACTOR: 0.05,
-      BUFFER_SIZE: 2,
-      MAX_VELOCITY: 150,
-      SNAP_DURATION: 220,
+    const setActive = (idx) => {
+      if (idx === lastIdx) return;
+      lastIdx = idx;
+      minimapInfos.forEach((el, i) => el.classList.toggle('active', i === idx));
+      // Phone backdrop crossfade (CSS is phone-scoped; harmless on desktop)
+      chefSlides.forEach((el, i) => el.classList.toggle('bg-on', i === idx));
+      container.classList.toggle('chef-active-last', idx === SLIDE_COUNT - 1);
     };
 
-    const lerp = (start, end, factor) => start + (end - start) * factor;
+    const clamp01 = (v) => Math.max(0, Math.min(1, v));
 
-    const getProjectData = (index) => {
-      const len = PROJECT_DATA.length;
-      const i = ((Math.abs(index) % len) + len) % len;
-      return PROJECT_DATA[i];
-    };
-
-    const getProjectNumber = (index) => {
-      const len = PROJECT_DATA.length;
-      const n = (((Math.abs(index) % len) + len) % len) + 1;
-      return n.toString().padStart(2, "0");
-    };
-
-    const state = {
-      currentY: 0,
-      targetY: 0,
-      isDragging: false,
-      isSnapping: false,
-      snapStart: { time: 0, y: 0, target: 0 },
-      lastScrollTime: Date.now(),
-      dragStart: { y: 0, scrollY: 0 },
-      projectHeight: window.innerHeight,
-      minimapHeight: 567,
-      requestRef: null,
-      lastSnappedIndex: 0,  // tracks the confirmed slide we last snapped to
-      scrollAccum: 0        // accumulates wheel delta between snaps
-    };
-
-    let projectsMap = new Map();
-    let minimapMap = new Map();
-    let infoMap = new Map();
-    let renderedMin = null;
-    let renderedMax = null;
-    let lastActiveIdx = -1;
-    let renderedPositionsY = null;
-
-    const aboutEl = document.getElementById('about');
-    const parallaxContainer = document.querySelector('#about .parallax-container');
-    const projectListEl = document.querySelector('#about .project-list');
-    const minimapImgPreviewEl = document.querySelector('#about .minimap-img-preview');
-    const minimapInfoListEl = document.querySelector('#about .minimap-info-list');
-
-    if (!aboutEl || !parallaxContainer || !projectListEl || !minimapImgPreviewEl || !minimapInfoListEl) return;
-
-    const updateParallax = (img, scroll, index, height) => {
-      if (!img) return;
-      // No inner lerp — the container itself is already lerping, so a direct offset is smooth
-      const offset = (-scroll - index * height) * 0.2;
-      img.style.transform = `translateY(${offset}px) scale(1.5)`;
-    };
-
-    const updateSnap = () => {
-      const progress = Math.min((Date.now() - state.snapStart.time) / CONFIG.SNAP_DURATION, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      state.targetY = state.snapStart.y + (state.snapStart.target - state.snapStart.y) * eased;
-      if (progress >= 1) state.isSnapping = false;
-    };
-
-    const snapToSlide = (index) => {
-      const clamped = Math.max(0, Math.min(PROJECT_DATA.length - 1, index));
-      state.lastSnappedIndex = clamped;
-      const target = -clamped * state.projectHeight;
-      state.isSnapping = true;
-      state.snapStart = { time: Date.now(), y: state.targetY, target };
-    };
-
-    // Cached img refs — avoids querySelector inside the hot rAF loop
-    const imgCache = new Map();
-    const getImg = (el) => {
-      if (!imgCache.has(el)) imgCache.set(el, el.querySelector('img'));
-      return imgCache.get(el);
-    };
-
-    const updatePositions = () => {
-      const minimapY = (state.currentY * state.minimapHeight) / state.projectHeight;
-
-      // Only touch classList when the active index actually changes
-      const activeIdx = Math.round(-state.currentY / state.projectHeight);
-      if (activeIdx !== lastActiveIdx) {
-        lastActiveIdx = activeIdx;
-        if (activeIdx === PROJECT_DATA.length - 1) {
-          parallaxContainer.classList.add('chef-active-last');
-        } else {
-          parallaxContainer.classList.remove('chef-active-last');
+    // p ∈ [0, SLIDE_COUNT-1] continuous. Slide i swipes in over
+    // p ∈ [i - SWIPE_ZONE, i]; underneath, the covered slide drifts left.
+    // The minimap image swipes with the exact same progress.
+    const apply = (p) => {
+      // Phone: everything — backdrop, faces, texts — swipes up in one motion.
+      // Desktop: horizontal swipe as before.
+      const isPhone = window.innerWidth <= 767;
+      for (let i = 0; i < SLIDE_COUNT; i++) {
+        let x;
+        if (i === 0) x = 0;
+        else x = (1 - clamp01((p - (i - SWIPE_ZONE)) / SWIPE_ZONE)) * 100;
+        if (x < 0.01 && i < SLIDE_COUNT - 1) {
+          // Desktop only: parallax drift as the next slide covers it.
+          // On phone the drift exposed a band under the covered layer
+          // when scrolling back — covered layers stay parked at 0 instead.
+          const covered = clamp01((p - (i + 1 - SWIPE_ZONE)) / SWIPE_ZONE);
+          x = isPhone ? 0 : covered * -24;
         }
+        const t = isPhone
+          ? 'translate3d(0, ' + x + '%, 0)'
+          : 'translate3d(' + x + '%, 0, 0)';
+        // Backdrop crossfades via setActive on all sizes — only the card
+        // imagery scrubs, so nothing shifts behind the white box
+        if (minimapImgs[i]) minimapImgs[i].style.transform = t;
+        if (isPhone && minimapInfos[i]) minimapInfos[i].style.transform = t;
       }
-
-      projectsMap.forEach((el, index) => {
-        const y = index * state.projectHeight + state.currentY;
-        el.style.transform = `translateY(${y}px)`;
-        updateParallax(getImg(el), state.currentY, index, state.projectHeight);
-      });
-
-      minimapMap.forEach((el, index) => {
-        const y = index * state.minimapHeight + minimapY;
-        el.style.transform = `translateY(${y}px)`;
-        const isActive = Math.abs(y) < 10;
-        if (isActive) el.classList.add('active');
-        else el.classList.remove('active');
-        const img = getImg(el);
-        if (img) updateParallax(img, minimapY, index, state.minimapHeight);
-      });
-
-      infoMap.forEach((el, index) => {
-        el.style.transform = `translateY(${index * state.minimapHeight + minimapY}px)`;
-      });
+      setActive(Math.max(0, Math.min(SLIDE_COUNT - 1, Math.round(p))));
     };
 
-    const animate = () => {
-      const now = Date.now();
-      const prevCurrentY = state.currentY;
-
-      // Idle safety snap — catches touch drag releasing mid-slide (wheel uses accumulator)
-      if (!state.isSnapping && !state.isDragging && now - state.lastScrollTime > 300) {
-        const nearest = Math.max(0, Math.min(
-          Math.round(-state.targetY / state.projectHeight),
-          PROJECT_DATA.length - 1
-        ));
-        const snapTarget = -nearest * state.projectHeight;
-        if (Math.abs(state.targetY - snapTarget) > 2) snapToSlide(nearest);
-      }
-
-      if (state.isSnapping) {
-        updateSnap();
-        // During a programmatic snap, updateSnap drives targetY with cubic ease —
-        // follow it directly so currentY tracks the ease precisely with no trailing lag.
-        state.currentY = state.targetY;
-      } else if (state.isDragging) {
-        // Touch drag: lerp for a slightly damped feel
-        state.currentY += (state.targetY - state.currentY) * 0.15;
-        if (Math.abs(state.currentY - state.targetY) < 0.1) state.currentY = state.targetY;
-      } else {
-        // Idle: snap directly so we don't spin the loop after coming to rest
-        state.currentY = state.targetY;
-      }
-
-      if (Math.abs(state.currentY - prevCurrentY) > 0.01) {
-        updatePositions();
-      }
-    };
-
-    const createProjectEl = (i) => {
-      const data = getProjectData(i);
-      const div = document.createElement('div');
-      div.className = 'project';
-      const pos = data.imgPosition ? `style="object-position:${data.imgPosition}"` : '';
-      div.innerHTML = `<img src="${data.image}" alt="${data.title}" ${pos}>`;
-      return div;
-    };
-
-    const createMinimapImgEl = (i) => {
-      const data = getProjectData(i);
-      const div = document.createElement('div');
-      div.className = 'minimap-img-item';
-      const pos = data.imgPosition ? `style="object-position:${data.imgPosition}"` : '';
-      div.innerHTML = `<img src="${data.image}" alt="${data.title}" ${pos}>`;
-      return div;
-    };
-
-    const createMinimapInfoEl = (i) => {
-      const data = getProjectData(i);
-      const num = getProjectNumber(i);
-      
-      const div = document.createElement('div');
-      div.className = 'minimap-item-info';
-      div.innerHTML = `
-        <div class="minimap-left">
-          <p class="minimap-num">${num}</p>
-          <p class="minimap-category">${data.category}</p>
-          <p class="minimap-desc">${data.description}</p>
-        </div>
-        <div class="minimap-right">
-          <p class="minimap-title">${data.title}</p>
-          <p class="minimap-year">${data.year}</p>
-        </div>
-      `;
-      return div;
-    };
-
-    const reconcileChildren = (container, min, max, creatorFunc) => {
-      const currentChildren = Array.from(container.children);
-      const childrenMap = new Map();
-      
-      currentChildren.forEach(child => {
-        const idx = parseInt(child.getAttribute('data-index'), 10);
-        childrenMap.set(idx, child);
-      });
-
-      childrenMap.forEach((child, idx) => {
-        if (idx < min || idx > max) {
-          container.removeChild(child);
-          childrenMap.delete(idx);
-        }
-      });
-
-      for (let i = min; i <= max; i++) {
-        if (!childrenMap.has(i)) {
-          const newChild = creatorFunc(i);
-          newChild.setAttribute('data-index', i.toString());
-          childrenMap.set(i, newChild);
-        }
-      }
-
-      const sortedIndices = Array.from(childrenMap.keys()).sort((a, b) => a - b);
-      sortedIndices.forEach(idx => {
-        const child = childrenMap.get(idx);
-        container.appendChild(child);
-      });
-
-      return childrenMap;
-    };
-
-    const updateDOMForRange = (min, max) => {
-      projectsMap = reconcileChildren(projectListEl, min, max, createProjectEl);
-      minimapMap = reconcileChildren(minimapImgPreviewEl, min, max, createMinimapImgEl);
-      infoMap = reconcileChildren(minimapInfoListEl, min, max, createMinimapInfoEl);
-    };
-
-    let chefVisible = false;
-
-    const scheduleLoop = () => {
-      if (!state.requestRef && chefVisible) {
-        state.requestRef = requestAnimationFrame(animationLoop);
-      }
-    };
-
-    const animationLoop = () => {
-      state.requestRef = null;
-      if (!chefVisible) return;
-      animate();
-
-      const currentIndex = Math.round(-state.targetY / state.projectHeight);
-      const min = currentIndex - CONFIG.BUFFER_SIZE;
-      const max = currentIndex + CONFIG.BUFFER_SIZE;
-
-      if (min !== renderedMin || max !== renderedMax) {
-        renderedMin = min;
-        renderedMax = max;
-        imgCache.clear(); // clear stale img refs when DOM changes
-        updateDOMForRange(min, max);
-        updatePositions();
-      } else if (Math.abs(state.currentY - (renderedPositionsY ?? state.currentY + 1)) > 0.01) {
-        updatePositions();
-      }
-      renderedPositionsY = state.currentY;
-
-      // Keep looping only while animating; idle = stop the loop
-      const stillMoving = state.isSnapping || state.isDragging ||
-                          Math.abs(state.currentY - state.targetY) > 0.05;
-      if (stillMoving) state.requestRef = requestAnimationFrame(animationLoop);
-    };
-
-    // ────────────────────────────────────────────────────────
-    // SNAP-LOCK SYSTEM: locks scroll on chef section,
-    // cycles Chef 1 → 2 → 3, then releases
-    // ────────────────────────────────────────────────────────
-    let isLocked = false;
-    let justReleased = false;
-    // Track boundary hits: require TWO consecutive boundary scrolls to release
-    let boundaryScrollCount = 0;
-    let lastBoundaryDir = 0;
-
-    const lockPage = () => {
-      // Stop Lenis (smooth scroll library)
-      if (window.lenis) window.lenis.stop();
-      // Also freeze body as a failsafe
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-    };
-
-    const unlockPage = () => {
-      if (window.lenis) window.lenis.start();
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    };
-
-    const snapAndLock = () => {
-      if (isLocked || justReleased || window._lenisScrollingToTarget) return;
-      window._artisanTransitioning = true;
-
-      const containerRect = parallaxContainer.getBoundingClientRect();
-      // Only trigger when the parallax container is meaningfully visible
-      if (containerRect.top > window.innerHeight * 0.5 || containerRect.bottom < window.innerHeight * 0.5) return;
-
-      isLocked = true;
-      boundaryScrollCount = 0;
-      lastBoundaryDir = 0;
-      state.scrollAccum = 0;
-
-      // Determine direction of approach and set targetY only (let currentY lerp)
-      const isComingFromBelow = containerRect.top < -100;
-      if (isComingFromBelow) {
-        state.targetY = -(PROJECT_DATA.length - 1) * state.projectHeight;
-        state.currentY = state.targetY;
-        state.lastSnappedIndex = PROJECT_DATA.length - 1;
-      } else {
-        state.targetY = 0;
-        state.currentY = 0;
-        state.lastSnappedIndex = 0;
-        // Play the chef title glitch-in animation on first entry from top
-        const chefTitle = document.querySelector('.chef-title-hed');
-        if (chefTitle && chefTitle.playGlitchEntry) chefTitle.playGlitchEntry();
-      }
-
-      // Scroll the PAGE so the parallax container fills the viewport,
-      // THEN lock
-      if (window.lenis) {
-        window.lenis.scrollTo(parallaxContainer, {
-          offset: 0,
-          duration: 0.25,
-          easing: (t) => t * (2 - t),
-          onComplete: () => {
-            lockPage();
-          }
-        });
-      } else {
-        // Fallback: native scroll then lock
-        parallaxContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(lockPage, 250);
-      }
-    };
-
-    const releaseLock = (targetId) => {
-      isLocked = false;
-      justReleased = true;
-      boundaryScrollCount = 0;
-      lastBoundaryDir = 0;
-      window._artisanTransitioning = false;
-
-      unlockPage();
-
-      setTimeout(() => { justReleased = false; }, 2000);
-
-      if (window.lenis) {
-        const targetEl = document.querySelector(targetId);
-        if (targetEl) {
-          window.lenis.scrollTo(targetEl, {
-            duration: 0.65,
-            easing: t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
-          });
-        }
-      }
-    };
-
-    // ── GLOBAL wheel listener (captures before Lenis) ──
-    const SWIPE_THRESHOLD = 80; // px of accumulated scroll to trigger a slide change
-
-    window.addEventListener("wheel", (e) => {
-      if (!isLocked) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      const scrollingUp   = e.deltaY < 0;
-      const scrollingDown = e.deltaY > 0;
-
-      // Boundary detection uses lastSnappedIndex — no position ambiguity
-      const atFirst = state.lastSnappedIndex === 0 && !state.isSnapping;
-      const atLast  = state.lastSnappedIndex === PROJECT_DATA.length - 1 && !state.isSnapping;
-
-      if ((atFirst && scrollingUp) || (atLast && scrollingDown)) {
-        const dir = scrollingUp ? -1 : 1;
-        if (dir === lastBoundaryDir) {
-          boundaryScrollCount++;
-        } else {
-          boundaryScrollCount = 1;
-          lastBoundaryDir = dir;
-        }
-        if (boundaryScrollCount >= 3) {
-          state.scrollAccum = 0;
-          releaseLock(scrollingUp ? '#japanese-precision' : '#about-gallery');
-        }
+    const tick = () => {
+      const diff = targetP - currentP;
+      if (Math.abs(diff) < 0.0005) {
+        currentP = targetP;
+        apply(currentP);
+        rafId = null;
         return;
       }
-
-      boundaryScrollCount = 0;
-      lastBoundaryDir = 0;
-      state.lastScrollTime = Date.now();
-
-      const delta = Math.max(Math.min(e.deltaY * CONFIG.SCROLL_SPEED, CONFIG.MAX_VELOCITY), -CONFIG.MAX_VELOCITY);
-      state.scrollAccum += delta;
-
-      if (Math.abs(state.scrollAccum) >= SWIPE_THRESHOLD) {
-        const dir = state.scrollAccum > 0 ? 1 : -1;
-        const next = state.lastSnappedIndex + dir;
-        state.scrollAccum = 0;
-        if (next >= 0 && next < PROJECT_DATA.length) {
-          snapToSlide(next);
-        }
-      }
-      scheduleLoop();
-    }, { passive: false, capture: true });
-
-    // ── Touch handlers (on the section itself) ──
-    aboutEl.addEventListener("touchstart", (e) => {
-      if (!isLocked) return;
-      state.isDragging = true;
-      state.isSnapping = false;
-      state.dragStart = { y: e.touches[0].clientY, scrollY: state.targetY };
-      state.lastScrollTime = Date.now();
-      boundaryScrollCount = 0;
-    }, { passive: true });
-
-    aboutEl.addEventListener("touchmove", (e) => {
-      if (!state.isDragging || !isLocked) return;
-
-      const deltaY = e.touches[0].clientY - state.dragStart.y;
-      const currentIndex = Math.round(-state.targetY / state.projectHeight);
-      const clampedIndex = Math.max(0, Math.min(currentIndex, PROJECT_DATA.length - 1));
-
-      const atFirst = clampedIndex === 0;
-      const atLast = clampedIndex === (PROJECT_DATA.length - 1);
-      const swipingUp = deltaY < -80;  // finger moves up = scroll down
-      const swipingDown = deltaY > 80; // finger moves down = scroll up
-
-      if (atFirst && swipingDown) {
-        state.isDragging = false;
-        releaseLock('#japanese-precision');
-        return;
-      }
-      if (atLast && swipingUp) {
-        state.isDragging = false;
-        releaseLock('#about-gallery');
-        return;
-      }
-
-      e.preventDefault();
-      const newY = state.dragStart.scrollY + deltaY * 1.5;
-      const minY = -(PROJECT_DATA.length - 1) * state.projectHeight;
-      state.targetY = Math.max(minY, Math.min(0, newY));
-      state.lastScrollTime = Date.now();
-      scheduleLoop();
-    }, { passive: false });
-
-    aboutEl.addEventListener("touchend", () => {
-      state.isDragging = false;
-    });
-
-    // ── Resize ──
-    const onResize = () => {
-      state.projectHeight = window.innerHeight;
-      parallaxContainer.style.height = `${window.innerHeight}px`;
+      // Phone settles faster — long lerp tails keep the GPU compositing
+      currentP += diff * (window.innerWidth <= 767 ? 0.16 : 0.08);
+      apply(currentP);
+      rafId = requestAnimationFrame(tick);
     };
-    window.addEventListener("resize", onResize);
-    onResize();
 
-    // ── IntersectionObserver to trigger snap-lock ──
+    const update = () => {
+      const rect = aboutSection.getBoundingClientRect();
+      if (rect.bottom < -100 || rect.top > window.innerHeight + 100) return;
+      // Phone: the last 100vh of the track is when the next section slides
+      // over the pinned view, so swipes must complete before that begins
+      const coverZone = window.innerWidth <= 767 ? window.innerHeight : 0;
+      const depth = aboutSection.offsetHeight - window.innerHeight - coverZone;
+      // Transitions finish at 82% of the usable pin — the last chef gets a
+      // dwell before the cover instead of switching at the final pixel
+      targetP = clamp01(-rect.top / (depth * 0.82)) * (SLIDE_COUNT - 1);
+      if (!rafId) rafId = requestAnimationFrame(tick);
+    };
+
+    window.addEventListener('scroll', update, { passive: true });
+    if (window.lenis) window.lenis.on('scroll', update);
+
+    const chefTitle = container.querySelector('.chef-title-hed');
     const visObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        const wasVisible = chefVisible;
-        chefVisible = entry.isIntersecting;
-        if (chefVisible && !wasVisible) {
-          // Re-enter: restart animation loop if not already running
-          if (!state.requestRef) state.requestRef = requestAnimationFrame(animationLoop);
+        if (entry.isIntersecting && chefTitle && chefTitle.playGlitchEntry) {
+          chefTitle.playGlitchEntry();
+          visObserver.disconnect();
         }
       });
-    }, { threshold: 0 });
+    }, { threshold: 0.1 });
+    visObserver.observe(container);
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          if (!isLocked && !justReleased) {
-            snapAndLock();
-          }
-        } else {
-          // Section scrolled completely out of view — clean up
-          if (isLocked) {
-            isLocked = false;
-            unlockPage();
-          }
-        }
-      });
-    }, {
-      threshold: [0.6]
-    });
-
-    observer.observe(parallaxContainer);
-    visObserver.observe(parallaxContainer);
-
-    // Start animation loop (starts only when section first enters view)
-    chefVisible = false;
-    // Don't start until section is visible
-  });
+    update();
+  })();
   </script>
 
 
@@ -2629,9 +2377,11 @@
 
     function pad(n) { return n.toString().padStart(2, '0'); }
 
-    // Pre-load all frames
+    // Pre-load all frames — the first ones (and the final lockup, which the
+    // phone shows statically) jump the network queue
     for (let i = 0; i < FRAME_COUNT; i++) {
       const img = new Image();
+      if (i < 12 || i === FRAME_COUNT - 1) img.fetchPriority = 'high';
       img.onload = () => { frames[i] = img; loadedCount++; };
       img.onerror = () => { loadedCount++; };
       img.src = `images/yui/logo-frames/logo_reveal${pad(i)}.png`;
@@ -2672,7 +2422,8 @@
         if (frames[0]) { drawNav(0); startPlay(); }
         else requestAnimationFrame(waitAndStart);
       }
-      waitAndStart();
+      // 0.5s delay — the reveal plays together with the hero video
+      setTimeout(waitAndStart, 500);
     }
 
     // ── VIDEO SCROLL SCRUB ──
@@ -2694,6 +2445,8 @@
       function lerp(a, b, t) { return a + (b - a) * t; }
 
       function scrubFrame() {
+        // The scrub owns the video whenever it runs — autoplay yields
+        if (!video.paused) video.pause();
         const diff = targetP - currentP;
         currentP = Math.abs(diff) < 0.0008 ? targetP : lerp(currentP, targetP, 0.1);
 
@@ -2702,20 +2455,31 @@
         else video.currentTime = t;
 
         const exp = Math.min(1, currentP / 0.4);
-        const top = 13 * (1 - exp);
-        const bot = 10 * (1 - exp);
+        const top = 18 * (1 - exp);
+        const bot = 15 * (1 - exp);
         video.style.clipPath = (top > 0.05 || bot > 0.05)
           ? `inset(${top}% 0 ${bot}% 0)` : 'none';
 
         scrubRaf = Math.abs(diff) >= 0.0008 ? requestAnimationFrame(scrubFrame) : null;
       }
 
-      window.addEventListener('scroll', () => {
-        if (window.innerWidth <= 767) return;
+      const onHeroScroll = () => {
+        if (window.innerWidth <= 767) return; // phone: video autoplays instead
         const depth = heroSection.offsetHeight - window.innerHeight;
+        if (depth <= 0) return;
         targetP = Math.max(0, Math.min(1, window.scrollY / depth));
         if (!scrubRaf) scrubRaf = requestAnimationFrame(scrubFrame);
-      }, { passive: true });
+      };
+      window.addEventListener('scroll', onHeroScroll, { passive: true });
+      if (window.lenis) window.lenis.on('scroll', onHeroScroll);
+
+      // All sizes: plays through once after 0.5s, in sync with the logo
+      // reveal (on desktop the scroll scrub takes over at first scroll)
+      setTimeout(() => {
+        video.loop = false;
+        video.muted = true;
+        video.play().catch(() => {});
+      }, 500);
     }
 
     // ── HERO PARALLAX ──
@@ -2726,8 +2490,9 @@
         const scrollY = window.scrollY;
         const heroHeight = heroSection.scrollHeight;
         if (scrollY < heroHeight) {
-          const maxShift = window.innerHeight * 0.18;
-          heroContent.style.transform = `translateY(calc(-50% + ${Math.min(scrollY * 0.18, maxShift)}px))`;
+          // Gentle drift only — at 0.18 the CTAs sank out of view on laptops
+          const maxShift = window.innerHeight * 0.06;
+          heroContent.style.transform = `translateY(calc(-50% + ${Math.min(scrollY * 0.06, maxShift)}px))`;
         }
       }, { passive: true });
     }
@@ -2834,7 +2599,30 @@
     function loadImage(i) {
       return new Promise(resolve => {
         const img = new Image();
-        img.onload = () => { img._ready = true; images[i] = img; resolve(); };
+        img.onload = () => {
+          // Phone: shrink the 5120px frames OFF the main thread — a canvas
+          // resize here was stuttering the logo/video playing during load
+          if (window.innerWidth <= 768 && img.naturalWidth > 1280 && typeof createImageBitmap === 'function') {
+            const scale = 1280 / img.naturalWidth;
+            createImageBitmap(img, {
+              resizeWidth: 1280,
+              resizeHeight: Math.round(img.naturalHeight * scale),
+              resizeQuality: 'low'
+            }).then(bmp => {
+              bmp._ready = true;
+              images[i] = bmp;
+              resolve();
+            }).catch(() => {
+              img._ready = true;
+              images[i] = img;
+              resolve();
+            });
+          } else {
+            img._ready = true;
+            images[i] = img;
+            resolve();
+          }
+        };
         img.onerror = () => resolve();
         img.src = getFramePath(i);
       });
@@ -2863,13 +2651,17 @@
 
     function render() {
       const img = images[sequence.frame];
-      if (!img || !img._ready || img.naturalWidth === 0) { paintWhite(); return; }
+      const iw = img && (img.naturalWidth || img.width);
+      const ih = img && (img.naturalHeight || img.height);
+      if (!img || !img._ready || !iw) { paintWhite(); return; }
       const w = canvas.width, h = canvas.height;
-      const imgRatio = img.naturalWidth / img.naturalHeight;
-      const canvasRatio = w / h;
-      let dW, dH, x, y;
-      if (imgRatio > canvasRatio) { dW = w; dH = w / imgRatio; x = 0; y = (h - dH) / 2; }
-      else { dW = h * imgRatio; dH = h; x = (w - dW) / 2; y = 0; }
+      // Phones: cover (fill + crop) so the footage scales up instead of letterboxing
+      const useCover = window.innerWidth <= 768;
+      const scale = useCover
+        ? Math.max(w / iw, h / ih)
+        : Math.min(w / iw, h / ih);
+      const dW = iw * scale, dH = ih * scale;
+      const x = (w - dW) / 2, y = (h - dH) / 2;
       offCtx.fillStyle = '#ffffff';
       offCtx.fillRect(0, 0, w, h);
       offCtx.drawImage(img, x, y, dW, dH);
@@ -2908,6 +2700,12 @@
 
     let targetFrame = 0, currentFrame = 0, lastCharsToShow = -1;
 
+    // Phone: body copy is pre-loaded, not scroll-revealed
+    if (window.innerWidth <= 768 && typewriter) {
+      typewriter.innerText = fullText;
+      lastCharsToShow = fullText.length;
+    }
+
     function startLoop() {
       if (loopRunning) return;
       loopRunning = true;
@@ -2933,15 +2731,22 @@
       const scrollMax = sectionHeight - window.innerHeight;
       const progress = Math.max(0, Math.min(1, scrollDepth / scrollMax));
       targetFrame = progress * (frameCount - 1);
-      const charsToShow = Math.floor(progress * fullText.length);
+      // Phone: body copy is shown in full immediately (no typewriter reveal).
+      // Desktop: completes at ~70% so it's fully readable before the section ends.
+      const charsToShow = window.innerWidth <= 768
+        ? fullText.length
+        : Math.floor(Math.min(1, progress * 1.45) * fullText.length);
       if (charsToShow !== lastCharsToShow) {
         typewriter.innerText = fullText.substring(0, charsToShow);
         lastCharsToShow = charsToShow;
       }
-      // Subtle parallax: heading drifts down gently, settling behind the red bar
-      const precisionLeft = document.querySelector('.precision-left');
-      if (precisionLeft) precisionLeft.style.transform = 'translateY(' + (progress * 60) + 'px)';
-      if (typewriter) typewriter.style.transform = 'translateY(' + (progress * 25) + 'px)';
+      // Subtle parallax on desktop only — kept gentle so the heading never
+      // drifts far enough to be hard to read
+      if (window.innerWidth > 768) {
+        const precisionLeft = document.querySelector('.precision-left');
+        if (precisionLeft) precisionLeft.style.transform = 'translateY(' + (progress * 20) + 'px)';
+        if (typewriter) typewriter.style.transform = 'translateY(' + (progress * 10) + 'px)';
+      }
       // glitch disabled — heading stays in English
     }
 
@@ -2974,6 +2779,7 @@
     var cardType   = ['', 'red', 'black', 'red', '']; // '' = light card
     var nav = document.querySelector('.nav');
     var lastCardIdx = -2;
+    var lastNavScrollY = 0;
 
     function updateNavColor() {
       if (!nav) return;
@@ -2984,18 +2790,42 @@
       if (menuRect.bottom < 0 || menuRect.top > window.innerHeight) {
         if (lastCardIdx !== -1) {
           lastCardIdx = -1;
-          nav.classList.remove('menu-card-active', 'nav--dark', 'nav--red-card', 'nav--black-card');
+          nav.classList.remove('menu-card-active', 'nav--dark', 'nav--red-card', 'nav--black-card', 'nav-wipe-up', 'nav-wipe-down');
           nav.style.removeProperty('--nav-card-bg');
+          nav.style.removeProperty('--nav-card-bg-prev');
           nav.style.removeProperty('--nav-card-color');
         }
         return;
       }
-      // Find topmost card (last one scrolled past top)
-      var activeIdx = 0;
+      // Find topmost card. Scrolling down: switch as the card slips under the
+      // nav (top <= 1). Scrolling back up: hold until the card has visibly
+      // dropped below the nav, so the wipe-down syncs with the card leaving.
+      var goingDownDir = window.scrollY >= lastNavScrollY;
+      lastNavScrollY = window.scrollY;
+      // Scrolling up: switch early (card still covers the nav) so the
+      // wipe-down completes FIRST, then the card visibly falls away
+      var threshold = goingDownDir ? 1 : (nav.offsetHeight || 88) + 160;
+      var activeIdx = -1;
       sections.forEach(function(s, i) {
-        if (s.getBoundingClientRect().top <= 1) activeIdx = i;
+        if (s.getBoundingClientRect().top <= threshold) activeIdx = i;
       });
+      // Above the first card (menu intro zone): default nav, no ghost colour
+      if (activeIdx === -1) {
+        if (lastCardIdx !== -1) {
+          lastCardIdx = -1;
+          nav.classList.remove('menu-card-active', 'nav--dark', 'nav--red-card', 'nav--black-card', 'nav-wipe-up', 'nav-wipe-down');
+          nav.style.removeProperty('--nav-card-bg');
+          nav.style.removeProperty('--nav-card-bg-prev');
+          nav.style.removeProperty('--nav-card-color');
+        }
+        return;
+      }
       if (activeIdx !== lastCardIdx) {
+        // Scrolling forward → wipe sweeps up; scrolling back → sweeps down
+        var wipeDir = activeIdx > lastCardIdx ? 'nav-wipe-up' : 'nav-wipe-down';
+        // Previous card colour stays on the base layer; new colour wipes over it
+        if (lastCardIdx >= 0) nav.style.setProperty('--nav-card-bg-prev', cardBgs[lastCardIdx]);
+        else nav.style.removeProperty('--nav-card-bg-prev');
         lastCardIdx = activeIdx;
         nav.classList.add('menu-card-active');
         nav.style.setProperty('--nav-card-bg', cardBgs[activeIdx]);
@@ -3004,6 +2834,10 @@
         else nav.classList.remove('nav--dark');
         nav.classList.remove('nav--red-card', 'nav--black-card');
         if (cardType[activeIdx]) nav.classList.add('nav--' + cardType[activeIdx] + '-card');
+        // Restart the wipe animation in the right direction
+        nav.classList.remove('nav-wipe-up', 'nav-wipe-down');
+        void nav.offsetWidth;
+        nav.classList.add(wipeDir);
       }
     }
 
@@ -3027,31 +2861,18 @@
     if (window.lenis) { window.lenis.on('scroll', animateFlow); }
 
     animateFlow();
+
+    // Tap a dish to open its description (phone shows them on demand)
+    document.querySelectorAll('.mf-item').forEach(function(item) {
+      item.addEventListener('click', function() {
+        item.classList.toggle('open');
+      });
+    });
   })();
   </script>
 
-  <!-- Artisans section: parallax on "The Artisans" title -->
-  <script>
-  (function() {
-    var chefSection = document.querySelector('section#about');
-    var chefTitle = document.querySelector('.chef-title-overlay');
-    if (!chefSection || !chefTitle) return;
-
-    function updateChefParallax() {
-      var rect = chefSection.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-      // How far the section has scrolled past the top of the viewport
-      var scrolled = -rect.top;
-      var sectionH = rect.height;
-      var progress = Math.max(0, Math.min(1, scrolled / sectionH));
-      // Title drifts DOWN as section exits (lags behind = slow fall effect)
-      chefTitle.style.transform = 'translateY(' + (progress * 48) + 'px)';
-    }
-
-    window.addEventListener('scroll', updateChefParallax, { passive: true });
-    updateChefParallax();
-  })();
-  </script>
+  <!-- Artisans title parallax removed — it drifted the title down into
+       the white card; the title is now statically positioned in CSS -->
 
 
 
@@ -3161,6 +2982,7 @@
         direction: 'vertical',
         gestureDirection: 'vertical',
         smooth: true,
+        lerp: 0.075, /* lower = longer, silkier glide */
         mouseMultiplier: 1,
         smoothTouch: false,
         touchMultiplier: 2,
@@ -3261,6 +3083,71 @@
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       });
+      // Floating button appears once the hero is scrolled past
+      var toggleScrollTop = function() {
+        scrollTopBtn.classList.toggle('visible', window.scrollY > window.innerHeight * 0.8);
+      };
+      window.addEventListener('scroll', toggleScrollTop, { passive: true });
+      toggleScrollTop();
+    }
+
+    // ── Phone: past the hero, the nav bar collapses to floating circles ──
+    var minimalNav = document.getElementById('nav');
+    if (minimalNav) {
+      var resEndSection = document.getElementById('reservation');
+      var artDarkSection = document.querySelector('.artisans-section');
+      // Scroll spy: the gooey menu icon for the section in view turns red
+      var drawerSpyLinks = document.querySelectorAll('.nav-drawer a');
+      var spySections = [
+        ['#home', document.getElementById('home')],
+        ['#about', artDarkSection],
+        ['#menu', document.getElementById('menu')],
+        ['#reservation', resEndSection]
+      ];
+      var bentoCoverSection = document.querySelector('.bento-gallery-section');
+      var toggleMinimalNav = function() {
+        // Over the artisans backdrop (any screen size): transparent bar,
+        // white contents. Ends when the next section slides over it.
+        var overArtisans = false;
+        if (artDarkSection) {
+          var ab = artDarkSection.getBoundingClientRect();
+          var covered = bentoCoverSection
+            ? bentoCoverSection.getBoundingClientRect().top < 60
+            : false;
+          overArtisans = ab.top < 60 && ab.bottom > 60 && !covered;
+        }
+        minimalNav.classList.toggle('nav--over-artisans', overArtisans);
+
+        if (window.innerWidth > 767) {
+          minimalNav.classList.remove('nav--minimal', 'nav--logo-hidden', 'nav--on-dark');
+          return;
+        }
+        // Hysteresis: switch modes at different points going down vs up so
+        // the bar never flaps (and never mid-animates) around one boundary
+        var isMin = minimalNav.classList.contains('nav--minimal');
+        minimalNav.classList.toggle('nav--minimal',
+          window.scrollY > window.innerHeight * (isMin ? 0.7 : 0.95));
+        // Logo shows (white) only while the artisans backdrop is visible
+        minimalNav.classList.toggle('nav--on-dark', overArtisans);
+        // Fade the floating logo out as the reservation section wraps up
+        if (resEndSection) {
+          var rr = resEndSection.getBoundingClientRect();
+          minimalNav.classList.toggle('nav--logo-hidden', rr.bottom < window.innerHeight * 1.2);
+        }
+        // Active section → red icon in the gooey menu
+        var mid = window.innerHeight * 0.5;
+        var current = '#home';
+        spySections.forEach(function(p) {
+          if (p[1] && p[1].getBoundingClientRect().top <= mid) current = p[0];
+        });
+        drawerSpyLinks.forEach(function(a) {
+          a.classList.toggle('active', a.getAttribute('href') === current);
+        });
+      };
+      window.addEventListener('scroll', toggleMinimalNav, { passive: true });
+      if (window.lenis) window.lenis.on('scroll', toggleMinimalNav);
+      window.addEventListener('resize', toggleMinimalNav);
+      toggleMinimalNav();
     }
 
     // ── Nav: hide when reservation section scrolls fully past the top ──
