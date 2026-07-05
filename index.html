@@ -9,11 +9,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/svg+xml" href="images/yui/yui-logo-mark.svg.svg" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/svg+xml" href="images/yui/Main_Logo_Illustrations 2.svg" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/svg+xml" href="images/yui/Logo/yui-logo-mark.svg.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" type="image/svg+xml" href="images/yui/Logo/Main_Logo_Illustrations 2.svg" media="(prefers-color-scheme: dark)">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   <!-- Resource hints: sprite + video start downloading immediately -->
-  <link rel="preload" href="images/yui/logo-frames/logo_sprite.png" as="image" fetchpriority="high">
+  <link rel="preload" href="images/yui/Logo/logo-frames/logo_sprite.png" as="image" fetchpriority="high">
   <link rel="preconnect" href="https://unpkg.com" crossorigin>
 
   <!-- Lenis Smooth Scroll Library -->
@@ -189,7 +189,7 @@
 
 <body>
   <div id="site-preloader">
-    <img src="images/yui/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+    <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
   </div>
   <div id="cur-dot"></div>
   <div id="cur-ring"></div>
@@ -200,7 +200,7 @@
   <nav class="nav" id="nav">
     <a href="#home" class="nav-logo hov">
       <span class="nav-logo-full"><canvas id="logoCanvas" width="160" height="158"></canvas></span>
-      <span class="nav-logo-mark"><img src="images/yui/yui-knot-mark.png" alt="Yui"></span>
+      <span class="nav-logo-mark"><img src="images/yui/Logo/yui-knot-mark.png" alt="Yui"></span>
     </a>
     <nav class="nav-center"><a href="#home" class="active hov">Home</a><a href="#about" class="hov">About</a><a
         href="#menu" class="hov">Menu</a><a href="#reservation" class="hov">Reservation</a></nav>
@@ -308,13 +308,13 @@
       <!-- Chef slides — stacked, crossfade driven by page scroll (works with Lenis) -->
       <div class="chef-slides-wrap">
         <div class="chef-slide active" data-index="0">
-          <img decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+          <img decoding="async" src="images/yui/Chef/Chef%20I.jpg" alt="Haruto Nakamura">
         </div>
         <div class="chef-slide" data-index="1">
-          <img decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+          <img decoding="async" src="images/yui/Chef/Chef%20II.jpg" alt="Hina Tanaka">
         </div>
         <div class="chef-slide" data-index="2">
-          <img decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+          <img decoding="async" src="images/yui/Chef/Chef%20III.jpg" alt="Kenji Sato">
         </div>
       </div>
 
@@ -322,13 +322,13 @@
         <div class="minimap-wrapper">
           <div class="minimap-img-preview">
             <div class="minimap-img-item active" data-index="0">
-              <img decoding="async" src="images/yui/Chef%20I.jpg" alt="Haruto Nakamura">
+              <img decoding="async" src="images/yui/Chef/Chef%20I.jpg" alt="Haruto Nakamura">
             </div>
             <div class="minimap-img-item" data-index="1">
-              <img decoding="async" src="images/yui/Chef%20II.jpg" alt="Hina Tanaka">
+              <img decoding="async" src="images/yui/Chef/Chef%20II.jpg" alt="Hina Tanaka">
             </div>
             <div class="minimap-img-item" data-index="2">
-              <img decoding="async" src="images/yui/Chef%20III.jpg" alt="Kenji Sato">
+              <img decoding="async" src="images/yui/Chef/Chef%20III.jpg" alt="Kenji Sato">
             </div>
           </div>
           <div class="minimap-info-list">
@@ -396,7 +396,7 @@
 
     <div class="bento-tray-scroll">
       <div class="bento-tray-wrapper">
-        <img class="bento-tray-frame" loading="lazy" decoding="async" src="images/yui/bento-layout-1.jpg" alt="Bento tray">
+        <img class="bento-tray-frame" loading="lazy" decoding="async" src="images/yui/Menu/bento-layout-1.jpg" alt="Bento tray">
         <div class="bento-tray-slots" id="bentoGrid"></div>
       </div>
     </div>
@@ -441,7 +441,7 @@
       <div class="mf-body">
         <div class="mf-hero">
           <h2 class="mf-hed">Appetizers</h2>
-          <div class="mf-img-bleed"><img src="images/yui/bento-menu-appetizers.jpg" alt="Menu" class="mf-img" loading="lazy"></div>
+          <div class="mf-img-bleed"><img src="images/yui/Menu/bento-menu-appetizers.jpg" alt="Menu" class="mf-img" loading="lazy"></div>
         </div>
         <div class="mf-items-col">
       <div class="mf-item">
@@ -497,7 +497,7 @@
         <div class="mf-hero">
           <h2 class="mf-hed">Nigiri</h2>
           <p class="mf-note">Per order</p>
-          <div class="mf-img-bleed"><img src="images/yui/bento-menu-nigiri.jpg" alt="Nigiri" class="mf-img" loading="lazy"></div>
+          <div class="mf-img-bleed"><img src="images/yui/Menu/bento-menu-nigiri.jpg" alt="Nigiri" class="mf-img" loading="lazy"></div>
         </div>
         <div class="mf-items-col">
       <div class="mf-qty-head">
@@ -576,7 +576,7 @@
         <div class="mf-hero">
           <h2 class="mf-hed">Sushi</h2>
           <p class="mf-note">4 pieces · 8 pieces</p>
-          <div class="mf-img-bleed"><img src="images/yui/bento-menu-sushi.jpg" alt="Sushi" class="mf-img" loading="lazy"></div>
+          <div class="mf-img-bleed"><img src="images/yui/Menu/bento-menu-sushi.jpg" alt="Sushi" class="mf-img" loading="lazy"></div>
         </div>
         <div class="mf-items-col">
       <div class="mf-qty-head">
@@ -638,7 +638,7 @@
       <div class="mf-body mf-body--flip">
         <div class="mf-hero">
           <h2 class="mf-hed">Ramen</h2>
-          <div class="mf-img-bleed"><img src="images/yui/bento-menu-ramen.jpg" alt="Ramen" class="mf-img" loading="lazy"></div>
+          <div class="mf-img-bleed"><img src="images/yui/Menu/bento-menu-ramen.jpg" alt="Ramen" class="mf-img" loading="lazy"></div>
         </div>
         <div class="mf-items-col">
       <div class="mf-item">
@@ -694,7 +694,7 @@
         <div class="mf-hero">
           <h2 class="mf-hed">Curry</h2>
           <p class="mf-note">Served with Japanese sticky rice</p>
-          <div class="mf-img-bleed"><img src="images/yui/bento-menu-curry.jpg" alt="Curry" class="mf-img" loading="lazy"></div>
+          <div class="mf-img-bleed"><img src="images/yui/Menu/bento-menu-curry.jpg" alt="Curry" class="mf-img" loading="lazy"></div>
         </div>
         <div class="mf-items-col">
       <div class="mf-item">
@@ -1037,7 +1037,7 @@
       <!-- Header -->
       <div class="yui-header">
         <div class="yui-header-left">
-          <img class="yui-header-logo" src="images/yui/logo-frames/logo_reveal89.png" alt="Yui">
+          <img class="yui-header-logo" src="images/yui/Logo/logo-frames/logo_reveal89.png" alt="Yui">
           <div class="yui-header-info">
             <div class="yui-status-area">
               <span class="yui-online-dot"></span>
@@ -1925,13 +1925,13 @@
     //   Mid center:       x=506–723, y=310–549
     //   Mid right:        x=750–883, y=310–549
     const SLOTS = [
-      { id:1, title:'The Dining Room',  desc:'Where every seat tells a story',        url:'images/yui/interior01.jpg', g:[0.187,0.141,0.188,0.451] }, // left tall
-      { id:2, title:'Noren & Light',    desc:'A threshold between worlds',            url:'images/yui/interior09.jpg', g:[0.669,0.141,0.188,0.153] }, // bottom left
-      { id:3, title:'Counter Dining',   desc:'An animated, intimate gathering',       url:'images/yui/interior11.jpg', g:[0.187,0.355,0.351,0.187] }, // top center wide
-      { id:4, title:'Sake Pour',        desc:'Poured with care and ritual',           url:'images/yui/interior08.jpg', g:[0.187,0.732,0.130,0.187] }, // top right
-      { id:5, title:'Wabi-sabi',        desc:'Imperfection as philosophy',            url:'images/yui/interior05.jpg', g:[0.408,0.355,0.113,0.312] }, // mid small left
-      { id:6, title:'Omakase',          desc:"The chef's choice, in silence",         url:'images/yui/interior07.jpg', g:[0.408,0.494,0.212,0.312] }, // mid center
-      { id:7, title:'The Kitchen',      desc:'Precision behind every plate',          url:'images/yui/interior14.jpg', g:[0.408,0.732,0.130,0.312] }, // mid right
+      { id:1, title:'The Dining Room',  desc:'Where every seat tells a story',        url:'images/yui/The Space Within/interior01.jpg', g:[0.187,0.141,0.188,0.451] }, // left tall
+      { id:2, title:'Noren & Light',    desc:'A threshold between worlds',            url:'images/yui/The Space Within/interior09.jpg', g:[0.669,0.141,0.188,0.153] }, // bottom left
+      { id:3, title:'Counter Dining',   desc:'An animated, intimate gathering',       url:'images/yui/The Space Within/interior11.jpg', g:[0.187,0.355,0.351,0.187] }, // top center wide
+      { id:4, title:'Sake Pour',        desc:'Poured with care and ritual',           url:'images/yui/The Space Within/interior08.jpg', g:[0.187,0.732,0.130,0.187] }, // top right
+      { id:5, title:'Wabi-sabi',        desc:'Imperfection as philosophy',            url:'images/yui/The Space Within/interior05.jpg', g:[0.408,0.355,0.113,0.312] }, // mid small left
+      { id:6, title:'Omakase',          desc:"The chef's choice, in silence",         url:'images/yui/The Space Within/interior07.jpg', g:[0.408,0.494,0.212,0.312] }, // mid center
+      { id:7, title:'The Kitchen',      desc:'Precision behind every plate',          url:'images/yui/The Space Within/interior14.jpg', g:[0.408,0.732,0.130,0.312] }, // mid right
     ];
 
     const slotsEl   = document.getElementById('bentoGrid');
@@ -2407,7 +2407,7 @@
     spriteImg.fetchPriority = 'high';
     let spriteReady = false;
     spriteImg.onload = () => { spriteReady = true; };
-    spriteImg.src = 'images/yui/logo-frames/logo_sprite.png';
+    spriteImg.src = 'images/yui/Logo/logo-frames/logo_sprite.png';
 
     // draw frame idx from the sprite onto ctx at dw×dh
     function drawSpriteFrame(ctx, idx, dw, dh) {
@@ -2613,7 +2613,7 @@
 
     function getFramePath(i) {
       const fileName = `Screenshot 2026-04-14 at 9-08-27 PM${i.toString().padStart(3, '0')}.jpg`;
-      return `images/yui/precision-frames/${fileName.replace(/ /g, '%20')}`;
+      return `images/yui/Japanese Precision Video/${fileName.replace(/ /g, '%20')}`;
     }
 
     for (let i = 0; i < frameCount; i++) images.push(null);

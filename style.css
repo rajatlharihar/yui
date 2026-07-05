@@ -1278,7 +1278,7 @@
     .hero-pattern-layer {
       position: absolute;
       inset: 0;
-      background-image: url('images/yui/IndexPage%20-%20ArtStyle.jpg');
+      background-image: url('images/yui/Hero/IndexPage%20-%20ArtStyle.jpg');
       background-size: cover;
       background-position: right center;
       opacity: 1;
@@ -1621,7 +1621,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background-image: url("images/yui/exterior-main.jpg");
+      background-image: url("images/yui/Exterior/exterior-main.jpg");
       background-size: cover;
       background-position: center;
       filter: brightness(0.7) contrast(1.1);
@@ -6742,7 +6742,7 @@
   content: '';
   position: absolute;
   inset: -12%;
-  background: url('images/yui/chat-welcome-bg.svg') center 30% / 150% auto no-repeat;
+  background: url('images/yui/UI/chat-welcome-bg.svg') center 30% / 150% auto no-repeat;
   opacity: 0.1;
   pointer-events: none;
 }
