@@ -1828,8 +1828,16 @@
       background: var(--red);
     }
 
-    /* ── RESPONSIVE: TABLET (≤768px) ──────────────────── */
-    @media(max-width:768px) {
+    /* ── RESPONSIVE: TABLET (≤767px) ────────────────────
+       Was ≤768px, which is exactly 1px wider than the menu-card mobile
+       breakpoint (max-width:767px) and 1px inside the desktop menu bleed
+       breakpoint (min-width:768px). At exactly 768px wide that meant the
+       nav switched to the hamburger (mobile) while the menu section
+       simultaneously rendered with the DESKTOP absolute-bleed photo
+       positioning — the huge rotated image overlapping the heading and
+       first couple of items, with a hamburger nav floating on top.
+       Matching this to 767px closes that gap. */
+    @media(max-width:767px) {
       .about-editorial {
         grid-template-columns: 1fr;
         min-height: auto;
@@ -5709,7 +5717,12 @@
 }
 
 /* ── mobile ── */
-@media (max-width: 768px) {
+/* Was max-width:768px — 1px wider than the desktop menu bleed rule's
+   min-width:768px, so at exactly 768px both applied at once: this block's
+   single-column/relative-position mobile layout fought the desktop rule's
+   absolute-bleed image (still carrying its scale(2.74) transform), which
+   is what produced the huge overlapping photo at that one exact width. */
+@media (max-width: 767px) {
   .mf-section { height: auto; min-height: 100svh; position: relative; }
   .mf-body { grid-template-columns: 1fr; gap: 24px 0; }
   .mf-hed { font-size: clamp(3.5rem, 16vw, 7rem); margin-bottom: 12px; }
