@@ -4669,19 +4669,23 @@
 }
 /* ── RESERVATION TICKET — TERMINAL LOG STYLE ─────────────────────── */
 #resModal .res-ticket {
-  background: var(--dark);
-  padding: 14px;
-  border-radius: 30px;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
   text-align: left;
 }
 #resModal .res-ticket-container { max-height: 92vh; }
 
 .res-ticket-paper {
   position: relative;
-  background: var(--cream);
-  border-radius: 20px;
+  background-color: var(--cream);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px;
+  background-repeat: repeat;
+  background-blend-mode: multiply;
+  border-radius: 0;
   padding: 34px 28px 22px 60px;
-  max-height: calc(92vh - 28px);
+  max-height: 92vh;
   overflow-y: auto;
   font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   color: #1c1713;
@@ -4734,7 +4738,7 @@
 .res-log-table { font-size: 11.5px; }
 .res-log-row {
   display: grid;
-  grid-template-columns: 1.4fr 0.5fr 0.9fr 1.2fr;
+  grid-template-columns: 1.3fr 0.9fr 1.3fr;
   gap: 8px;
   padding: 9px 0;
   border-bottom: 1px dotted rgba(28, 23, 19, 0.18);
@@ -4748,7 +4752,7 @@
   letter-spacing: 0.06em;
   font-size: 10px;
 }
-.res-log-row span:nth-child(4) { text-align: right; font-weight: 600; }
+.res-log-row span:nth-child(3) { text-align: right; font-weight: 600; }
 
 .res-log-endline {
   text-align: center;
@@ -4771,9 +4775,9 @@
   height: 72px;
   margin: 0 auto 6px;
   padding: 6px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  background: var(--cream);
+  border: 1px solid rgba(28, 23, 19, 0.25);
+  border-radius: 2px;
 }
 .res-log-qr-wrap .res-qr-svg { width: 100%; height: 100%; }
 .res-log-qr-wrap .res-qr-label {
@@ -4824,16 +4828,18 @@
 #resModal .res-change-btn {
   font-family: inherit;
   font-size: 11px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: rgba(28, 23, 19, 0.45);
+  color: #1c1713;
+  opacity: 1;
 }
-#resModal .res-change-btn:hover { color: rgba(28, 23, 19, 0.75); }
+#resModal .res-change-btn:hover { color: var(--red); }
 #resModal .res-save-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: inherit;
+  font-family: var(--ff-heading);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -4853,7 +4859,7 @@
   .res-ticket-paper { padding: 28px 18px 18px 52px; }
   .res-ticket-holes { left: 16px; }
   .res-ticket-perf { left: 30px; }
-  .res-log-row { grid-template-columns: 1.3fr 0.5fr 0.8fr 1fr; font-size: 10px; }
+  .res-log-row { grid-template-columns: 1.2fr 0.8fr 1fr; font-size: 10px; }
   .res-log-bottom { flex-wrap: wrap; }
 }
 
