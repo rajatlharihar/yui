@@ -1349,6 +1349,17 @@
       .hero-jp-panel { display: none; }
       #heroHeadline { font-size: clamp(56px, 7vw, 80px) !important; }
       .hero-eyebrow { font-size: 14px; }
+
+      /* Nav: .nav-center is absolutely centered on the full bar width with
+         no awareness of the logo/CTA either side of it, and the bar keeps
+         its full 80px desktop padding here — so on anything from 768px up
+         to roughly 830px, the centered links and "Reserve a Table" button
+         collided (RESERVATION text sat behind the button). Tightening
+         padding/gaps/sizes just in this band gives both enough room. */
+      .nav { padding-left: 32px; padding-right: 32px; }
+      .nav-center { gap: 18px; }
+      .nav-center a { font-size: 10.5px; }
+      .nav-cta { padding: 9px 16px; font-size: 11px; }
     }
 
     /* ── HERO: MOBILE (≤767px) — editorial vertical composition ── */
@@ -5613,6 +5624,11 @@
   font-weight: 300;
   opacity: 0.45;
   margin-left: 8px;
+  /* CJK line-breaking allows a break between any two characters, so when
+     the row got tight (tablet widths) this wrapped mid-phrase, stranding
+     one or two characters alone on the next line. nowrap keeps it a
+     single unit that drops to its own line whole instead. */
+  white-space: nowrap;
 }
 .mfi-desc {
   font-family: 'Outfit', sans-serif;
@@ -6501,7 +6517,12 @@
     right: auto;
     bottom: auto;
     width: calc(100% + 48px);
-    height: 240px;
+    /* Was a flat 240px — on a short phone viewport (address bar visible,
+       or a card with more items like Nigiri's 7) the heading + item list
+       already used up most of 100svh, so the fixed-height photo silently
+       overflowed the card's overflow:hidden boundary and got clipped mid-
+       frame. Scales down on short viewports instead of getting cut. */
+    height: clamp(90px, 30vh, 240px);
     min-height: 0;
     margin: 10px -24px 0;
     overflow: hidden;
@@ -6576,7 +6597,7 @@
   .mfi-pv { font-size: 14px; }
   .mf-item {
     margin-right: 0 !important; /* was bleeding rows past the edge, clipping prices */
-    padding: 16px 0;
+    padding: 12px 0; /* was 16px — the saved space helps the photo below fit on short viewports */
     align-items: center;
   }
   .mf-qty-lbl { font-size: 10px; }
