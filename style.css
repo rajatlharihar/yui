@@ -214,7 +214,7 @@
     }
     .nav.menu-card-active.nav-wipe-down::before {
       transform-origin: center bottom;
-      animation: navCardWipeOut 0.3s cubic-bezier(0.3, 0.9, 0.4, 1) forwards;
+      animation: navCardWipeOut 0.24s cubic-bezier(0.3, 0.9, 0.4, 1) forwards;
     }
     @keyframes navCardWipeOut {
       from { transform: scaleY(1); }
@@ -4720,7 +4720,7 @@
 .res-log-topbar-col.right { text-align: right; align-items: flex-end; }
 .res-log-label { opacity: 0.45; text-transform: uppercase; font-weight: 700; }
 .res-log-value { font-weight: 700; text-transform: uppercase; word-break: break-all; }
-.res-log-value.res-log-accent { color: var(--red); }
+.res-log-value.res-log-accent { color: #2E7D32; }
 
 .res-dotted-rule {
   border-top: 1.5px dotted rgba(28, 23, 19, 0.3);
@@ -4756,9 +4756,10 @@
 
 .res-log-endline {
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.15em;
-  opacity: 0.35;
+  opacity: 0.85;
   margin: 22px 0;
   text-transform: uppercase;
 }
@@ -6721,10 +6722,13 @@
    5K and blow up to half the screen at laptop widths — tame them
    ═══════════════════════════════════════════════════════════════ */
 @media (min-width: 768px) and (max-width: 1920px) {
-  /* Light cards (Appetizers / Sushi / Curry): photo big, low, left */
+  /* Light cards (Appetizers / Sushi / Curry): photo big, low, left.
+     Sized by the SMALLER of width/height-based limits — on a wide-but-short
+     window (common on laptops), 30vw alone made the photo taller than its
+     own hero column and it rode up over the heading. */
   .mf-img-bleed {
-    width: clamp(280px, 30vw, 540px);
-    height: clamp(280px, 30vw, 540px);
+    width: clamp(220px, min(30vw, 58vh), 540px);
+    height: clamp(220px, min(30vw, 58vh), 540px);
     bottom: clamp(0px, 2vh, 60px);
     left: clamp(40px, 6vw, 150px);
   }
