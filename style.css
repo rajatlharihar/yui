@@ -4667,126 +4667,194 @@
   text-align: center;
   box-shadow: 0 40px 90px rgba(0, 0, 0, 0.38);
 }
-.res-thankyou {
-  display: block;
-  font-family: var(--ff-heading);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  margin-bottom: 14px;
-  opacity: 0.45;
+/* ── RESERVATION TICKET — TERMINAL LOG STYLE ─────────────────────── */
+#resModal .res-ticket {
+  background: var(--dark);
+  padding: 14px;
+  border-radius: 30px;
+  text-align: left;
 }
-.res-guest-title {
-  font-family: 'Restora', Georgia, serif;
-  font-size: 40px;
-  font-weight: 400;
-  line-height: 1.05;
-  color: var(--red);
-  margin-bottom: 10px;
+#resModal .res-ticket-container { max-height: 92vh; }
+
+.res-ticket-paper {
+  position: relative;
+  background: var(--cream);
+  border-radius: 20px;
+  padding: 34px 28px 22px 60px;
+  max-height: calc(92vh - 28px);
+  overflow-y: auto;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  color: #1c1713;
 }
-.res-status-sub {
-  font-family: 'Restora', Georgia, serif;
-  font-style: italic;
-  font-size: 17px;
-  opacity: 0.55;
+.res-ticket-perf {
+  position: absolute;
+  left: 34px;
+  top: 0;
+  bottom: 0;
+  border-left: 2px dashed rgba(28, 23, 19, 0.22);
+}
+.res-ticket-holes {
+  position: absolute;
+  left: 20px;
+  top: 26px;
+  bottom: 26px;
+  width: 14px;
+  background-image: radial-gradient(circle, var(--dark) 6.5px, transparent 7px);
+  background-size: 14px 46px;
+  background-repeat: repeat-y;
 }
 
-.res-qr-section {
-  margin: 36px 0;
-}
-.res-qr-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  opacity: 0.5;
+.res-log-topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
   margin-bottom: 18px;
 }
-.res-qr-wrapper {
-  width: 148px;
-  height: 148px;
-  margin: 0 auto 18px;
-  padding: 12px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 14px;
-}
-.res-qr-svg {
-  width: 100%;
-  height: 100%;
-}
-.res-conf-code {
-  font-family: ui-monospace, Menlo, monospace;
-  font-size: 13px;
-  letter-spacing: 0.3em;
-  opacity: 0.5;
+.res-log-topbar-col { display: flex; flex-direction: column; gap: 4px; }
+.res-log-topbar-col.right { text-align: right; align-items: flex-end; }
+.res-log-label { opacity: 0.45; text-transform: uppercase; font-weight: 700; }
+.res-log-value { font-weight: 700; text-transform: uppercase; word-break: break-all; }
+.res-log-value.res-log-accent { color: var(--red); }
+
+.res-dotted-rule {
+  border-top: 1.5px dotted rgba(28, 23, 19, 0.3);
+  margin: 18px 0;
 }
 
-.res-info-grid {
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
-  padding-top: 28px;
+.res-log-para {
+  font-size: 12.5px;
+  line-height: 1.8;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+.res-log-para strong { font-weight: 700; }
+
+.res-log-table { font-size: 11.5px; }
+.res-log-row {
+  display: grid;
+  grid-template-columns: 1.4fr 0.5fr 0.9fr 1.2fr;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px dotted rgba(28, 23, 19, 0.18);
+  align-items: baseline;
+  text-transform: uppercase;
+}
+.res-log-row:last-child { border-bottom: none; }
+.res-log-row.res-log-head {
+  opacity: 0.4;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: 10px;
+}
+.res-log-row span:nth-child(4) { text-align: right; font-weight: 600; }
+
+.res-log-endline {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  opacity: 0.35;
+  margin: 22px 0;
+  text-transform: uppercase;
+}
+
+.res-log-bottom {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+.res-log-qr-wrap { flex-shrink: 0; text-align: center; }
+.res-log-qr-wrap .res-qr-wrapper {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 6px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+.res-log-qr-wrap .res-qr-svg { width: 100%; height: 100%; }
+.res-log-qr-wrap .res-qr-label {
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  opacity: 0.45;
+  text-transform: uppercase;
+}
+.res-log-barcode {
+  flex: 1;
+  align-self: stretch;
+  background: repeating-linear-gradient(90deg,
+    #1c1713 0 2px, transparent 2px 4px,
+    #1c1713 4px 5px, transparent 5px 9px,
+    #1c1713 9px 12px, transparent 12px 14px,
+    #1c1713 14px 15px, transparent 15px 20px,
+    #1c1713 20px 23px, transparent 23px 24px);
+  opacity: 0.85;
+}
+.res-log-vertical {
+  writing-mode: vertical-rl;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  opacity: 0.4;
+  flex-shrink: 0;
+}
+
+#resModal .res-ticket-footer {
+  margin-top: 0;
+  border-top: 1px dotted rgba(28, 23, 19, 0.3);
+  padding-top: 16px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
-.res-info-grid .res-info-row {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-}
-.res-info-item.detail {
-  margin-top: 8px;
-}
-.res-info-grid .res-info-lbl {
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--red);
+.res-log-legal {
+  font-size: 8.5px;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  opacity: 0.4;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  margin-bottom: 6px;
 }
-.res-info-grid .res-info-val {
-  font-family: 'Restora', Georgia, serif;
-  font-size: 21px;
-  letter-spacing: 0.01em;
-}
-
-.res-ticket-footer {
-  margin-top: 40px;
-  padding-top: 22px;
-  border-top: 1px solid rgba(0, 0, 0, 0.07);
+.res-log-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
-.res-ticket-footer a:first-child {
-  font-size: 12px;
+#resModal .res-change-btn {
+  font-family: inherit;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: rgba(28, 23, 19, 0.45);
 }
-.res-ticket-footer a:first-child:hover { color: rgba(28, 23, 19, 0.75); }
-.res-save-btn {
+#resModal .res-change-btn:hover { color: rgba(28, 23, 19, 0.75); }
+#resModal .res-save-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-family: inherit;
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: #fff;
   background: var(--red);
-  border-radius: 999px;
-  padding: 11px 22px;
+  border-radius: 4px;
+  padding: 10px 18px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.res-save-btn:hover {
+#resModal .res-save-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(227, 37, 39, 0.35);
 }
 
 @media (max-width: 480px) {
-  .res-ticket { padding: 40px 24px; }
-  .res-guest-title { font-size: 24px; }
+  .res-ticket-paper { padding: 28px 18px 18px 52px; }
+  .res-ticket-holes { left: 16px; }
+  .res-ticket-perf { left: 30px; }
+  .res-log-row { grid-template-columns: 1.3fr 0.5fr 0.8fr 1fr; font-size: 10px; }
+  .res-log-bottom { flex-wrap: wrap; }
 }
 
 /* STATUS TICKET VARIANT */

@@ -1833,12 +1833,15 @@
           // Populate and show the ticket modal
           try {
             document.getElementById('ticket-name').textContent = nameVal;
-            document.getElementById('ticket-date').textContent = new Date(dateVal + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('ticket-date').textContent = new Date(dateVal + 'T00:00:00').toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' });
             document.getElementById('ticket-time').textContent = timeVal.substring(0, 5);
             document.getElementById('ticket-size').textContent = partySize;
             document.getElementById('ticket-note').textContent = noteVal || 'None';
-            document.getElementById('ticket-conf-code').textContent = 'YUK-' + Math.floor(10000 + Math.random() * 90000) + '-AIRA';
-            
+            const confNum = Math.floor(10000 + Math.random() * 90000);
+            document.getElementById('ticket-conf-code').textContent = 'YUK-' + confNum + '-AIRA';
+            const ticketStamp = document.getElementById('ticket-stamp');
+            if (ticketStamp) ticketStamp.textContent = String(confNum).slice(0, 2) + ' / ' + String(confNum).slice(2);
+
             const ticketOccasion = document.getElementById('ticket-occasion');
             if (ticketOccasion) ticketOccasion.textContent = occasion || 'Dining';
 
@@ -2946,47 +2949,75 @@
         </svg>
       </button>
       <div class="res-ticket">
-        <div class="res-ticket-header">
-          <span class="res-thankyou">Thank you!!</span>
-          <h2 class="res-guest-title">Table for <span id="ticket-name"></span></h2>
-          <p class="res-status-sub">You're all set.</p>
-        </div>
-        <div class="res-ticket-body">
-          <div class="res-qr-section">
-            <p class="res-qr-label">QR sent via SMS.</p>
-            <div class="res-qr-wrapper">
-              <svg class="res-qr-svg" viewBox="0 0 100 100" fill="currentColor">
-                <path d="M0 0h30v30H0V0zm10 10v10h10V10H10zm60-10h30v30H70V0zm10 10v10h10V10H10zM0 70h30v30H0V70zm10 10v10h10V10H10zm60 0h10v10H70V80zm20 0h10v10H90V80zm-10 10h10v10H80V90zm10 0h10v10H90V90zM40 0h10v10H40V0zm10 10h10v10H50V10zM40 20h10v10H40V20zm20-20h10v10H60V0zm0 20h10v10H60V20zm-20 20h10v10H40V40zm20 0h10v10H60V40zm-10 10h10v10H50V50zM0 40h10v10H0V40zm10 10h10v10H10V50zm20 0h10v10H30V50zm40-10h10v10H70V40zm20 0h10v10H90V40z" />
-              </svg>
+        <div class="res-ticket-paper">
+          <div class="res-ticket-perf"></div>
+          <div class="res-ticket-holes"></div>
+
+          <div class="res-log-topbar">
+            <div class="res-log-topbar-col">
+              <span class="res-log-label">Status:</span>
+              <span class="res-log-value res-log-accent">Confirmed</span>
+              <span class="res-log-label">Party:</span>
+              <span class="res-log-value"><span id="ticket-size"></span> Guests</span>
             </div>
-            <div class="res-conf-code" id="ticket-conf-code"></div>
-          </div>
-          <div class="res-info-grid">
-            <div class="res-info-item"><div class="res-info-val" id="ticket-date"></div></div>
-            <div class="res-info-row">
-              <div class="res-info-val"><span id="ticket-time"></span> Hr</div>
-              <div class="res-info-val"><span id="ticket-size"></span> Guests</div>
-            </div>
-            <div class="res-info-item detail">
-              <div class="res-info-lbl">Note :</div>
-              <div class="res-info-val" id="ticket-note"></div>
-            </div>
-            <div class="res-info-item detail">
-              <div class="res-info-lbl">Occasion :</div>
-              <div class="res-info-val" id="ticket-occasion"></div>
+            <div class="res-log-topbar-col right">
+              <span class="res-log-label">Ref_Code:</span>
+              <span class="res-log-value" id="ticket-conf-code"></span>
+              <span class="res-log-label">Occasion:</span>
+              <span class="res-log-value" id="ticket-occasion"></span>
             </div>
           </div>
-        </div>
-        <div class="res-ticket-footer">
-          <a href="https://wa.me/918951765556" target="_blank" class="res-change-btn hov">
-            <span>Change Reservation</span>
-          </a>
-          <button class="res-save-btn hov" onclick="saveTicket()">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-            </svg>
-            <span>Save</span>
-          </button>
+
+          <div class="res-dotted-rule"></div>
+
+          <p class="res-log-para">Booking log. Guest <strong id="ticket-name"></strong> cleared for seating.</p>
+
+          <div class="res-dotted-rule"></div>
+
+          <div class="res-log-table">
+            <div class="res-log-row res-log-head">
+              <span>Field</span><span>Ref</span><span>Status</span><span>Detail</span>
+            </div>
+            <div class="res-log-row">
+              <span>Arrival_Date</span><span>01</span><span>Scheduled</span><span id="ticket-date"></span>
+            </div>
+            <div class="res-log-row">
+              <span>Arrival_Time</span><span>02</span><span>On_Time</span><span id="ticket-time"></span>
+            </div>
+            <div class="res-log-row">
+              <span>Special_Note</span><span>03</span><span>Noted</span><span id="ticket-note"></span>
+            </div>
+          </div>
+
+          <div class="res-log-endline">[ Table Reserved ]</div>
+
+          <div class="res-log-bottom">
+            <div class="res-log-qr-wrap">
+              <div class="res-qr-wrapper">
+                <svg class="res-qr-svg" viewBox="0 0 100 100" fill="currentColor">
+                  <path d="M0 0h30v30H0V0zm10 10v10h10V10H10zm60-10h30v30H70V0zm10 10v10h10V10H10zM0 70h30v30H0V70zm10 10v10h10V10H10zm60 0h10v10H70V80zm20 0h10v10H90V80zm-10 10h10v10H80V90zm10 0h10v10H90V90zM40 0h10v10H40V0zm10 10h10v10H50V10zM40 20h10v10H40V20zm20-20h10v10H60V0zm0 20h10v10H60V20zm-20 20h10v10H40V40zm20 0h10v10H60V40zm-10 10h10v10H50V50zM0 40h10v10H0V40zm10 10h10v10H10V50zm20 0h10v10H30V50zm40-10h10v10H70V40zm20 0h10v10H90V40z" />
+                </svg>
+              </div>
+              <p class="res-qr-label">Scan on arrival</p>
+            </div>
+            <div class="res-log-barcode"></div>
+            <div class="res-log-vertical" id="ticket-stamp"></div>
+          </div>
+
+          <div class="res-ticket-footer">
+            <p class="res-log-legal">Present this ticket on arrival &middot; Unauthorized duplication voids entry &middot; Yui Dining</p>
+            <div class="res-log-actions">
+              <a href="https://wa.me/918951765556" target="_blank" class="res-change-btn hov">
+                <span>Change Reservation</span>
+              </a>
+              <button class="res-save-btn hov" onclick="saveTicket()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                </svg>
+                <span>Save</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
