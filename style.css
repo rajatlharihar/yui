@@ -6718,10 +6718,16 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   LAPTOP DESKTOPS (768–1920px): the menu-card photos were sized for
-   5K and blow up to half the screen at laptop widths — tame them
+   DESKTOP (768px+): the menu-card photos were sized for actual 5K
+   canvases and blow up to half the screen at every other desktop
+   width — tame them. No upper bound: capping this at 1920px left a
+   hard jump right at that width (a 1921px-wide window fell back to
+   the old 5K-only sizing below and the photo suddenly ballooned and
+   overlapped the price list) — common 1440p/4K/ultrawide viewports
+   all live past 1920px, so the old ceiling broke far more often than
+   it helped.
    ═══════════════════════════════════════════════════════════════ */
-@media (min-width: 768px) and (max-width: 1920px) {
+@media (min-width: 768px) {
   /* Light cards (Appetizers / Sushi / Curry): photo big, low, left.
      Sized by the SMALLER of width/height-based limits — on a wide-but-short
      window (common on laptops), 30vw alone made the photo taller than its
