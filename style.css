@@ -6530,13 +6530,20 @@
     right: auto;
     bottom: auto;
     width: calc(100% + 48px);
-    /* Was a flat 240px — on a short phone viewport (address bar visible,
-       or a card with more items like Nigiri's 7) the heading + item list
-       already used up most of 100svh, so the fixed-height photo silently
-       overflowed the card's overflow:hidden boundary and got clipped mid-
-       frame. Scales down on short viewports instead of getting cut. */
-    height: clamp(90px, 30vh, 240px);
-    min-height: 0;
+    /* Was a flat 240px, which on a short phone viewport (address bar
+       visible, or a card with more items like Nigiri's 7) let the heading
+       + item list eat past 100svh and silently clip the fixed-height
+       photo. Was then capped with a vh clamp to fix that — but the same
+       fixed cap meant that on a TALL viewport (little browser chrome, or
+       a resized/portrait window) it stayed pinned small, hugging the
+       bottom via margin-top:auto with a big empty gap above it. Growing
+       to fill whatever space is actually left (flex-grow, no margin
+       trick) solves both: it shrinks on short viewports and grows on
+       tall ones, with a floor and ceiling so it's never clipped or
+       absurdly huge. */
+    flex: 1 1 auto;
+    min-height: clamp(90px, 22vh, 240px);
+    max-height: 420px;
     margin: 10px -24px 0;
     overflow: hidden;
   }
@@ -6576,10 +6583,9 @@
   }
   /* +2px overdraw kills the white hairline under each pinned card */
   .mf-inner { height: calc(100% + 2px); overflow: hidden; }
-  .mf-section .mf-img-bleed {
-    margin-top: auto; /* photo hugs the bottom of the pinned card */
-    flex-shrink: 0;
-  }
+  /* No margin-top:auto / flex-shrink:0 here — the photo's own flex-grow
+     (set above) is what pushes it to the bottom now, growing or
+     shrinking with the space actually left in the card. */
   /* Card titles always left — flip cards (Nigiri, Ramen) inherit a
      right-side alignment from the desktop layout */
   .mf-hed { text-align: left !important; }
