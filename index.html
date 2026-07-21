@@ -2493,7 +2493,6 @@
       }
 
       const onHeroScroll = () => {
-        if (window.innerWidth <= 767) return; // phone: video autoplays instead
         const depth = heroSection.offsetHeight - window.innerHeight;
         if (depth <= 0) return;
         targetP = Math.max(0, Math.min(1, window.scrollY / depth));
@@ -2501,14 +2500,6 @@
       };
       window.addEventListener('scroll', onHeroScroll, { passive: true });
       if (window.lenis) window.lenis.on('scroll', onHeroScroll);
-
-      // All sizes: plays through once after 0.5s, in sync with the logo
-      // reveal (on desktop the scroll scrub takes over at first scroll)
-      setTimeout(() => {
-        video.loop = false;
-        video.muted = true;
-        video.play().catch(() => {});
-      }, 500);
     }
 
     // ── HERO PARALLAX ──
