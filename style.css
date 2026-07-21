@@ -6770,11 +6770,18 @@
 @media (min-width: 768px) {
   /* Light cards (Appetizers / Sushi / Curry): photo big, low, left.
      Sized by the SMALLER of width/height-based limits — on a wide-but-short
-     window (common on laptops), 30vw alone made the photo taller than its
-     own hero column and it rode up over the heading. */
+     window (common on laptops), width-only sizing made the photo taller
+     than its own hero column and it rode up over the heading. A 540px
+     ceiling fixed that but then flattened every wide screen (2000px+,
+     e.g. an iMac 5K's 2560px-wide viewport) to the same size regardless
+     of how much room was actually there — the photo read as tiny and
+     lost. 900px ceiling (with a bigger 52vw pull) restores room to grow
+     on big screens; the vh term still protects short viewports either
+     way — verified across the 1800x550-style short-wide stress cases
+     down to a narrow 768px-wide window with no overlap regressions. */
   .mf-img-bleed {
-    width: clamp(220px, min(30vw, 58vh), 540px);
-    height: clamp(220px, min(30vw, 58vh), 540px);
+    width: clamp(280px, min(52vw, 66vh), 900px);
+    height: clamp(280px, min(52vw, 66vh), 900px);
     bottom: clamp(0px, 2vh, 60px);
     left: clamp(40px, 6vw, 150px);
   }
