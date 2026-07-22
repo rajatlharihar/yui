@@ -3091,7 +3091,13 @@
   background: #fff;
 }
 
-#home { background: var(--bg); }
+/* Match .hero's own dark background, not the page's white --bg — at
+   tablet widths (<=1024px) the hero switches from the full-bleed
+   scroll-scrub layout to a shorter min-height:100vh block, and its
+   content no longer fills that full height. Without this, the ID
+   selector's white default showed through as a huge white gap under
+   the hero video. */
+#home { background: #0D0C0A; }
 #about { background: #fafafa; }
 /* #menu { background: #fff; } */
 #reservation { background: var(--bg); display: grid !important; }
@@ -6542,8 +6548,8 @@
        tall ones, with a floor and ceiling so it's never clipped or
        absurdly huge. */
     flex: 1 1 auto;
-    min-height: clamp(90px, 22vh, 240px);
-    max-height: 420px;
+    min-height: clamp(110px, 26vh, 280px);
+    max-height: 560px;
     margin: 10px -24px 0;
     overflow: hidden;
   }
@@ -6780,19 +6786,25 @@
      way — verified across the 1800x550-style short-wide stress cases
      down to a narrow 768px-wide window with no overlap regressions. */
   .mf-img-bleed {
-    width: clamp(280px, min(52vw, 66vh), 900px);
-    height: clamp(280px, min(52vw, 66vh), 900px);
+    width: clamp(320px, min(60vw, 76vh), 1050px);
+    height: clamp(320px, min(60vw, 76vh), 1050px);
     bottom: clamp(0px, 2vh, 60px);
     left: clamp(40px, 6vw, 150px);
   }
   /* shifted right/up so the food stays in the visible crop at this zoom */
   .mf-img { transform: translate(60%, -30%) rotate(10deg) scale(2.74); }
 
-  /* Flip cards (Nigiri / Ramen): photo big, pushed to the bottom right */
+  /* Flip cards (Nigiri / Ramen): photo big, pushed to the bottom right.
+     Same width/height formula as the light cards would bleed straight
+     into the 2pcs/4pcs price columns and the heading — this column has
+     less spare width to give (items sit on the LEFT here, right up
+     against the photo), so it keeps the more conservative size. */
   .mf-body--flip .mf-img-bleed {
     left: auto;
     right: clamp(60px, 8vw, 180px);
     bottom: clamp(30px, 6vh, 130px);
+    width: clamp(300px, min(50vw, 68vh), 920px);
+    height: clamp(300px, min(50vw, 68vh), 920px);
   }
   .mf-body--flip .mf-img { transform: translate(-50%, -50%) rotate(-5deg) scale(2.81); }
 
