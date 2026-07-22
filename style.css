@@ -1308,7 +1308,12 @@
       }
       .hero-sticky-track {
         position: relative;
-        height: auto;
+        /* Was height:auto — #heroVideo is height:100% + position:absolute,
+           so it had no definite parent height to resolve against and fell
+           back to its own intrinsic (aspect-ratio) size: a thin strip at
+           the top instead of filling the section, leaving the rest of
+           this 100vh block empty. */
+        height: 100vh;
         grid-template-columns: 1fr;
         padding-top: 160px;
         display: block;
@@ -6263,7 +6268,19 @@
   }
 
   /* Chips step aside while the bento gallery modal is open (its close X
-     sits exactly where the hamburger lives) */
+     sits exactly where the hamburger lives). pointer-events isn't part
+     of the opacity transition, so on close it flipped back to clickable
+     instantly while the nav was still fading back in over 0.25s — a
+     window where a tap meant for the still-visible modal close button
+     could land on the reappearing (but nearly invisible) hamburger
+     underneath. Delaying pointer-events until the fade finishes closes
+     that window. */
+  .nav {
+    transition: background 0.3s ease, backdrop-filter 0.18s linear,
+                min-height 0.18s linear, padding 0.18s linear, color 0.3s ease,
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.25s ease, pointer-events 0s 0.25s;
+  }
   .nav.nav--modal-open {
     opacity: 0 !important;
     pointer-events: none !important;
@@ -6553,10 +6570,13 @@
     margin: 10px -24px 0;
     overflow: hidden;
   }
-  /* Same treatment on every card photo (matched to the approved
-     Appetizers placement): 1.96× zoom, pushed 10% down */
+  /* Was a flat 1.96x zoom, tuned back when this box was a fixed 240px
+     tall. Now that it flex-grows anywhere from ~110px to 560px, the same
+     fixed zoom cropped in far too tight on taller cards, cutting off
+     most of the tray. object-fit:cover already frames it sensibly at
+     any height on its own — just a gentle zoom/nudge on top of that. */
   .mf-section .mf-img {
-    transform: scale(1.96) translateY(10%);
+    transform: scale(1.12) translateY(4%);
     transform-origin: center;
     object-position: center;
   }
