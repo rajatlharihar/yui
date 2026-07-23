@@ -6839,9 +6839,12 @@
      on any reasonably-proportioned screen (short windows stay capped by
      76vh regardless); this ceiling only needs to stop truly pathological
      canvases, so it's raised well past anything a real monitor hits. */
+  /* Sized 10% down from the formula above, across the board, per direct
+     request — the fixed-vs-not-fixed relationship between width and
+     height (what closes the wide-window gap) is preserved, just scaled. */
   .mf-img-bleed {
-    width: clamp(320px, min(60vw, 88vh), 1500px);
-    height: clamp(320px, min(60vw, 85vh), 1500px);
+    width: clamp(288px, min(54vw, 79.2vh), 1350px);
+    height: clamp(288px, min(54vw, 76.5vh), 1350px);
     bottom: clamp(0px, 2vh, 60px);
     left: clamp(40px, 6vw, 150px);
   }
@@ -6858,8 +6861,8 @@
     left: auto;
     right: clamp(60px, 8vw, 180px);
     bottom: clamp(30px, 6vh, 130px);
-    width: clamp(300px, min(50vw, 76vh), 1300px);
-    height: clamp(300px, min(50vw, 76vh), 1300px);
+    width: clamp(270px, min(45vw, 68.4vh), 1170px);
+    height: clamp(270px, min(45vw, 68.4vh), 1170px);
   }
   .mf-body--flip .mf-img { transform: translate(-50%, -50%) rotate(-5deg) scale(2.81); }
 
