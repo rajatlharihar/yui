@@ -5430,6 +5430,17 @@
 .mf-body {
   display: grid;
   grid-template-columns: 28% 1fr;
+  /* Pin the row to the card's own available height. Without this, the
+     implicit auto row sized itself to whatever the items column needed —
+     and hovering a dish grows that column (padding + description reveal),
+     which grew the row, which stretched .mf-hero taller too. Since the
+     photo is bottom-anchored inside .mf-hero via an absolute offset, a
+     taller hero pushed the photo down, uncovering the card's own
+     background above it — the "white border blocking the photo" bug.
+     A fixed 100% row keeps the hero (and the photo inside it) stable
+     no matter how the item list grows; any hover overflow just spills
+     past the card edge, where the section's own clip already hides it. */
+  grid-template-rows: 100%;
   gap: 0 clamp(20px, 3vw, 48px);
   flex: 1;
   min-height: 0;
@@ -5513,6 +5524,15 @@
 .mf-section[data-mf-idx="0"] .mf-hero,
 .mf-section[data-mf-idx="2"] .mf-hero,
 .mf-section[data-mf-idx="4"] .mf-hero { z-index: 2; clip-path: inset(-300px -300px -300px -300px); }
+/* "Appetizers" is long enough that the shared .mf-hed size (tuned for
+   short words like Sushi/Curry/Nigiri/Ramen) overran the 28% hero column
+   at every desktop width from 768px up to ~1800px — the heading's own
+   ink bled into the item list's price column, which is the white patch
+   that looked like it was "blocking" the photo below it (the card's
+   plain background showing through where heading and item text tangled
+   instead of a clean edge). Scaled down to fit its own column with
+   room to spare; the other four cards' words were never affected. */
+.mf-section[data-mf-idx="0"] .mf-hed { font-size: clamp(2.4rem, 5.3vw, 7.4rem); }
 .mf-section[data-mf-idx="0"] .mfi-prices,
 .mf-section[data-mf-idx="2"] .mfi-prices,
 .mf-section[data-mf-idx="4"] .mfi-prices { margin-right: 10%; }
