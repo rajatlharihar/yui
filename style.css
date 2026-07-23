@@ -6828,10 +6828,20 @@
      lost. 900px ceiling (with a bigger 52vw pull) restores room to grow
      on big screens; the vh term still protects short viewports either
      way — verified across the 1800x550-style short-wide stress cases
-     down to a narrow 768px-wide window with no overlap regressions. */
+     down to a narrow 768px-wide window with no overlap regressions.
+     That 900px (then 1050px) ceiling was itself the same mistake as the
+     1920px one this comment already warns about, just at a bigger number:
+     on an actual ultrawide monitor (3330px-class) the photo hit the cap
+     and stopped growing while the rest of the card kept stretching,
+     leaving a dead white gap between the photo and the price list — the
+     exact "ceiling breaks more often than it helps" failure this section
+     was written to avoid. The vh term already does the real limiting job
+     on any reasonably-proportioned screen (short windows stay capped by
+     76vh regardless); this ceiling only needs to stop truly pathological
+     canvases, so it's raised well past anything a real monitor hits. */
   .mf-img-bleed {
-    width: clamp(320px, min(60vw, 76vh), 1050px);
-    height: clamp(320px, min(60vw, 76vh), 1050px);
+    width: clamp(320px, min(60vw, 85vh), 1500px);
+    height: clamp(320px, min(60vw, 85vh), 1500px);
     bottom: clamp(0px, 2vh, 60px);
     left: clamp(40px, 6vw, 150px);
   }
@@ -6842,13 +6852,14 @@
      Same width/height formula as the light cards would bleed straight
      into the 2pcs/4pcs price columns and the heading — this column has
      less spare width to give (items sit on the LEFT here, right up
-     against the photo), so it keeps the more conservative size. */
+     against the photo), so it keeps the more conservative size. Same
+     ultrawide-ceiling fix as the light cards above. */
   .mf-body--flip .mf-img-bleed {
     left: auto;
     right: clamp(60px, 8vw, 180px);
     bottom: clamp(30px, 6vh, 130px);
-    width: clamp(300px, min(50vw, 68vh), 920px);
-    height: clamp(300px, min(50vw, 68vh), 920px);
+    width: clamp(300px, min(50vw, 76vh), 1300px);
+    height: clamp(300px, min(50vw, 76vh), 1300px);
   }
   .mf-body--flip .mf-img { transform: translate(-50%, -50%) rotate(-5deg) scale(2.81); }
 
