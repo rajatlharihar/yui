@@ -5537,6 +5537,23 @@
 .mf-section[data-mf-idx="2"] .mfi-prices,
 .mf-section[data-mf-idx="4"] .mfi-prices { margin-right: 10%; }
 
+/* The photo deliberately bleeds under the item list (that's the "photo
+   showing through" effect these cards are built around) — item text sits
+   above it in stacking order, and DOES render on top; that part was never
+   broken. The actual bug: dish names are dark, semi-transparent text
+   (.mf-item's own 0.72 opacity), so wherever the photo's own dark tray/
+   lacquer pixels happen to fall directly under a name, the two nearly
+   the same tone and the name reads as if it's been erased — the "white
+   rectangle cutting the photo" (really the reverse: text going illegible,
+   not the photo being cut). Backing each name with its own card's flat
+   colour keeps it legible over any part of the photo, and is invisible
+   the rest of the time since it exactly matches the plain card behind it. */
+.mf-section[data-mf-idx="0"] .mfi-name,
+.mf-section[data-mf-idx="4"] .mfi-name { background: #FFFDFE; }
+.mf-section[data-mf-idx="2"] .mfi-name { background: #0B0B09; }
+.mf-section[data-mf-idx="1"] .mfi-name,
+.mf-section[data-mf-idx="3"] .mfi-name { background: #E32527; }
+
 .mf-section[data-mf-idx="0"] .mf-wm,
 .mf-section[data-mf-idx="2"] .mf-wm,
 .mf-section[data-mf-idx="4"] .mf-wm { margin-right: 5%; }
