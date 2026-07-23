@@ -184,7 +184,28 @@
     }
   </style>
 
-
+  <!-- Height floor: below this, the handful of scroll-jacked/100vh-pinned
+       sections (hero, Artisans, menu cards) stop shrinking with the window
+       and the page grows a scrollbar instead — a very short window used to
+       crush their pinned layouts. Sections use calc(var(--vh, 1vh) * N)
+       instead of raw vh so they still track the real viewport normally
+       above the floor. Debounced: this only needs to react to a finished
+       resize, not every tick of a drag. -->
+  <script>
+  (function() {
+    var FLOOR = 650;
+    function setVH() {
+      var h = Math.max(window.innerHeight, FLOOR);
+      document.documentElement.style.setProperty('--vh', (h / 100) + 'px');
+    }
+    setVH();
+    var t = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(t);
+      t = setTimeout(setVH, 120);
+    });
+  })();
+  </script>
 </head>
 
 <body>
@@ -2787,7 +2808,15 @@
     });
     lazyObs.observe(section);
 
-    window.addEventListener('resize', resize);
+    // Dragging a window edge fires 'resize' dozens of times a second — resize()
+    // clears and redraws two full-screen canvases synchronously, so calling it
+    // on every tick was the main cause of drag-to-resize jank. Debounced so the
+    // expensive redraw only runs once the drag actually pauses/ends.
+    let resizeDebounce = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeDebounce);
+      resizeDebounce = setTimeout(resize, 120);
+    });
     window.addEventListener('scroll', update, { passive: true });
     resize();
   })();
@@ -3205,7 +3234,13 @@
       };
       window.addEventListener('scroll', toggleMinimalNav, { passive: true });
       if (window.lenis) window.lenis.on('scroll', toggleMinimalNav);
-      window.addEventListener('resize', toggleMinimalNav);
+      // Debounced — this reads several elements' getBoundingClientRect() per
+      // call, no need to run it on every tick of a resize drag.
+      var navResizeDebounce = null;
+      window.addEventListener('resize', function() {
+        clearTimeout(navResizeDebounce);
+        navResizeDebounce = setTimeout(toggleMinimalNav, 120);
+      });
       toggleMinimalNav();
     }
 
