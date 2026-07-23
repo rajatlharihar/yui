@@ -6843,8 +6843,8 @@
      request — the fixed-vs-not-fixed relationship between width and
      height (what closes the wide-window gap) is preserved, just scaled. */
   .mf-img-bleed {
-    width: clamp(288px, min(54vw, 79.2vh), 1350px);
-    height: clamp(288px, min(54vw, 76.5vh), 1350px);
+    width: clamp(274px, min(51.3vw, 75.24vh), 1282px);
+    height: clamp(274px, min(51.3vw, 72.68vh), 1282px);
     bottom: clamp(0px, 2vh, 60px);
     left: clamp(40px, 6vw, 150px);
   }
@@ -6861,8 +6861,8 @@
     left: auto;
     right: clamp(60px, 8vw, 180px);
     bottom: clamp(30px, 6vh, 130px);
-    width: clamp(270px, min(45vw, 68.4vh), 1170px);
-    height: clamp(270px, min(45vw, 68.4vh), 1170px);
+    width: clamp(257px, min(42.75vw, 64.98vh), 1111px);
+    height: clamp(257px, min(42.75vw, 64.98vh), 1111px);
   }
   .mf-body--flip .mf-img { transform: translate(-50%, -50%) rotate(-5deg) scale(2.81); }
 
