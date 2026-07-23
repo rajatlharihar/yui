@@ -5443,10 +5443,14 @@
   overflow: visible;
   min-height: 0;
   position: relative;
-  clip-path: inset(0 0 -300px -300px);
+  /* Top was 0 (no bleed allowed upward) — fine while the photo was small,
+     but a bigger photo now sometimes reaches taller than the hero box,
+     and got hard-clipped at that top edge, exposing the card's own
+     background above the cutoff instead of the rest of the photo. */
+  clip-path: inset(-300px 0 -300px -300px);
 }
 .mf-body--flip .mf-hero {
-  clip-path: inset(0 -300px -300px 0);
+  clip-path: inset(-300px -300px -300px 0);
 }
 .mf-hed {
   font-family: 'Restora', Georgia, serif;
@@ -5508,7 +5512,7 @@
 
 .mf-section[data-mf-idx="0"] .mf-hero,
 .mf-section[data-mf-idx="2"] .mf-hero,
-.mf-section[data-mf-idx="4"] .mf-hero { z-index: 2; clip-path: inset(0 -300px -300px -300px); }
+.mf-section[data-mf-idx="4"] .mf-hero { z-index: 2; clip-path: inset(-300px -300px -300px -300px); }
 .mf-section[data-mf-idx="0"] .mfi-prices,
 .mf-section[data-mf-idx="2"] .mfi-prices,
 .mf-section[data-mf-idx="4"] .mfi-prices { margin-right: 10%; }
@@ -5546,7 +5550,7 @@
 /* 2pcs / 4pcs align directly above their price column */
 .mf-section[data-mf-idx="1"] .mf-qty-cols { margin-right: 1%; }
 /* Hero: extend clip 100px right to cover mf-inner right padding (eliminates red border); left:−150vw lets image fill items column */
-.mf-section[data-mf-idx="1"] .mf-hero { z-index: 2; clip-path: inset(0 -100px -300px -150vw); background: #0B0B09; }
+.mf-section[data-mf-idx="1"] .mf-hero { z-index: 2; clip-path: inset(-300px -100px -300px -150vw); background: #0B0B09; }
 .mf-section[data-mf-idx="1"] .mf-body { gap: 0; }
 /* multiply blends the bento box dark edges into the red background seamlessly */
 .mf-section[data-mf-idx="1"] .mf-img { mix-blend-mode: multiply; }
@@ -5560,7 +5564,7 @@
   padding-left: calc(80px + 4vw);
   margin-right: 30%;
 }
-.mf-section[data-mf-idx="3"] .mf-hero { z-index: 2; clip-path: inset(0 -100px -300px -150vw); background: #0B0B09; }
+.mf-section[data-mf-idx="3"] .mf-hero { z-index: 2; clip-path: inset(-300px -100px -300px -150vw); background: #0B0B09; }
 .mf-section[data-mf-idx="3"] .mf-body { gap: 0; }
 .mf-section[data-mf-idx="3"] .mf-img { mix-blend-mode: multiply; }
 .mf-body--flip .mf-hed { text-align: right; }
