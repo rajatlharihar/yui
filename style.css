@@ -5523,7 +5523,7 @@
 
 .mf-section[data-mf-idx="0"] .mf-hero,
 .mf-section[data-mf-idx="2"] .mf-hero,
-.mf-section[data-mf-idx="4"] .mf-hero { z-index: 2; clip-path: inset(-300px -300px -300px -300px); }
+.mf-section[data-mf-idx="4"] .mf-hero { z-index: 2; clip-path: inset(-300px -900px -300px -300px); }
 /* "Appetizers" is long enough that the shared .mf-hed size (tuned for
    short words like Sushi/Curry/Nigiri/Ramen) overran the 28% hero column
    at every desktop width from 768px up to ~1800px — the heading's own
@@ -6840,7 +6840,7 @@
      76vh regardless); this ceiling only needs to stop truly pathological
      canvases, so it's raised well past anything a real monitor hits. */
   .mf-img-bleed {
-    width: clamp(320px, min(60vw, 85vh), 1500px);
+    width: clamp(320px, min(60vw, 88vh), 1500px);
     height: clamp(320px, min(60vw, 85vh), 1500px);
     bottom: clamp(0px, 2vh, 60px);
     left: clamp(40px, 6vw, 150px);
