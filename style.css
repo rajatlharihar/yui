@@ -6463,7 +6463,10 @@
     background: #171717;
   }
   .minimap-img-item {
-    width: 100%;
+    /* A couple px of right-edge overscan — sub-pixel rounding between this
+       100%-width layer and its clipped parent left a hairline gap on the
+       right, showing the dark #171717 backing as a thin black line. */
+    width: calc(100% + 2px);
     height: 100%;
   }
 

@@ -2775,8 +2775,15 @@
     }, {
       // Phone: only start pulling the 169 frames when the section is truly
       // near — preloading them at page load was flooding the main thread
-      // exactly while the logo reveal and hero video were playing
-      rootMargin: window.innerWidth <= 768 ? '120px' : '600px'
+      // exactly while the logo reveal and hero video were playing.
+      // Asymmetric now: a generous BOTTOM margin still starts the render
+      // loop early as you scroll down toward the hero, but a small TOP
+      // margin means it stops soon after you've scrolled past it, instead
+      // of the old symmetric 600px keeping it "visible" (and its per-frame
+      // canvas draw running) for 600px of scroll into the Artisans section
+      // right below it, competing with that section's own scroll-driven
+      // animation for main-thread time.
+      rootMargin: window.innerWidth <= 768 ? '40px 0px 120px 0px' : '100px 0px 600px 0px'
     });
     lazyObs.observe(section);
 
