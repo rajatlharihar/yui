@@ -5374,6 +5374,50 @@
 }
 
 /* ═══════════════════════════════════════════════════════
+   LAYOUT CONTAINMENT — resize performance
+   Traced an actual resize drag: every single tick was forcing a full-
+   document layout recalculation (~1250 elements, up to 146ms per pass —
+   confirmed via DevTools trace: dirtyObjects === totalObjects, one shared
+   layoutRoot at #document). Debouncing JS resize handlers doesn't touch
+   this — it's the browser's own native reflow, driven by how much of the
+   page uses vw/vh/%-based sizing. `contain: layout` gives each top-level
+   section its own layout boundary so resizing doesn't cascade into a
+   whole-page reflow — only `layout style`, not `paint`, so it doesn't
+   clip any section's intentional visual bleed (menu photos, Artisans
+   minimap, etc.). Sections already have explicit vh/vw-based sizing, so
+   none of them depend on an ancestor for their own dimensions — safe to
+   contain.
+═══════════════════════════════════════════════════════ */
+.hero,
+.precision-section,
+.artisans-section,
+.bento-gallery-section,
+.menu-flow,
+.res-section,
+.fy {
+  contain: layout style;
+}
+
+/* contain alone didn't move the number (re-traced: still 1246/1246 dirty) —
+   these ~1250 elements each depend DIRECTLY on viewport units, so isolating
+   cross-section cascades doesn't reduce what has to be recomputed. The
+   actual fix: skip layout entirely for sections that are off-screen, via
+   content-visibility. Scoped to only the sections with the simplest JS
+   (basic IntersectionObserver reveals, which are spec'd to work fine
+   across a content-visibility boundary) — deliberately NOT applied to the
+   hero/Artisans/menu cards, which drive their scroll-jacked animations off
+   continuous getBoundingClientRect() reads that content-visibility could
+   make return stale/zeroed values for while off-screen. contain-intrinsic-
+   size is a rough placeholder so nothing jumps when a section is skipped
+   vs. rendered. */
+.bento-gallery-section,
+.res-section,
+.fy {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1200px;
+}
+
+/* ═══════════════════════════════════════════════════════
    MENU FLOW — FlowArt stacking scroll
 ═══════════════════════════════════════════════════════ */
 .menu-flow { position: relative; }
@@ -5385,7 +5429,7 @@
   height: calc(var(--vh, 1vh) * 100);
   overflow: hidden;
   clip-path: inset(0);
-  contain: paint; /* guarantees all child overflow is clipped at section boundary */
+  contain: layout paint; /* guarantees all child overflow is clipped at section boundary, and isolates its layout from the rest of the page */
 }
 
 .mf-inner {
