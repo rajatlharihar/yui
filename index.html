@@ -1948,13 +1948,14 @@
     //   Mid-left small:   x=364–480, y=310–549
     //   Mid center:       x=506–723, y=310–549
     //   Mid right:        x=750–883, y=310–549
+    const AV = '20260725a'; // bump this whenever gallery image/video files are replaced, to bust browser image cache
     const SLOTS = [
-      { id:1, title:'The Dining Room',  desc:'Where every seat tells a story',        url:'images/yui/The Space Within/interior01.jpg', g:[0.187,0.141,0.188,0.451] }, // left tall
+      { id:1, title:'The Dining Room',  desc:'Where every seat tells a story',        url:'images/yui/The Space Within/interior01.jpg', vurl:'videos/interior01-noren.mp4', g:[0.187,0.141,0.188,0.451] }, // left tall
       { id:2, title:'Noren & Light',    desc:'A threshold between worlds',            url:'images/yui/The Space Within/interior09.jpg', g:[0.669,0.141,0.188,0.153] }, // bottom left
       { id:3, title:'Counter Dining',   desc:'An animated, intimate gathering',       url:'images/yui/The Space Within/interior11.jpg', g:[0.187,0.355,0.351,0.187] }, // top center wide
       { id:4, title:'Sake Pour',        desc:'Poured with care and ritual',           url:'images/yui/The Space Within/interior08.jpg', g:[0.187,0.732,0.130,0.187] }, // top right
       { id:5, title:'Wabi-sabi',        desc:'Imperfection as philosophy',            url:'images/yui/The Space Within/interior05.jpg', g:[0.408,0.355,0.113,0.312] }, // mid small left
-      { id:6, title:'Omakase',          desc:"The chef's choice, in silence",         url:'images/yui/The Space Within/interior07.jpg', g:[0.408,0.494,0.212,0.312] }, // mid center
+      { id:6, title:'Omakase',          desc:"The chef's choice, in silence",         url:'images/yui/The Space Within/interior07.jpg', vurl:'videos/interior07-chef.mp4', g:[0.408,0.494,0.212,0.312] }, // mid center
       { id:7, title:'The Kitchen',      desc:'Precision behind every plate',          url:'images/yui/The Space Within/interior14.jpg', g:[0.408,0.732,0.130,0.312] }, // mid right
     ];
 
@@ -1979,13 +1980,19 @@
         `top:${(t*100).toFixed(3)}%;left:${(l*100).toFixed(3)}%;` +
         `width:${(w*100).toFixed(3)}%;height:${(h*100).toFixed(3)}%`;
       el.innerHTML = `
-        <img class="slot-dodge" src="${s.url}" alt="${s.title}" loading="lazy" decoding="async">
-        <img class="slot-reveal" src="${s.url}" alt="${s.title}" loading="lazy" decoding="async">
+        <img class="slot-dodge" src="${s.url}?v=${AV}" alt="${s.title}" loading="lazy" decoding="async">
+        <img class="slot-reveal" src="${s.url}?v=${AV}" alt="${s.title}" loading="lazy" decoding="async">
+        ${s.vurl ? `<video class="slot-video" src="${s.vurl}?v=${AV}" muted loop playsinline preload="none"></video>` : ''}
         <div class="bento-slot-caption">
           <h3>${s.title}</h3>
           <p>${s.desc}</p>
         </div>`;
       el.addEventListener('click', () => openModal(s));
+      if (s.vurl) {
+        const vid = el.querySelector('.slot-video');
+        el.addEventListener('mouseenter', () => { vid.currentTime = 0; vid.play().catch(() => {}); });
+        el.addEventListener('mouseleave', () => { vid.pause(); });
+      }
       slotsEl.appendChild(el);
     });
 
@@ -1994,7 +2001,7 @@
       const t = document.createElement('div');
       t.className = 'bento-dock-thumb';
       t.dataset.id = s.id;
-      t.innerHTML = `<img src="${s.url}" alt="${s.title}" loading="lazy">`;
+      t.innerHTML = `<img src="${s.url}?v=${AV}" alt="${s.title}" loading="lazy">`;
       t.addEventListener('click', e => { e.stopPropagation(); switchSlot(s); });
       dock.appendChild(t);
     });
@@ -2022,7 +2029,7 @@
       c.style.top = (i * 10) + 'px'; // staggered stack offsets
       c.dataset.id = s.id;
       c.innerHTML = `
-        <img src="${s.url}" alt="${s.title}" loading="lazy">
+        <img src="${s.url}?v=${AV}" alt="${s.title}" loading="lazy">
         <div class="bsc-cap"><h3>${s.title}</h3><p>${s.desc}</p></div>`;
       cardsWrap.appendChild(c);
     });

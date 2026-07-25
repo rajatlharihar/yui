@@ -5121,6 +5121,21 @@
 .bento-tray-slot:hover .slot-dodge  { opacity: 0; }
 .bento-tray-slot:hover .slot-reveal { opacity: 1; transform: scale(1.06); }
 
+/* Hover-to-play video, sits above the reveal image and crossfades in on hover */
+.bento-tray-slot .slot-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 3;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s ease;
+}
+
+.bento-tray-slot:hover .slot-video { opacity: 1; }
+
 /* Caption on hover — sits above both image layers */
 .bento-slot-caption {
   position: absolute;
