@@ -108,23 +108,11 @@
     }
 
     /* CURSOR */
-    #cur-dot {
-      position: fixed;
-      left: 0; top: 0;
-      width: 4px;
-      height: 4px;
-      background: #E53935;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 20000;
-      will-change: transform;
-    }
-
     #cur-ring {
       position: fixed;
       left: 0; top: 0;
-      width: 44px;
-      height: 44px;
+      width: 64px;
+      height: 64px;
       pointer-events: none;
       z-index: 20000;
       will-change: transform;
@@ -148,14 +136,9 @@
     }
 
     body.on-link #cur-ring {
-      width: 52px;
-      height: 52px;
+      width: 76px;
+      height: 76px;
       transition: width .28s var(--ease), height .28s var(--ease)
-    }
-
-    body.on-link #cur-dot {
-      background: #E53935;
-      transform: translate(-50%, -50%) scale(1.2)
     }
 
     /* NAV LOGIC */
@@ -4537,7 +4520,7 @@
     }
 
     /* 1. Disable custom cursor on mobile to fix click issues */
-    #cur-dot, #cur-ring, .cur-trail {
+    #cur-ring, .cur-trail {
         display: none !important;
     }
     body, button, a, input, textarea, select {

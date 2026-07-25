@@ -212,7 +212,6 @@
   <div id="site-preloader">
     <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
   </div>
-  <div id="cur-dot"></div>
   <div id="cur-ring"><img src="images/yui/Logo/cursor-mark.svg" alt="" id="cur-ring-mark"></div>
   <div class="cur-trail" id="ct1"></div>
   <div class="cur-trail" id="ct2"></div>
@@ -922,14 +921,13 @@
   <script>
 
     // Cursor
-    const dot = document.getElementById('cur-dot'), ring = document.getElementById('cur-ring');
+    const ring = document.getElementById('cur-ring');
     const trails = ['ct1', 'ct2', 'ct3'].map(id => document.getElementById(id)).filter(Boolean);
-    let mx = 0, my = 0, rx = 0, ry = 0, tx = [0, 0, 0], ty = [0, 0, 0], px = 0, py = 0;
+    let mx = 0, my = 0, tx = [0, 0, 0], ty = [0, 0, 0], px = 0, py = 0;
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     (function ac() {
-      dot.style.transform = `translate(${mx - 2}px,${my - 2}px)`;
-      rx += (mx - rx) * .1; ry += (my - ry) * .1;
-      ring.style.transform = `translate(${rx - 22}px,${ry - 22}px)`;
+      const half = ring.offsetWidth / 2;
+      ring.style.transform = `translate(${mx - half}px,${my - half}px)`;
       const spd = Math.sqrt((mx - px) ** 2 + (my - py) ** 2);
       trails.forEach((t, i) => {
         const lag = .055 - .012 * i;
