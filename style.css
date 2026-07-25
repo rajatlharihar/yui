@@ -141,6 +141,22 @@
       transition: width .28s var(--ease), height .28s var(--ease)
     }
 
+    /* On hover, drop the brand red for an adaptive mark that reads black
+       on light backgrounds and white on dark ones automatically. */
+    body.on-link #cur-ring-mark {
+      filter: brightness(0) invert(1);
+      mix-blend-mode: difference;
+    }
+
+    /* Many buttons/links set their own cursor: pointer further down the
+       cascade, which overrides the global cursor: none and lets the native
+       hand icon leak through on hover. Force the custom cursor everywhere
+       except the chatbot widget, which intentionally keeps a native pointer
+       via its own !important rules below. */
+    a, button, input, textarea, select, .hov {
+      cursor: none !important;
+    }
+
     /* NAV LOGIC */
     /* NAV LOGIC - REFINED SPACING */
     .nav {
