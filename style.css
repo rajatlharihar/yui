@@ -123,6 +123,14 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+      /* Black by default so it reads against any background; only the
+         white-bg case (below) reveals the mark's native brand red. */
+      filter: brightness(0);
+    }
+
+    /* Over a white/near-white background, show the brand red instead. */
+    body.cur-on-white #cur-ring-mark {
+      filter: none;
     }
 
     .cur-trail {
@@ -139,13 +147,6 @@
       width: 76px;
       height: 76px;
       transition: width .28s var(--ease), height .28s var(--ease)
-    }
-
-    /* On hover, drop the brand red for an adaptive mark that reads black
-       on light backgrounds and white on dark ones automatically. */
-    body.on-link #cur-ring-mark {
-      filter: brightness(0) invert(1);
-      mix-blend-mode: difference;
     }
 
     /* Many buttons/links set their own cursor: pointer further down the

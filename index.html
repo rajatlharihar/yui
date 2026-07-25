@@ -924,9 +924,33 @@
     const ring = document.getElementById('cur-ring');
     const trails = ['ct1', 'ct2', 'ct3'].map(id => document.getElementById(id)).filter(Boolean);
     let mx = 0, my = 0, tx = [0, 0, 0], ty = [0, 0, 0], px = 0, py = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    // The mark's artwork sits inset within its square viewBox (measured via
+    // getBBox: ~18.5%/15.2% padding before the strokes start) — offset by
+    // that fraction of the rendered size so the hotspot lands on the tip of
+    // the illustration, not the empty corner of the bounding box.
+    const CUR_TIP_X = 0.1846, CUR_TIP_Y = 0.1517;
+
+    // Walks up from the element under the cursor to find the nearest opaque
+    // background color, so the mark can switch to red specifically over
+    // white/near-white sections.
+    function bgIsWhite(el) {
+      while (el && el !== document.documentElement) {
+        const m = getComputedStyle(el).backgroundColor.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
+        if (m) {
+          const a = m[4] === undefined ? 1 : parseFloat(m[4]);
+          if (a > 0.4) return +m[1] > 235 && +m[2] > 235 && +m[3] > 235;
+        }
+        el = el.parentElement;
+      }
+      return true; // page background is white
+    }
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      document.body.classList.toggle('cur-on-white', bgIsWhite(document.elementFromPoint(mx, my)));
+    });
     (function ac() {
-      ring.style.transform = `translate(${mx}px,${my}px)`;
+      const size = ring.offsetWidth;
+      ring.style.transform = `translate(${mx - size * CUR_TIP_X}px,${my - size * CUR_TIP_Y}px)`;
       const spd = Math.sqrt((mx - px) ** 2 + (my - py) ** 2);
       trails.forEach((t, i) => {
         const lag = .055 - .012 * i;
