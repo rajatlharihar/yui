@@ -3877,8 +3877,12 @@
 .minimap-img-item {
   position: absolute;
   top: 0;
-  left: 0;
-  width: 431px;
+  /* A few px of left-edge overscan — sub-pixel rounding against the
+     scaled (0.82) ancestor left a hairline gap on the left, showing the
+     dark #171717 backing as a thin black line. Widened to compensate so
+     the right edge (and swipe alignment) stays put. */
+  left: -3px;
+  width: calc(431px + 3px);
   height: 567px;
   overflow: hidden;
   background: #171717;

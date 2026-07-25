@@ -981,8 +981,8 @@
       const panel = document.getElementById('heroRight');
       const overlay = document.getElementById('heroOverlay');
       const circle = document.getElementById('heroCircle');
-      const illusImg = panel.querySelector('.hero-illus img');
       if (!panel) return;
+      const illusImg = panel.querySelector('.hero-illus img');
       let ocx = 50, ocy = 50, ocr = 0, tcx = 50, tcy = 50, hover = false;
       const R = 210;
       panel.addEventListener('mouseenter', () => hover = true);
@@ -2308,7 +2308,7 @@
     if (!aboutSection || !container) return;
 
     const SLIDE_COUNT = 3;
-    const SWIPE_ZONE = 0.45; // last 45% of each segment is the swipe window
+    const SWIPE_ZONE = 0.8; // last 80% of each segment is the swipe window
     const chefSlides  = Array.from(container.querySelectorAll('.chef-slide'));
     const minimapImgs = Array.from(container.querySelectorAll('.minimap-img-item'));
     const minimapInfos = container.querySelectorAll('.minimap-item-info');
@@ -2325,6 +2325,8 @@
     };
 
     const clamp01 = (v) => Math.max(0, Math.min(1, v));
+    // Cubic ease-out — fast start, gentle settle into place.
+    const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 
     // p ∈ [0, SLIDE_COUNT-1] continuous. Slide i swipes in over
     // p ∈ [i - SWIPE_ZONE, i]; underneath, the covered slide drifts left.
@@ -2336,12 +2338,12 @@
       for (let i = 0; i < SLIDE_COUNT; i++) {
         let x;
         if (i === 0) x = 0;
-        else x = (1 - clamp01((p - (i - SWIPE_ZONE)) / SWIPE_ZONE)) * 100;
+        else x = (1 - easeOut(clamp01((p - (i - SWIPE_ZONE)) / SWIPE_ZONE))) * 100;
         if (x < 0.01 && i < SLIDE_COUNT - 1) {
           // Desktop only: parallax drift as the next slide covers it.
           // On phone the drift exposed a band under the covered layer
           // when scrolling back — covered layers stay parked at 0 instead.
-          const covered = clamp01((p - (i + 1 - SWIPE_ZONE)) / SWIPE_ZONE);
+          const covered = easeOut(clamp01((p - (i + 1 - SWIPE_ZONE)) / SWIPE_ZONE));
           x = isPhone ? 0 : covered * -24;
         }
         const t = isPhone
@@ -2364,7 +2366,7 @@
         return;
       }
       // Phone settles faster — long lerp tails keep the GPU compositing
-      currentP += diff * (window.innerWidth <= 767 ? 0.16 : 0.08);
+      currentP += diff * (window.innerWidth <= 767 ? 0.16 : 0.22);
       apply(currentP);
       rafId = requestAnimationFrame(tick);
     };
