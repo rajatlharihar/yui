@@ -926,8 +926,7 @@
     let mx = 0, my = 0, tx = [0, 0, 0], ty = [0, 0, 0], px = 0, py = 0;
     document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
     (function ac() {
-      const half = ring.offsetWidth / 2;
-      ring.style.transform = `translate(${mx - half}px,${my - half}px)`;
+      ring.style.transform = `translate(${mx}px,${my}px)`;
       const spd = Math.sqrt((mx - px) ** 2 + (my - py) ** 2);
       trails.forEach((t, i) => {
         const lag = .055 - .012 * i;
