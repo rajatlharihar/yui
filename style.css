@@ -214,7 +214,7 @@
     }
     .nav.menu-card-active.nav-wipe-down::before {
       transform-origin: center bottom;
-      animation: navCardWipeOut 0.24s cubic-bezier(0.3, 0.9, 0.4, 1) forwards;
+      animation: navCardWipeOut 0.1s cubic-bezier(0.3, 0.9, 0.4, 1) forwards;
     }
     @keyframes navCardWipeOut {
       from { transform: scaleY(1); }
