@@ -3742,7 +3742,8 @@
   color: #F5EDE3 !important;
   transform: scale(0) translate3d(0, 0, 0);
   opacity: 0;
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease;
+  visibility: hidden;
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease, visibility 0.5s ease;
   pointer-events: none;
   transform-origin: 40% 60%;
   will-change: transform, opacity;
@@ -3756,6 +3757,7 @@
 .parallax-container.chef-active-last .chef-title-overlay .chef-title-hed .cream-mask {
   transform: scale(1.15) translate3d(0, 0, 0);
   opacity: 1;
+  visibility: visible;
 }
 
 /* Japanese layer also white */
