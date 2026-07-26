@@ -2300,7 +2300,7 @@
   })();
   </script>
 
-  <!-- Artisans slide driver — OPTIMIZED for 60fps smoothness -->
+  <!-- Artisans slide driver — Direct scroll-position mapping (no lerp layer) -->
   <script>
   (function() {
     const aboutSection = document.querySelector('.artisans-section');
@@ -2314,11 +2314,9 @@
     const minimapInfos = container.querySelectorAll('.minimap-item-info');
 
     let lastIdx = -1;
-    let targetP = 0, currentP = 0, rafId = null;
     let isPhone = window.innerWidth <= 767;
-    let isAnimating = false;
 
-    // Precompute easing table for faster lookup (60fps × 3s max animation)
+    // Precompute easing table
     const EASE_TABLE_SIZE = 180;
     const easeTable = new Float32Array(EASE_TABLE_SIZE);
     for (let i = 0; i < EASE_TABLE_SIZE; i++) {
@@ -2327,119 +2325,61 @@
     }
 
     const clamp01 = (v) => Math.max(0, Math.min(1, v));
-    const easeOutLookup = (t) => easeTable[Math.floor(clamp01(t) * (EASE_TABLE_SIZE - 1))];
+    const easeOut = (t) => easeTable[Math.floor(clamp01(t) * (EASE_TABLE_SIZE - 1))];
 
     const setActive = (idx) => {
       if (idx === lastIdx) return;
       lastIdx = idx;
 
-      // Batch DOM updates
       for (let i = 0; i < SLIDE_COUNT; i++) {
         const active = i === idx;
-        const info = minimapInfos[i];
-        if (info) {
-          info.classList.toggle('active', active);
-          if (isPhone && minimapInfos[i]) minimapInfos[i].style.willChange = active ? 'transform' : 'auto';
-        }
-        const slide = chefSlides[i];
-        if (slide) slide.classList.toggle('bg-on', active);
+        minimapInfos[i].classList.toggle('active', active);
+        chefSlides[i].classList.toggle('bg-on', active);
       }
       container.classList.toggle('chef-active-last', idx === SLIDE_COUNT - 1);
     };
 
-    const apply = (p) => {
-      let needsUpdate = false;
+    const update = () => {
+      const rect = aboutSection.getBoundingClientRect();
+      if (rect.bottom < -100 || rect.top > window.innerHeight + 100) return;
 
+      const coverZone = isPhone ? window.innerHeight : 0;
+      const depth = aboutSection.offsetHeight - window.innerHeight - coverZone;
+      const p = clamp01(-rect.top / (depth * 0.82)) * (SLIDE_COUNT - 1);
+
+      // Direct transform mapping — no lerp, no RAF
       for (let i = 0; i < SLIDE_COUNT; i++) {
         let x;
         if (i === 0) {
           x = 0;
         } else {
           const progress = clamp01((p - (i - SWIPE_ZONE)) / SWIPE_ZONE);
-          x = (1 - easeOutLookup(progress)) * 100;
+          x = (1 - easeOut(progress)) * 100;
 
           if (x < 0.01 && i < SLIDE_COUNT - 1 && !isPhone) {
-            const covered = easeOutLookup(clamp01((p - (i + 1 - SWIPE_ZONE)) / SWIPE_ZONE));
+            const covered = easeOut(clamp01((p - (i + 1 - SWIPE_ZONE)) / SWIPE_ZONE));
             x = covered * -24;
           }
         }
 
-        if (minimapImgs[i]) {
-          const t = isPhone ? `translate3d(0,${x}%,0)` : `translate3d(${x}%,0,0)`;
-          minimapImgs[i].style.transform = t;
-          needsUpdate = true;
-        }
+        const transform = isPhone ? `translate3d(0,${x}%,0)` : `translate3d(${x}%,0,0)`;
+        minimapImgs[i].style.transform = transform;
 
         if (isPhone && minimapInfos[i]) {
           minimapInfos[i].style.transform = `translate3d(0,${x}%,0)`;
         }
       }
 
-      if (needsUpdate) {
-        setActive(Math.max(0, Math.min(SLIDE_COUNT - 1, Math.round(p))));
-      }
+      setActive(Math.max(0, Math.min(SLIDE_COUNT - 1, Math.round(p))));
     };
 
-    const tick = () => {
-      const diff = targetP - currentP;
-      // Snap to target faster for crisp final state
-      if (Math.abs(diff) < 0.001) {
-        currentP = targetP;
-        apply(currentP);
-        isAnimating = false;
-        rafId = null;
-        return;
-      }
-
-      // Adaptive lerp: faster when far, smooth when near
-      const distRatio = Math.abs(diff);
-      let lerp;
-      if (distRatio > 0.5) {
-        lerp = isPhone ? 0.28 : 0.32; // Fast approach
-      } else if (distRatio > 0.1) {
-        lerp = isPhone ? 0.20 : 0.26; // Medium
-      } else {
-        lerp = isPhone ? 0.14 : 0.18; // Smooth settle
-      }
-
-      currentP += diff * lerp;
-      apply(currentP);
-      rafId = requestAnimationFrame(tick);
-    };
-
-    let lastScrollTime = 0;
-    const SCROLL_THROTTLE = 16; // ~60fps
-
-    const update = () => {
-      const now = performance.now();
-      if (now - lastScrollTime < SCROLL_THROTTLE) return;
-      lastScrollTime = now;
-
-      const rect = aboutSection.getBoundingClientRect();
-      if (rect.bottom < -100 || rect.top > window.innerHeight + 100) {
-        if (isAnimating) rafId && cancelAnimationFrame(rafId);
-        isAnimating = false;
-        return;
-      }
-
-      const coverZone = isPhone ? window.innerHeight : 0;
-      const depth = aboutSection.offsetHeight - window.innerHeight - coverZone;
-      targetP = clamp01(-rect.top / (depth * 0.82)) * (SLIDE_COUNT - 1);
-
-      if (!isAnimating) {
-        isAnimating = true;
-        if (!rafId) rafId = requestAnimationFrame(tick);
-      }
-    };
-
-    // Use Lenis if available, fallback to native scroll
+    // Listen to Lenis scroll events (if available) for perfectly smooth scroll
     if (window.lenis) {
       window.lenis.on('scroll', update);
     } else {
       window.addEventListener('scroll', update, { passive: true });
     }
 
-    // Recalculate isPhone on resize
     window.addEventListener('resize', () => {
       isPhone = window.innerWidth <= 767;
     }, { passive: true });
