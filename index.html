@@ -2342,31 +2342,43 @@
       container.classList.toggle('chef-active-last', idx === SLIDE_COUNT - 1);
     };
 
+    let lastRectTop = 0;
+    let pendingUpdate = false;
+
     const update = () => {
-      if (!isVisible) return; // Skip if section not in view
+      if (!isVisible || pendingUpdate) return;
+      pendingUpdate = true;
 
-      const rect = aboutSection.getBoundingClientRect();
-      const p = clamp01(-rect.top / (cachedDepth * 0.82)) * (SLIDE_COUNT - 1);
+      requestAnimationFrame(() => {
+        pendingUpdate = false;
+        const rect = aboutSection.getBoundingClientRect();
 
-      // Batch all transforms in one loop
-      for (let i = 0; i < SLIDE_COUNT; i++) {
-        let x = 0;
-        if (i > 0) {
-          const progress = clamp01((p - (i - SWIPE_ZONE)) / SWIPE_ZONE);
-          x = (1 - easeOut(progress)) * 100;
+        // Only update if position actually changed (avoid layout thrashing)
+        if (Math.abs(rect.top - lastRectTop) < 0.1) return;
+        lastRectTop = rect.top;
 
-          if (x < 0.01 && i < SLIDE_COUNT - 1 && !isPhone) {
-            const covered = easeOut(clamp01((p - (i + 1 - SWIPE_ZONE)) / SWIPE_ZONE));
-            x = covered * -24;
+        const p = clamp01(-rect.top / (cachedDepth * 0.82)) * (SLIDE_COUNT - 1);
+
+        // Batch all transforms in one loop
+        for (let i = 0; i < SLIDE_COUNT; i++) {
+          let x = 0;
+          if (i > 0) {
+            const progress = clamp01((p - (i - SWIPE_ZONE)) / SWIPE_ZONE);
+            x = (1 - easeOut(progress)) * 100;
+
+            if (x < 0.01 && i < SLIDE_COUNT - 1 && !isPhone) {
+              const covered = easeOut(clamp01((p - (i + 1 - SWIPE_ZONE)) / SWIPE_ZONE));
+              x = covered * -24;
+            }
           }
+
+          const transform = isPhone ? `translate3d(0,${x}%,0)` : `translate3d(${x}%,0,0)`;
+          minimapImgs[i].style.transform = transform;
+          if (isPhone) minimapInfos[i].style.transform = transform;
         }
 
-        const transform = isPhone ? `translate3d(0,${x}%,0)` : `translate3d(${x}%,0,0)`;
-        minimapImgs[i].style.transform = transform;
-        if (isPhone) minimapInfos[i].style.transform = transform;
-      }
-
-      setActive(Math.max(0, Math.min(SLIDE_COUNT - 1, Math.round(p))));
+        setActive(Math.max(0, Math.min(SLIDE_COUNT - 1, Math.round(p))));
+      });
     };
 
     // Only attach scroll handler when section is visible
@@ -2383,7 +2395,7 @@
     }, { threshold: 0 });
     visibilityObserver.observe(aboutSection);
 
-    // Lenis scroll handler — only fires when section is visible
+    // Lenis scroll handler — only fires when section is visible, throttled via RAF
     if (window.lenis) {
       window.lenis.on('scroll', update);
     } else {
