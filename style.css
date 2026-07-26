@@ -3871,13 +3871,13 @@
   border-radius: 6px;
 }
 
-/* Image preview — fills full card height edge-to-edge */
+/* Image preview — fills full card height edge-to-edge (cropped 3px right overflow) */
 .minimap-img-preview {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 431px;
+  width: 428px;
   height: 567px;
   overflow: hidden;
   z-index: 2;

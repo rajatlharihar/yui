@@ -2300,7 +2300,7 @@
   })();
   </script>
 
-  <!-- Artisans slide driver — Direct scroll-position mapping (no lerp layer) -->
+  <!-- Artisans slide driver — Optimized: only update when visible, no layout thrashing -->
   <script>
   (function() {
     const aboutSection = document.querySelector('.artisans-section');
@@ -2315,6 +2315,9 @@
 
     let lastIdx = -1;
     let isPhone = window.innerWidth <= 767;
+    let isVisible = false;
+    let cachedDepth = 0;
+    let cachedCoverZone = 0;
 
     // Precompute easing table
     const EASE_TABLE_SIZE = 180;
@@ -2340,19 +2343,15 @@
     };
 
     const update = () => {
+      if (!isVisible) return; // Skip if section not in view
+
       const rect = aboutSection.getBoundingClientRect();
-      if (rect.bottom < -100 || rect.top > window.innerHeight + 100) return;
+      const p = clamp01(-rect.top / (cachedDepth * 0.82)) * (SLIDE_COUNT - 1);
 
-      const coverZone = isPhone ? window.innerHeight : 0;
-      const depth = aboutSection.offsetHeight - window.innerHeight - coverZone;
-      const p = clamp01(-rect.top / (depth * 0.82)) * (SLIDE_COUNT - 1);
-
-      // Direct transform mapping — no lerp, no RAF
+      // Batch all transforms in one loop
       for (let i = 0; i < SLIDE_COUNT; i++) {
-        let x;
-        if (i === 0) {
-          x = 0;
-        } else {
+        let x = 0;
+        if (i > 0) {
           const progress = clamp01((p - (i - SWIPE_ZONE)) / SWIPE_ZONE);
           x = (1 - easeOut(progress)) * 100;
 
@@ -2364,16 +2363,27 @@
 
         const transform = isPhone ? `translate3d(0,${x}%,0)` : `translate3d(${x}%,0,0)`;
         minimapImgs[i].style.transform = transform;
-
-        if (isPhone && minimapInfos[i]) {
-          minimapInfos[i].style.transform = `translate3d(0,${x}%,0)`;
-        }
+        if (isPhone) minimapInfos[i].style.transform = transform;
       }
 
       setActive(Math.max(0, Math.min(SLIDE_COUNT - 1, Math.round(p))));
     };
 
-    // Listen to Lenis scroll events (if available) for perfectly smooth scroll
+    // Only attach scroll handler when section is visible
+    const visibilityObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          // Recalculate cached values when entering view
+          cachedCoverZone = isPhone ? window.innerHeight : 0;
+          cachedDepth = aboutSection.offsetHeight - window.innerHeight - cachedCoverZone;
+          update();
+        }
+      });
+    }, { threshold: 0 });
+    visibilityObserver.observe(aboutSection);
+
+    // Lenis scroll handler — only fires when section is visible
     if (window.lenis) {
       window.lenis.on('scroll', update);
     } else {
@@ -2382,20 +2392,22 @@
 
     window.addEventListener('resize', () => {
       isPhone = window.innerWidth <= 767;
+      if (isVisible) {
+        cachedCoverZone = isPhone ? window.innerHeight : 0;
+        cachedDepth = aboutSection.offsetHeight - window.innerHeight - cachedCoverZone;
+      }
     }, { passive: true });
 
     const chefTitle = container.querySelector('.chef-title-hed');
-    const visObserver = new IntersectionObserver((entries) => {
+    const glitchObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting && chefTitle && chefTitle.playGlitchEntry) {
           chefTitle.playGlitchEntry();
-          visObserver.disconnect();
+          glitchObserver.disconnect();
         }
       });
     }, { threshold: 0.1 });
-    visObserver.observe(container);
-
-    update();
+    glitchObserver.observe(container);
   })();
   </script>
 
