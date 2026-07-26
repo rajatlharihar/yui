@@ -2382,7 +2382,8 @@
 
     const tick = () => {
       const diff = targetP - currentP;
-      if (Math.abs(diff) < 0.002) {
+      // Snap to target faster for crisp final state
+      if (Math.abs(diff) < 0.001) {
         currentP = targetP;
         apply(currentP);
         isAnimating = false;
@@ -2390,7 +2391,17 @@
         return;
       }
 
-      const lerp = isPhone ? 0.18 : 0.24;
+      // Adaptive lerp: faster when far, smooth when near
+      const distRatio = Math.abs(diff);
+      let lerp;
+      if (distRatio > 0.5) {
+        lerp = isPhone ? 0.28 : 0.32; // Fast approach
+      } else if (distRatio > 0.1) {
+        lerp = isPhone ? 0.20 : 0.26; // Medium
+      } else {
+        lerp = isPhone ? 0.14 : 0.18; // Smooth settle
+      }
+
       currentP += diff * lerp;
       apply(currentP);
       rafId = requestAnimationFrame(tick);

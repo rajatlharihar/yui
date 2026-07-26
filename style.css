@@ -3881,14 +3881,15 @@
   height: 567px;
   overflow: hidden;
   z-index: 2;
+  contain: layout paint;
 }
 
 /* Minimap images swipe with GPU-optimized transforms */
 .minimap-img-item {
   position: absolute;
   top: 0;
-  left: -3px;
-  width: calc(431px + 3px);
+  left: 0;
+  width: 431px;
   height: 567px;
   overflow: hidden;
   background: #171717;
@@ -3907,6 +3908,10 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
 /* Info list — overlays full card, text flows around center image */
