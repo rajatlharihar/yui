@@ -173,14 +173,63 @@
       opacity: 0;
       visibility: hidden;
     }
+    .preloader-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+    }
     .preloader-logo {
-      width: 60px;
+      width: 56px;
       height: auto;
       animation: preloader-hover 1.2s infinite ease-in-out alternate;
     }
     @keyframes preloader-hover {
       0% { transform: translateY(0) scale(1); opacity: 0.7; }
       100% { transform: translateY(-12px) scale(1.05); opacity: 1; }
+    }
+    .preloader-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      height: 28px;
+    }
+    .preloader-bars span {
+      width: 3px;
+      height: 100%;
+      background: #E32527;
+      border-radius: 2px;
+      transform-origin: bottom center;
+      animation: preloader-bar 1.05s ease-in-out infinite;
+    }
+    .preloader-bars span:nth-child(1) { animation-delay: 0s; }
+    .preloader-bars span:nth-child(2) { animation-delay: .12s; }
+    .preloader-bars span:nth-child(3) { animation-delay: .24s; }
+    .preloader-bars span:nth-child(4) { animation-delay: .36s; }
+    .preloader-bars span:nth-child(5) { animation-delay: .48s; }
+    @keyframes preloader-bar {
+      0%, 100% { transform: scaleY(0.22); opacity: 0.55; }
+      50%      { transform: scaleY(1);    opacity: 1; }
+    }
+    .preloader-status {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 7px;
+      font-family: 'Outfit', sans-serif;
+    }
+    .preloader-pct {
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: #FFFDFE;
+      font-variant-numeric: tabular-nums;
+    }
+    .preloader-label {
+      font-size: 10px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: rgba(255, 253, 254, 0.4);
     }
   </style>
 
@@ -210,7 +259,14 @@
 
 <body>
   <div id="site-preloader">
-    <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+    <div class="preloader-inner">
+      <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+      <div class="preloader-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="preloader-status">
+        <span class="preloader-pct" id="preloaderPct">0%</span>
+        <span class="preloader-label" id="preloaderLabel">Preparing the room</span>
+      </div>
+    </div>
   </div>
   <div id="cur-dot"></div>
   <div id="cur-ring"></div>
@@ -422,26 +478,45 @@
       </div>
     </div>
 
-    <!-- Modal overlay -->
+    <!-- Modal overlay: opens onto the 3D drum carousel — drag (or the
+         arrows) to spin through every photo, the front one is live
+         (autoplays if it has video); the caption below tracks it. -->
     <div class="bento-modal-overlay" id="bentoModal" aria-hidden="true">
       <div class="bento-modal-bg" id="bentoModalBg"></div>
+      <button class="bento-modal-close" id="bentoModalClose" aria-label="Close">
+        <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
+          <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
       <div class="bento-modal-panel">
-        <img class="bento-modal-img" id="bentoModalImg" src="" alt="">
+        <div class="carousel3d-wrap" id="carousel3dWrap">
+          <button class="carousel3d-arrow carousel3d-prev" id="carousel3dPrev" aria-label="Rotate left">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <div class="carousel3d-stage" id="carousel3dStage">
+            <div class="carousel3d-drum" id="carousel3dDrum"></div>
+          </div>
+          <button class="carousel3d-arrow carousel3d-next" id="carousel3dNext" aria-label="Rotate right">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+
+          <!-- Zoomed photo: a plain centered overlay, not a 3D-space
+               transform — simple, dead-center, closes with an obvious X. -->
+          <div class="carousel3d-zoom" id="carousel3dZoom">
+            <button class="carousel3d-zoom-close" id="carousel3dZoomClose" aria-label="Close">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <img class="carousel3d-zoom-img" id="carousel3dZoomImg" src="" alt="">
+            <video class="carousel3d-zoom-video" id="carousel3dZoomVideo" muted loop playsinline></video>
+          </div>
+        </div>
         <div class="bento-modal-caption">
           <h3 id="bentoModalTitle"></h3>
           <p id="bentoModalDesc"></p>
         </div>
-        <button class="bento-modal-close" id="bentoModalClose" aria-label="Close">
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-            <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </button>
-        <!-- Keyboard nav hint -->
-        <div class="bento-nav-hint">
-          <span>← →</span> navigate
-        </div>
       </div>
-      <div class="bento-dock" id="bentoDock"></div>
     </div>
   </section>
 
@@ -1044,12 +1119,45 @@
     })();
 
     // Mobile nav toggle
+    var navDrawerOpenedAt = 0;
     function toggleMobileNav() {
       const drawer = document.getElementById('navDrawer');
       const hamburger = document.getElementById('navHamburger');
+      const opening = !drawer.classList.contains('open');
       drawer.classList.toggle('open');
       hamburger.classList.toggle('active');
+      if (opening) navDrawerOpenedAt = Date.now();
     }
+    function closeMobileNav() {
+      const drawer = document.getElementById('navDrawer');
+      const hamburger = document.getElementById('navHamburger');
+      if (!drawer || !drawer.classList.contains('open')) return;
+      // Ignore the same tap/gesture that just opened it
+      if (Date.now() - navDrawerOpenedAt < 250) return;
+      drawer.classList.remove('open');
+      hamburger.classList.remove('active');
+    }
+    (function () {
+      const drawer = document.getElementById('navDrawer');
+      const hamburger = document.getElementById('navHamburger');
+      if (!drawer || !hamburger) return;
+
+      // Home (or any drawer link) closes it
+      drawer.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMobileNav));
+
+      // The slightest scroll or touch movement closes it
+      window.addEventListener('scroll', closeMobileNav, { passive: true });
+      window.addEventListener('touchmove', closeMobileNav, { passive: true });
+
+      // Tapping/clicking anywhere outside the drawer or hamburger closes it
+      function outsideClose(e) {
+        if (!drawer.classList.contains('open')) return;
+        if (drawer.contains(e.target) || hamburger.contains(e.target)) return;
+        closeMobileNav();
+      }
+      document.addEventListener('click', outsideClose);
+      document.addEventListener('touchstart', outsideClose, { passive: true });
+    })();
   </script>
     <!-- YUI ASSISTANT -->
   <div class="yui-wrapper" id="yui-widget">
@@ -1184,6 +1292,7 @@
           const MIC_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>`;
           const STOP_ICON = `<svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><rect x="6" y="6" width="12" height="12" rx="2" /></svg>`;
           let isVoiceMode = false;
+          let isSending = false; // guards against double-submission (double tap, Enter mashed while a reply is in flight)
           let chatHistory = []; // session-only, never persisted
           let yuiVoiceAudio = null;
 
@@ -1404,12 +1513,15 @@
       };
 
       const handleSend = async () => {
+        if (isSending) return;
         const text = sendInput.value.trim();
         if (!text) {
           setYuiState('idle');
           return;
         }
 
+        isSending = true;
+        sendBtn.disabled = true;
         setYuiState('thinking');
         chatHistory.push({ role: 'user', content: text });
         sendInput.value = '';
@@ -1461,6 +1573,9 @@
           addMessage(errorMsg, 'bot');
           if (isVoiceMode) speakYui(errorMsg);
           else setYuiState('idle');
+        } finally {
+          isSending = false;
+          sendBtn.disabled = false;
         }
       };
 
@@ -1960,14 +2075,21 @@
     ];
 
     const slotsEl   = document.getElementById('bentoGrid');
-    const modal     = document.getElementById('bentoModal');
-    const modalBg   = document.getElementById('bentoModalBg');
-    const modalImg  = document.getElementById('bentoModalImg');
-    const modalTitle= document.getElementById('bentoModalTitle');
-    const modalDesc = document.getElementById('bentoModalDesc');
-    const modalClose= document.getElementById('bentoModalClose');
-    const dock      = document.getElementById('bentoDock');
-    if (!slotsEl || !modal) return;
+    const modal      = document.getElementById('bentoModal');
+    const modalBg    = document.getElementById('bentoModalBg');
+    const modalClose = document.getElementById('bentoModalClose');
+    const modalTitle = document.getElementById('bentoModalTitle');
+    const modalDesc  = document.getElementById('bentoModalDesc');
+    const drumEl     = document.getElementById('carousel3dDrum');
+    const stageEl    = document.getElementById('carousel3dStage');
+    const carWrap    = document.getElementById('carousel3dWrap');
+    const carPrev    = document.getElementById('carousel3dPrev');
+    const carNext    = document.getElementById('carousel3dNext');
+    const zoomEl     = document.getElementById('carousel3dZoom');
+    const zoomImg    = document.getElementById('carousel3dZoomImg');
+    const zoomVideo  = document.getElementById('carousel3dZoomVideo');
+    const zoomClose  = document.getElementById('carousel3dZoomClose');
+    if (!slotsEl || !modal || !drumEl) return;
 
     // ── Build compartment slots ──────────────────────────
     // Positions use CSS % — the wrapper has aspect-ratio:1030/686 so its height is
@@ -1996,103 +2118,227 @@
       slotsEl.appendChild(el);
     });
 
-    // ── Build dock ───────────────────────────────────────
-    SLOTS.forEach(s => {
-      const t = document.createElement('div');
-      t.className = 'bento-dock-thumb';
-      t.dataset.id = s.id;
-      t.innerHTML = `<img src="${s.url}?v=${AV}" alt="${s.title}" loading="lazy">`;
-      t.addEventListener('click', e => { e.stopPropagation(); switchSlot(s); });
-      dock.appendChild(t);
+    // ── Build the 3D drum: one card per slot, evenly spaced around a ring.
+    // Drag the stage (or use the arrows) to spin it; the front-facing card
+    // autoplays its video if it has one, and the caption below tracks it.
+    const N = SLOTS.length;
+    const angleStep = 360 / N;
+    let rotation = 0;
+    let radius = 300;
+
+    const carVideos = []; // parallel to carCards; null where a slot has no video
+    const carCards = SLOTS.map((s, i) => {
+      const el = document.createElement('div');
+      el.className = 'carousel3d-card';
+      el.dataset.index = i;
+      el.innerHTML = `
+        <img src="${s.url}?v=${AV}" alt="${s.title}" loading="lazy" decoding="async">
+        ${s.vurl ? `<video class="carousel3d-video" src="${s.vurl}?v=${AV}" muted loop playsinline preload="none"></video>` : ''}`;
+      drumEl.appendChild(el);
+      carVideos.push(s.vurl ? el.querySelector('.carousel3d-video') : null);
+      return el;
     });
 
-    // ── Dots (phone) — one per photo, swipe or tap to move ──
-    const dotsWrap = document.createElement('div');
-    dotsWrap.className = 'bento-dots';
-    SLOTS.forEach(s => {
-      const d = document.createElement('span');
-      d.className = 'bento-dot';
-      d.dataset.id = s.id;
-      d.addEventListener('click', e => { e.stopPropagation(); switchSlot(s); });
-      dotsWrap.appendChild(d);
-    });
-    const modalPanel = modal.querySelector('.bento-modal-panel');
-    if (modalPanel) modalPanel.appendChild(dotsWrap);
-
-    // ── Phone: stacked scroll-cards gallery (cards pile up as you scroll) ──
-    const cardsWrap = document.createElement('div');
-    cardsWrap.className = 'bento-cards-scroll';
-    cardsWrap.setAttribute('data-lenis-prevent', ''); // keep Lenis off this scroller
-    SLOTS.forEach((s, i) => {
-      const c = document.createElement('div');
-      c.className = 'bento-scroll-card';
-      c.style.top = (i * 10) + 'px'; // staggered stack offsets
-      c.dataset.id = s.id;
-      c.innerHTML = `
-        <img src="${s.url}?v=${AV}" alt="${s.title}" loading="lazy">
-        <div class="bsc-cap"><h3>${s.title}</h3><p>${s.desc}</p></div>`;
-      cardsWrap.appendChild(c);
-    });
-    if (modalPanel) modalPanel.appendChild(cardsWrap);
-
-    let activeId = null;
-    modalImg.style.transition = 'opacity 0.11s ease';
-
-    // ── Modal ────────────────────────────────────────────
-    function switchSlot(s) {
-      activeId = s.id;
-      modalImg.style.opacity = '0';
-      setTimeout(() => { modalImg.src = s.url; modalImg.alt = s.title; modalImg.style.opacity = '1'; }, 110);
-      modalTitle.textContent = s.title;
-      modalDesc.textContent  = s.desc;
-      dock.querySelectorAll('.bento-dock-thumb').forEach(t =>
-        t.classList.toggle('active', +t.dataset.id === s.id));
-      dotsWrap.querySelectorAll('.bento-dot').forEach(d =>
-        d.classList.toggle('active', +d.dataset.id === s.id));
+    // Whichever card's absolute angle sits closest to 0° is facing the
+    // viewer. Also stacks every card's z-index by that same closeness, so
+    // the true front card always wins hit-testing over an overlapping
+    // sibling behind it.
+    function frontIndex() {
+      let best = 0, bestDiff = Infinity;
+      carCards.forEach((el, i) => {
+        const ang = ((i * angleStep + rotation) % 360 + 360) % 360;
+        const diff = Math.min(ang, 360 - ang);
+        el.style.zIndex = String(Math.round(100 - diff));
+        if (diff < bestDiff) { bestDiff = diff; best = i; }
+      });
+      return best;
     }
 
-    // ── Swipe through photos (phone) ──
-    let touchX = null;
-    modal.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; }, { passive: true });
-    modal.addEventListener('touchend', e => {
-      if (touchX === null) return;
-      const dx = e.changedTouches[0].clientX - touchX;
-      touchX = null;
-      if (Math.abs(dx) < 40) return;
-      const idx = SLOTS.findIndex(s => s.id === activeId);
-      if (dx < 0) switchSlot(SLOTS[(idx + 1) % SLOTS.length]);
-      else switchSlot(SLOTS[(idx - 1 + SLOTS.length) % SLOTS.length]);
+    // The rotation transform is updated every single frame while dragging,
+    // so it has to stay cheap. Which card is "front" only actually changes a
+    // handful of times per full spin — video/caption/class updates are
+    // gated behind that so a drag doesn't re-toggle 7 elements + restart
+    // videos on every pointermove (that per-event DOM work was the main
+    // cause of the dragging feeling laggy).
+    let lastFrontIdx = -1;
+    function renderCarousel() {
+      drumEl.style.transform = `rotateY(${-rotation}deg)`;
+      const front = frontIndex();
+      if (front === lastFrontIdx) return;
+      lastFrontIdx = front;
+      carCards.forEach((el, i) => {
+        el.classList.toggle('is-front', i === front);
+        const vid = carVideos[i];
+        if (!vid) return;
+        if (i === front) { vid.currentTime = 0; vid.play().catch(() => {}); }
+        else vid.pause();
+      });
+      const s = SLOTS[front];
+      modalTitle.textContent = s.title;
+      modalDesc.textContent  = s.desc;
+    }
+
+    // ── Zoom: clicking the front card opens it centered in a plain overlay
+    // — not a 3D-space transform on the card itself. Simplest, most robust
+    // way to guarantee it's always dead-center and closes cleanly: a fixed
+    // X to close it, click its background, or Escape.
+    let zoomedIndex = null;
+
+    function openZoom(i) {
+      zoomedIndex = i;
+      const s = SLOTS[i];
+      zoomEl.classList.toggle('showing-video', !!s.vurl);
+      if (s.vurl) {
+        zoomVideo.src = s.vurl;
+        zoomVideo.currentTime = 0;
+        zoomVideo.play().catch(() => {});
+      } else {
+        zoomVideo.pause();
+        zoomVideo.removeAttribute('src');
+      }
+      zoomImg.src = s.url;
+      zoomImg.alt = s.title;
+      zoomEl.classList.add('open');
+      if (carWrap) carWrap.classList.add('zoomed-active');
+    }
+    function exitZoom() {
+      if (zoomedIndex === null) return;
+      zoomedIndex = null;
+      zoomEl.classList.remove('open');
+      zoomVideo.pause();
+      if (carWrap) carWrap.classList.remove('zoomed-active');
+    }
+    zoomClose.addEventListener('click', e => { e.stopPropagation(); exitZoom(); });
+    zoomEl.addEventListener('click', e => { if (e.target === zoomEl) exitZoom(); });
+
+    function applyCardTransform(i) {
+      carCards[i].style.transform =
+        `translate(-50%,-50%) rotateY(${i * angleStep}deg) translateZ(${radius}px)`;
+    }
+
+    function layoutCarousel() {
+      const w = parseFloat(getComputedStyle(carCards[0]).width);
+      radius = (w / 2) / Math.tan(Math.PI / N);
+      carCards.forEach((_, i) => applyCardTransform(i));
+    }
+
+    function rotateToIndex(i, animate) {
+      if (animate === false) drumEl.style.transition = 'none';
+      rotation = -i * angleStep;
+      renderCarousel();
+      if (animate === false) {
+        void drumEl.offsetHeight; // force layout so the transition re-enables cleanly for the next change
+        drumEl.style.transition = '';
+      }
+    }
+
+    carPrev.addEventListener('click', () => { rotation -= angleStep; renderCarousel(); });
+    carNext.addEventListener('click', () => { rotation += angleStep; renderCarousel(); });
+
+    // ── Drag to spin, and tap-vs-drag detection, all from one pointer
+    // sequence (pointerdown → move → up) instead of a separate `click`
+    // listener — that split was unreliable (a tap could get misread as a
+    // drag, or the wrong overlapping card could catch it), which is why
+    // tapping the front card to zoom often silently did nothing. The zoom
+    // overlay covers and captures input over this whole area while open,
+    // so none of this fires until it's closed. Pointermove can also fire
+    // far faster than the screen repaints, so the transform update is
+    // batched to one rAF per frame rather than one per event — that
+    // mismatch was the other big source of the dragging feeling laggy.
+    let carouselDragging = false, dragStartX = 0, rotationAtStart = 0;
+    let pendingDx = null, dragRafScheduled = false, hasDraggedFar = false, downCardIndex = null;
+
+    function dragTick() {
+      dragRafScheduled = false;
+      if (pendingDx === null || !carouselDragging) return;
+      rotation = rotationAtStart - pendingDx * 0.4;
+      renderCarousel();
+    }
+    stageEl.addEventListener('pointerdown', e => {
+      const cardEl = e.target.closest('.carousel3d-card');
+      downCardIndex = cardEl ? carCards.indexOf(cardEl) : null;
+      carouselDragging = true; hasDraggedFar = false;
+      dragStartX = e.clientX; rotationAtStart = rotation;
+      drumEl.style.transition = 'none';
+      stageEl.setPointerCapture(e.pointerId);
+    });
+    stageEl.addEventListener('pointermove', e => {
+      if (!carouselDragging) return;
+      const dx = e.clientX - dragStartX;
+      if (Math.abs(dx) > 6) hasDraggedFar = true;
+      pendingDx = dx;
+      if (!dragRafScheduled) { dragRafScheduled = true; requestAnimationFrame(dragTick); }
+    });
+    function endCarouselDrag() {
+      if (!carouselDragging) return;
+      carouselDragging = false;
+      pendingDx = null;
+      drumEl.style.transition = '';
+      if (!hasDraggedFar && downCardIndex !== null) {
+        if (downCardIndex === frontIndex()) openZoom(downCardIndex);
+        else rotateToIndex(downCardIndex);
+      } else {
+        rotateToIndex(((Math.round(-rotation / angleStep) % N) + N) % N);
+      }
+      downCardIndex = null;
+    }
+    stageEl.addEventListener('pointerup', endCarouselDrag);
+    stageEl.addEventListener('pointercancel', () => {
+      carouselDragging = false; pendingDx = null; downCardIndex = null;
+      drumEl.style.transition = '';
+    });
+
+    // Scroll to spin — one wheel "tick" rotates one card, debounced so a
+    // single trackpad swipe doesn't spin through the whole set.
+    let wheelLocked = false;
+    modal.addEventListener('wheel', e => {
+      if (wheelLocked) return;
+      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      if (Math.abs(delta) < 8) return;
+      wheelLocked = true;
+      rotation += delta > 0 ? angleStep : -angleStep;
+      rotateToIndex(((Math.round(-rotation / angleStep) % N) + N) % N);
+      setTimeout(() => { wheelLocked = false; }, 220);
     }, { passive: true });
 
+    window.addEventListener('resize', () => { layoutCarousel(); renderCarousel(); });
+    requestAnimationFrame(() => { layoutCarousel(); renderCarousel(); });
+
+    let navRestoreTimer = null;
+
     function openModal(s) {
-      switchSlot(s);
       modal.setAttribute('aria-hidden', 'false');
       modal.classList.add('open');
-      // Stacked scroll-cards view on every screen, opened at the tapped photo
-      modal.classList.add('cards-mode');
-      requestAnimationFrame(() => {
-        const card = cardsWrap.querySelector('[data-id="' + s.id + '"]');
-        if (card) cardsWrap.scrollTop = card.offsetTop;
-      });
+      rotateToIndex(SLOTS.findIndex(x => x.id === s.id), false);
       if (window.lenis) window.lenis.stop();
       document.body.style.overflow = 'hidden';
-      // Phone: hide the floating nav chips — the modal X sits where the
-      // hamburger lives
-      var navEl = document.getElementById('nav');
-      if (navEl && window.innerWidth <= 767) navEl.classList.add('nav--modal-open');
+      if (typeof closeMobileNav === 'function') closeMobileNav();
+      if (navRestoreTimer) { clearTimeout(navRestoreTimer); navRestoreTimer = null; }
+      const navEl = document.getElementById('nav');
+      if (navEl) navEl.classList.add('nav--modal-open');
     }
 
     function closeModal() {
       modal.classList.remove('open');
       modal.setAttribute('aria-hidden', 'true');
+      exitZoom();
+      carCards.forEach(el => { const v = el.querySelector('.carousel3d-video'); if (v) v.pause(); });
       if (window.lenis) window.lenis.start();
       document.body.style.overflow = '';
-      var navEl = document.getElementById('nav');
-      if (navEl) navEl.classList.remove('nav--modal-open');
+      const navEl = document.getElementById('nav');
+      if (navEl) {
+        // Wait out the modal's own fade so the nav bar never crossfades
+        // visibly through/over the closing gallery — that overlap used to
+        // read as the close button and hamburger colliding.
+        navRestoreTimer = setTimeout(() => { navEl.classList.remove('nav--modal-open'); navRestoreTimer = null; }, 320);
+      }
     }
 
     modalClose.addEventListener('click', closeModal);
-    modalBg.addEventListener('click', closeModal);
+    modalBg.addEventListener('click', () => {
+      if (zoomedIndex !== null) { exitZoom(); return; }
+      closeModal();
+    });
 
     // Phone: when the tray first appears it drifts very slowly to the
     // right (a real scroll, so it stays where it lands) — "swipe me".
@@ -2123,10 +2369,9 @@
 
     document.addEventListener('keydown', e => {
       if (!modal.classList.contains('open')) return;
-      if (e.key === 'Escape') { closeModal(); return; }
-      const idx = SLOTS.findIndex(s => s.id === activeId);
-      if (e.key === 'ArrowRight') switchSlot(SLOTS[(idx + 1) % SLOTS.length]);
-      if (e.key === 'ArrowLeft')  switchSlot(SLOTS[(idx - 1 + SLOTS.length) % SLOTS.length]);
+      if (e.key === 'Escape') { if (zoomedIndex !== null) exitZoom(); else closeModal(); return; }
+      if (e.key === 'ArrowRight') { if (zoomedIndex !== null) exitZoom(); else { rotation += angleStep; renderCarousel(); } }
+      if (e.key === 'ArrowLeft')  { if (zoomedIndex !== null) exitZoom(); else { rotation -= angleStep; renderCarousel(); } }
     });
   })();
   </script>
@@ -3080,19 +3325,89 @@
     </div>
   </div>
   <script>
-    function dismissPreloader() {
-      const preloader = document.getElementById('site-preloader');
-      if (preloader && !preloader.classList.contains('hidden')) {
+    (function () {
+      var preloader = document.getElementById('site-preloader');
+      var pctEl = document.getElementById('preloaderPct');
+      var labelEl = document.getElementById('preloaderLabel');
+      if (!preloader) return;
+
+      var LABELS = ['Preparing the room', 'Setting the table', 'Warming the lights', 'Almost ready'];
+      var labelStep = 0;
+      var labelTimer = setInterval(function () {
+        labelStep = (labelStep + 1) % LABELS.length;
+        if (labelEl) labelEl.textContent = LABELS[labelStep];
+      }, 900);
+
+      function dismissPreloader() {
+        if (preloader.classList.contains('hidden')) return;
+        clearInterval(labelTimer);
         preloader.classList.add('hidden');
-        setTimeout(() => preloader.remove(), 600);
+        setTimeout(function () { preloader.remove(); }, 600);
       }
-    }
-    
-    // Dismiss preloader when page fully loads
-    window.addEventListener('load', dismissPreloader);
-    
-    // Fallback: force preloader dismissal after 1s maximum (images now load progressively)
-    setTimeout(dismissPreloader, 1000);
+
+      // Only the assets visible without scrolling are worth blocking on —
+      // everything below the fold (gallery slots, dock thumbs, etc.) is
+      // already marked loading="lazy" on purpose elsewhere in the page, and
+      // waiting on those here would just make this screen sit there longer
+      // for no visible benefit.
+      var criticalImgs = Array.prototype.filter.call(document.images, function (img) {
+        var src = img.getAttribute('src');
+        return img.getAttribute('loading') !== 'lazy' && !!src && src.trim() !== '';
+      });
+      var heroVideo = document.getElementById('heroVideo');
+
+      var total = criticalImgs.length + (heroVideo ? 1 : 0);
+      var loaded = 0;
+      var shownPct = 0, targetPct = 0, ticking = false;
+
+      function tick() {
+        if (shownPct < targetPct) {
+          shownPct++;
+          if (pctEl) pctEl.textContent = shownPct + '%';
+          requestAnimationFrame(tick);
+        } else {
+          ticking = false;
+        }
+      }
+      function bumpTo(pct) {
+        targetPct = pct;
+        if (!ticking) { ticking = true; requestAnimationFrame(tick); }
+      }
+
+      var pageLoaded = false, minTimeElapsed = false;
+      function maybeFinish() {
+        if (loaded >= total && pageLoaded && minTimeElapsed) dismissPreloader();
+      }
+      function onAssetSettled() {
+        loaded++;
+        bumpTo(total ? Math.round((loaded / total) * 100) : 100);
+        if (loaded >= total) maybeFinish();
+      }
+
+      // Never flash-dismiss on a fast cached load — give the loader a
+      // moment to actually be seen — but never hang on a slow one either.
+      setTimeout(function () { minTimeElapsed = true; maybeFinish(); }, 500);
+      window.addEventListener('load', function () { pageLoaded = true; maybeFinish(); });
+      setTimeout(dismissPreloader, 6000); // hard safety net
+
+      if (total === 0) {
+        bumpTo(100);
+      } else {
+        criticalImgs.forEach(function (img) {
+          if (img.complete) { onAssetSettled(); return; }
+          img.addEventListener('load', onAssetSettled, { once: true });
+          img.addEventListener('error', onAssetSettled, { once: true });
+        });
+        if (heroVideo) {
+          if (heroVideo.readyState >= 2) {
+            onAssetSettled();
+          } else {
+            heroVideo.addEventListener('loadeddata', onAssetSettled, { once: true });
+            heroVideo.addEventListener('error', onAssetSettled, { once: true });
+          }
+        }
+      }
+    })();
 
     // Initialize Lenis Smooth Scroll
     document.addEventListener('DOMContentLoaded', () => {

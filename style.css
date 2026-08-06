@@ -179,9 +179,25 @@
       /* short, linear easing so the bar tracks the scroll position closely */
       transition: background 0.3s ease, backdrop-filter 0.18s linear,
                   min-height 0.18s linear, padding 0.18s linear, color 0.3s ease,
-                  transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                  transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                  opacity 0.25s ease;
       overflow: visible;
       color: color-mix(in srgb, var(--text) calc(var(--nav-p) * 100%), #fff);
+    }
+
+    /* While the Space Within gallery is open, the nav (and, on phone, the
+       hamburger sitting where the gallery's own close X lives) must be
+       fully out of the way — on every screen size, not just phone, since
+       the modal's dark backdrop is translucent enough that the nav bar
+       ghosts through it otherwise. Hidden instantly (transition:none) so
+       it never crossfades visibly under the gallery as it opens; the JS
+       only removes this class after the gallery has already finished
+       fading out on close, so the nav's normal opacity transition (above)
+       fades it back in cleanly with nothing left to collide with. */
+    .nav.nav--modal-open {
+      transition: none !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     /* When over a FlowArt menu card — card colour takes over.
@@ -1028,6 +1044,8 @@
     }
     .yui-btn-send:hover { transform: scale(1.1); box-shadow: 0 4px 14px rgba(227,37,39,0.35); }
     .yui-btn-send svg { display: block; }
+    .yui-btn-send:disabled { opacity: 0.6; cursor: default; pointer-events: none; }
+    .yui-btn-send:disabled:hover { transform: none; box-shadow: none; }
 
     .yui-powered {
       font-size: 10px;
@@ -5209,9 +5227,35 @@
 .bento-modal-bg {
   position: absolute;
   inset: 0;
-  background: rgba(8, 6, 4, 0.88);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(6, 5, 4, 0.97);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* The gallery's own close button lives at a fixed viewport corner — kept
+   as a direct child of the overlay (not the panel) so it's never affected
+   by stage zoom/pan transforms. */
+.bento-modal-close {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(20,16,12,0.85);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.bento-modal-close:hover {
+  background: var(--accent, #C8102E);
+  border-color: var(--accent, #C8102E);
 }
 
 .bento-modal-panel {
@@ -5220,21 +5264,185 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: min(90vw, 860px);
+  justify-content: center;
   width: 100%;
+  height: 100%;
+  padding: 32px 24px;
+  box-sizing: border-box;
 }
 
-.bento-modal-img {
+/* ── 3D drum carousel (lives inside the popup) ──────────
+   One card per photo, evenly spaced around a ring. Drag the stage (or
+   the arrows) to spin it; the front-facing card is the live one — its
+   video autoplays if it has one — and the caption below tracks it.
+   Sized to its own content (not flex:1 filling the panel) and centered
+   as a group with the caption, so the caption sits immediately under
+   the ring instead of getting stranded near the bottom of the screen
+   while the ring floats above center. */
+.carousel3d-wrap {
+  position: relative;
+  flex-shrink: 0;
   width: 100%;
-  max-height: 70vh;
+  height: clamp(280px, 34vw, 440px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Extra headroom while a photo is zoomed, so it reads as meaningfully
+   bigger than the ring rather than just filling the same box. */
+.carousel3d-wrap.zoomed-active {
+  height: clamp(380px, 46vw, 560px);
+}
+
+.carousel3d-stage {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  height: 100%;
+  perspective: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: pan-y;
+  cursor: grab;
+}
+.carousel3d-stage:active { cursor: grabbing; }
+
+.carousel3d-drum {
+  position: relative;
+  width: 1px;
+  height: 1px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.carousel3d-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(150px, 17vw, 230px);
+  height: clamp(195px, 22vw, 300px);
+  box-sizing: border-box;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  overflow: hidden;
+  cursor: pointer;
+  background: #0c0c0c;
+  box-shadow: 0 20px 46px rgba(0, 0, 0, 0.4);
+  backface-visibility: hidden;
+  filter: brightness(0.34) saturate(0.55);
+  transition: filter 0.4s ease, box-shadow 0.4s ease, border-color 0.3s ease,
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* The card facing the viewer while browsing the ring — full brightness
+   plus an accent-colour ring, so it's unambiguous which photo is "in
+   focus" even before anything is clicked. */
+.carousel3d-card.is-front {
+  filter: brightness(1) saturate(1);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.55);
+  border-color: var(--accent, #C8102E);
+}
+
+.carousel3d-card img,
+.carousel3d-card video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+.carousel3d-card video { display: none; }
+.carousel3d-card:has(video).is-front img { display: none; }
+.carousel3d-card:has(video).is-front video { display: block; }
+
+/* ── Zoom overlay: a plain centered layer, not a 3D-space transform on the
+   card itself — simplest, most robust way to guarantee the zoomed photo
+   is always dead-center and closes cleanly. */
+.carousel3d-zoom {
+  position: absolute;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.9);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.carousel3d-zoom.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+.carousel3d-zoom-img,
+.carousel3d-zoom-video {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
   object-fit: contain;
   display: block;
-  border-radius: 2px;
+  border-radius: 8px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+}
+.carousel3d-zoom-video { display: none; }
+.carousel3d-zoom.showing-video .carousel3d-zoom-img { display: none; }
+.carousel3d-zoom.showing-video .carousel3d-zoom-video { display: block; }
+
+.carousel3d-zoom-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.22);
+  background: rgba(20,16,12,0.9);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.carousel3d-zoom-close:hover {
+  background: var(--accent, #C8102E);
+  border-color: var(--accent, #C8102E);
 }
 
+.carousel3d-arrow {
+  position: relative;
+  z-index: 5; /* stage has its own stacking context (perspective) capping card
+                 z-index inside it — this just needs to beat the stage's own
+                 (auto/0) level so a side card can never paint over an arrow */
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.carousel3d-arrow:hover {
+  background: var(--accent, #C8102E);
+  border-color: var(--accent, #C8102E);
+}
+
+
 .bento-modal-caption {
-  margin-top: 20px;
+  margin-top: 18px;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .bento-modal-caption h3 {
@@ -5253,72 +5461,6 @@
   margin: 0;
 }
 
-.bento-modal-close {
-  position: absolute;
-  top: -14px;
-  right: -14px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.2);
-  background: rgba(20,16,12,0.85);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.bento-modal-close:hover {
-  background: var(--accent, #C8102E);
-  border-color: var(--accent, #C8102E);
-}
-
-.bento-nav-hint {
-  margin-top: 14px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  color: rgba(255,255,255,0.3);
-  text-transform: uppercase;
-}
-
-/* ── Dock ────────────────────────────────────────────── */
-.bento-dock {
-  display: flex;
-  gap: 8px;
-  justify-content: center;
-  margin-top: 20px;
-  position: relative;
-  z-index: 1;
-}
-
-.bento-dock-thumb {
-  width: 48px;
-  height: 36px;
-  overflow: hidden;
-  border-radius: 2px;
-  cursor: pointer;
-  border: 1.5px solid transparent;
-  transition: border-color 0.2s, transform 0.2s;
-  opacity: 0.5;
-}
-
-.bento-dock-thumb:hover,
-.bento-dock-thumb.active {
-  opacity: 1;
-  border-color: var(--accent, #C8102E);
-  transform: translateY(-3px);
-}
-
-.bento-dock-thumb img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
 /* ── Mobile ──────────────────────────────────────────── */
 @media (max-width: 600px) {
   .bento-tray-wrapper {
@@ -5329,15 +5471,13 @@
   .bento-slot-caption h3 { font-size: 8px; }
   .bento-slot-caption p  { display: none; }
 
-  .bento-modal-close {
-    top: -12px;
-    right: -4px;
-  }
+  .bento-modal-panel { padding: 20px 12px; }
 
-  .bento-dock-thumb {
-    width: 36px;
-    height: 28px;
+  .carousel3d-arrow {
+    width: 34px;
+    height: 34px;
   }
+  .carousel3d-arrow svg { width: 16px; height: 16px; }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -6377,26 +6517,6 @@
     transform: translateY(-50%) !important;
   }
 
-  /* Chips step aside while the bento gallery modal is open (its close X
-     sits exactly where the hamburger lives). pointer-events isn't part
-     of the opacity transition, so on close it flipped back to clickable
-     instantly while the nav was still fading back in over 0.25s — a
-     window where a tap meant for the still-visible modal close button
-     could land on the reappearing (but nearly invisible) hamburger
-     underneath. Delaying pointer-events until the fade finishes closes
-     that window. */
-  .nav {
-    transition: background 0.3s ease, backdrop-filter 0.18s linear,
-                min-height 0.18s linear, padding 0.18s linear, color 0.3s ease,
-                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.25s ease, pointer-events 0s 0.25s;
-  }
-  .nav.nav--modal-open {
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transition: opacity 0.25s ease;
-  }
-
   /* Nav reserve pill: hair to the right, sized like the Explore Menu pill */
   .nav .nav-cta {
     transform: translateX(2px);
@@ -6780,10 +6900,6 @@
   /* ── Footer: breathing room between the logo and Reserve Now ── */
   .fy-logo-row { margin-top: 26px; }
 
-  /* ── Bento: phone-only bits (dock/dots hidden; cards CSS is global) ── */
-  .bento-dock { display: none !important; }
-  .bento-dots { display: none !important; }
-
   /* ── Minimal nav past the hero: logo chip left, hamburger chip right ── */
   .nav.nav--minimal {
     background: transparent !important;
@@ -6890,12 +7006,6 @@
   .nav.nav--minimal .nav-hamburger span { background: #0D0C0A; }
   .nav.nav--minimal .nav-hamburger::before,
   .nav.nav--minimal .nav-hamburger::after { background: #0D0C0A; }
-}
-
-/* Scroll-cards exist only in the phone modal */
-.bento-cards-scroll { display: none; }
-@media (min-width: 768px) {
-  .bento-dots { display: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -7040,81 +7150,6 @@
 }
 .yui-panel.has-messages .yui-messages::before { display: none; }
 .yui-empty-state { position: relative; z-index: 1; }
-
-/* ═══════════════════════════════════════════════════════════════
-   BENTO GALLERY MODAL — stacked scroll-cards on EVERY screen size
-   ═══════════════════════════════════════════════════════════════ */
-.bento-modal-overlay.cards-mode .bento-modal-panel {
-  position: absolute;
-  inset: 0;
-  top: 0;
-  left: 0;
-  width: 100%;
-  max-width: none;
-  height: 100%;
-  transform: none;
-  padding: 0;
-  background: transparent;
-}
-.bento-modal-overlay.cards-mode .bento-modal-img,
-.bento-modal-overlay.cards-mode .bento-modal-caption,
-.bento-modal-overlay.cards-mode .bento-nav-hint,
-.bento-modal-overlay.cards-mode .bento-dock {
-  display: none !important;
-}
-.bento-modal-overlay.cards-mode .bento-modal-close {
-  position: absolute;
-  top: 20px;
-  right: 22px;
-  z-index: 30;
-}
-.bento-modal-overlay.cards-mode .bento-cards-scroll {
-  display: block;
-  position: absolute;
-  inset: 72px 0 0;
-  overflow-y: auto;
-  padding: 0 20px 80px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  touch-action: pan-y;
-  overscroll-behavior: contain;
-}
-.bento-cards-scroll::-webkit-scrollbar { display: none; }
-.bento-scroll-card {
-  position: sticky;
-  max-width: 760px;
-  margin: 0 auto 22px;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #1b1b1b;
-  box-shadow: 0 -12px 36px rgba(0, 0, 0, 0.5);
-}
-.bento-scroll-card img {
-  width: 100%;
-  height: 44vh;
-  object-fit: cover;
-  display: block;
-}
-.bsc-cap { padding: 14px 16px 18px; }
-.bsc-cap h3 {
-  font-family: 'Restora', Georgia, serif;
-  font-size: 19px;
-  color: #FFFDFE;
-  margin: 0 0 4px;
-}
-.bsc-cap p {
-  font-size: 12px;
-  line-height: 1.55;
-  color: rgba(255, 253, 254, 0.65);
-  margin: 0;
-}
-@media (min-width: 768px) {
-  .bento-modal-overlay.cards-mode .bento-cards-scroll { padding: 0 40px 100px; }
-  .bento-scroll-card img { height: 54vh; }
-  .bsc-cap { padding: 18px 24px 22px; }
-  .bsc-cap h3 { font-size: 24px; }
-  .bsc-cap p { font-size: 14px; }
-}
 
 /* ═══════════════════════════════════════════════════════════════
    CHATBOT INPUT — gradient pill (ruixen) + loading send (kokonut)
