@@ -2082,7 +2082,6 @@
     const modalDesc  = document.getElementById('bentoModalDesc');
     const drumEl     = document.getElementById('carousel3dDrum');
     const stageEl    = document.getElementById('carousel3dStage');
-    const carWrap    = document.getElementById('carousel3dWrap');
     const carPrev    = document.getElementById('carousel3dPrev');
     const carNext    = document.getElementById('carousel3dNext');
     const zoomEl     = document.getElementById('carousel3dZoom');
@@ -2199,14 +2198,12 @@
       zoomImg.src = s.url;
       zoomImg.alt = s.title;
       zoomEl.classList.add('open');
-      if (carWrap) carWrap.classList.add('zoomed-active');
     }
     function exitZoom() {
       if (zoomedIndex === null) return;
       zoomedIndex = null;
       zoomEl.classList.remove('open');
       zoomVideo.pause();
-      if (carWrap) carWrap.classList.remove('zoomed-active');
     }
     zoomClose.addEventListener('click', e => { e.stopPropagation(); exitZoom(); });
     zoomEl.addEventListener('click', e => { if (e.target === zoomEl) exitZoom(); });

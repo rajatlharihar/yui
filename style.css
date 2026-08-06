@@ -5288,12 +5288,6 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  transition: height 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-}
-/* Extra headroom while a photo is zoomed, so it reads as meaningfully
-   bigger than the ring rather than just filling the same box. */
-.carousel3d-wrap.zoomed-active {
-  height: clamp(380px, 46vw, 560px);
 }
 
 .carousel3d-stage {
@@ -5358,19 +5352,23 @@
 .carousel3d-card:has(video).is-front img { display: none; }
 .carousel3d-card:has(video).is-front video { display: block; }
 
-/* ── Zoom overlay: a plain centered layer, not a 3D-space transform on the
-   card itself — simplest, most robust way to guarantee the zoomed photo
-   is always dead-center and closes cleanly. */
+/* ── Zoom overlay: fixed to the actual viewport (not the carousel's own
+   box) — that box can be shorter than the zoomed photo on smaller screens,
+   which was pushing the "centered" image up against the top instead of
+   truly centering it. Fixed positioning sidesteps that entirely: this
+   always centers in the full window regardless of the carousel's size. */
 .carousel3d-zoom {
-  position: absolute;
+  position: fixed;
   inset: 0;
-  z-index: 300;
+  z-index: 9600; /* above the modal overlay (9000) and its own close X (20) */
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 60px 24px;
+  box-sizing: border-box;
   opacity: 0;
   pointer-events: none;
-  transform: scale(0.9);
+  transform: scale(0.92);
   transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .carousel3d-zoom.open {
@@ -5393,13 +5391,15 @@
 .carousel3d-zoom.showing-video .carousel3d-zoom-img { display: none; }
 .carousel3d-zoom.showing-video .carousel3d-zoom-video { display: block; }
 
+/* Top-left, deliberately mirrored from the modal's own close X (top-right)
+   so the two are never sitting on top of each other. */
 .carousel3d-zoom-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+  position: fixed;
+  top: 20px;
+  left: 24px;
   z-index: 2;
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.22);
   background: rgba(20,16,12,0.9);
