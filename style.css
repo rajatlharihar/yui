@@ -5366,6 +5366,11 @@
   justify-content: center;
   padding: 60px 24px;
   box-sizing: border-box;
+  /* Own scrim: without it the carousel ring and caption stay visible
+     through the zoomed photo, which reads as a rendering glitch. */
+  background: rgba(6, 5, 4, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   opacity: 0;
   pointer-events: none;
   transform: scale(0.92);

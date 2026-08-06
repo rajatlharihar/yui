@@ -478,47 +478,58 @@
       </div>
     </div>
 
-    <!-- Modal overlay: opens onto the 3D drum carousel — drag (or the
-         arrows) to spin through every photo, the front one is live
-         (autoplays if it has video); the caption below tracks it. -->
-    <div class="bento-modal-overlay" id="bentoModal" aria-hidden="true">
-      <div class="bento-modal-bg" id="bentoModalBg"></div>
-      <button class="bento-modal-close" id="bentoModalClose" aria-label="Close">
-        <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
-          <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-      </button>
-      <div class="bento-modal-panel">
-        <div class="carousel3d-wrap" id="carousel3dWrap">
-          <button class="carousel3d-arrow carousel3d-prev" id="carousel3dPrev" aria-label="Rotate left">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-          </button>
-          <div class="carousel3d-stage" id="carousel3dStage">
-            <div class="carousel3d-drum" id="carousel3dDrum"></div>
-          </div>
-          <button class="carousel3d-arrow carousel3d-next" id="carousel3dNext" aria-label="Rotate right">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
-          </button>
+  </section>
 
-          <!-- Zoomed photo: a plain centered overlay, not a 3D-space
-               transform — simple, dead-center, closes with an obvious X. -->
-          <div class="carousel3d-zoom" id="carousel3dZoom">
-            <button class="carousel3d-zoom-close" id="carousel3dZoomClose" aria-label="Close">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-            </button>
-            <img class="carousel3d-zoom-img" id="carousel3dZoomImg" src="" alt="">
-            <video class="carousel3d-zoom-video" id="carousel3dZoomVideo" muted loop playsinline></video>
-          </div>
+  <!-- Gallery modal — deliberately a direct child of <body>, NOT inside
+       #about-gallery. That section (like every top-level section) carries
+       `contain: layout style` for resize performance, and `contain: layout`
+       makes an element a containing block for position:fixed descendants —
+       which trapped this whole overlay inside the section's box (rendering
+       it at the section's size/offset instead of the viewport, so it landed
+       off-center, its buttons sat off-screen, and clicks hit-tested against
+       the wrong coordinates). Keeping it at body level means no ancestor
+       containment or transform can ever capture it again.
+       Opens onto the 3D drum carousel — drag (or the arrows) to spin
+       through every photo, the front one is live (autoplays if it has
+       video); the caption below tracks it. -->
+  <div class="bento-modal-overlay" id="bentoModal" aria-hidden="true">
+    <div class="bento-modal-bg" id="bentoModalBg"></div>
+    <button class="bento-modal-close" id="bentoModalClose" aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 12 12" fill="none">
+        <path d="M1 1L11 11M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="bento-modal-panel">
+      <div class="carousel3d-wrap" id="carousel3dWrap">
+        <button class="carousel3d-arrow carousel3d-prev" id="carousel3dPrev" aria-label="Rotate left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <div class="carousel3d-stage" id="carousel3dStage">
+          <div class="carousel3d-drum" id="carousel3dDrum"></div>
         </div>
-        <div class="bento-modal-caption">
-          <h3 id="bentoModalTitle"></h3>
-          <p id="bentoModalDesc"></p>
-        </div>
+        <button class="carousel3d-arrow carousel3d-next" id="carousel3dNext" aria-label="Rotate right">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+      </div>
+      <div class="bento-modal-caption">
+        <h3 id="bentoModalTitle"></h3>
+        <p id="bentoModalDesc"></p>
       </div>
     </div>
-  </section>
+
+    <!-- Zoomed photo: a plain viewport-centered overlay, a sibling of the
+         panel so no carousel styling (or the stage's `perspective`, which
+         would likewise trap a fixed child) can affect its centering. -->
+    <div class="carousel3d-zoom" id="carousel3dZoom">
+      <button class="carousel3d-zoom-close" id="carousel3dZoomClose" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <img class="carousel3d-zoom-img" id="carousel3dZoomImg" src="" alt="">
+      <video class="carousel3d-zoom-video" id="carousel3dZoomVideo" muted loop playsinline></video>
+    </div>
+  </div>
 
   <!-- Removed editorial divider -->
   </div>
@@ -2139,17 +2150,22 @@
     });
 
     // Whichever card's absolute angle sits closest to 0° is facing the
-    // viewer. Also stacks every card's z-index by that same closeness, so
-    // the true front card always wins hit-testing over an overlapping
-    // sibling behind it.
+    // viewer. The drum renders at rotateY(-rotation) and each card sits at
+    // rotateY(i*angleStep) inside it, so a card's real world angle is
+    // (i*angleStep - rotation) — note the MINUS. Getting this sign wrong
+    // silently returns the card at the BACK of the ring instead of the
+    // front, which desynced the highlight, the caption, and click handling
+    // (a tap on the visibly-front card looked like a tap on a side card,
+    // so it rotated instead of zooming). No z-index juggling here: inside
+    // a preserve-3d context the browser already sorts paint and hit-testing
+    // by true 3D depth, and a hand-rolled z-index only fights that.
     function frontIndex() {
       let best = 0, bestDiff = Infinity;
-      carCards.forEach((el, i) => {
-        const ang = ((i * angleStep + rotation) % 360 + 360) % 360;
+      for (let i = 0; i < N; i++) {
+        const ang = ((i * angleStep - rotation) % 360 + 360) % 360;
         const diff = Math.min(ang, 360 - ang);
-        el.style.zIndex = String(Math.round(100 - diff));
         if (diff < bestDiff) { bestDiff = diff; best = i; }
-      });
+      }
       return best;
     }
 
@@ -2219,14 +2235,25 @@
       carCards.forEach((_, i) => applyCardTransform(i));
     }
 
+    // Card i faces the viewer when rotation === i*angleStep (see frontIndex).
+    // rotation is kept continuous rather than wrapped to 0–360, so picking
+    // the equivalent target nearest the current value keeps the drum taking
+    // the short way round instead of unwinding a full turn.
     function rotateToIndex(i, animate) {
       if (animate === false) drumEl.style.transition = 'none';
-      rotation = -i * angleStep;
+      const turns = Math.round((rotation / angleStep - i) / N);
+      rotation = (i + turns * N) * angleStep;
       renderCarousel();
       if (animate === false) {
         void drumEl.offsetHeight; // force layout so the transition re-enables cleanly for the next change
         drumEl.style.transition = '';
       }
+    }
+
+    // Settle onto the closest card without changing which one that is.
+    function snapToNearest() {
+      rotation = Math.round(rotation / angleStep) * angleStep;
+      renderCarousel();
     }
 
     carPrev.addEventListener('click', () => { rotation -= angleStep; renderCarousel(); });
@@ -2275,7 +2302,7 @@
         if (downCardIndex === frontIndex()) openZoom(downCardIndex);
         else rotateToIndex(downCardIndex);
       } else {
-        rotateToIndex(((Math.round(-rotation / angleStep) % N) + N) % N);
+        snapToNearest();
       }
       downCardIndex = null;
     }
@@ -2294,7 +2321,7 @@
       if (Math.abs(delta) < 8) return;
       wheelLocked = true;
       rotation += delta > 0 ? angleStep : -angleStep;
-      rotateToIndex(((Math.round(-rotation / angleStep) % N) + N) % N);
+      snapToNearest();
       setTimeout(() => { wheelLocked = false; }, 220);
     }, { passive: true });
 
