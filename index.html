@@ -2932,7 +2932,14 @@
 
     for (let i = 0; i < frameCount; i++) images.push(null);
 
+    // Counts every frame that has settled (decoded or errored), so the
+    // preloader can show real progress across the whole sequence.
+    let framesLoaded = 0;
     function loadImage(i) {
+      return loadImageRaw(i).then(() => { framesLoaded++; });
+    }
+
+    function loadImageRaw(i) {
       return new Promise(resolve => {
         const img = new Image();
         img.onload = () => {
@@ -3118,6 +3125,22 @@
     });
     window.addEventListener('scroll', update, { passive: true });
     resize();
+
+    // Start pulling the frame sequence immediately rather than waiting for
+    // the IntersectionObserver, and publish its progress so the preloader
+    // can hold the loading screen until the whole sequence is decoded —
+    // that's what keeps this section from hitching the first time it's
+    // scrolled into view. Downloading during the preloader is safe (unlike
+    // the old eager load this replaces): the preloader is covering the
+    // screen, so there's no logo reveal or hero video competing for the
+    // main thread yet. lazyObs still calls startLoading(), which no-ops
+    // once loadStarted is set.
+    const precisionPromise = startLoading();
+    window.__yuiPrecision = {
+      total: frameCount,
+      get loaded() { return framesLoaded; },
+      promise: precisionPromise,
+    };
   })();
   </script>
 
@@ -3380,9 +3403,25 @@
       });
       var heroVideo = document.getElementById('heroVideo');
 
-      var total = criticalImgs.length + (heroVideo ? 1 : 0);
+      // The Japanese Precision scroll sequence (169 frames, ~21MB) is held
+      // for too: it's the one thing heavy enough to visibly hitch the first
+      // time you scroll into it, so it's worth finishing here instead. Its
+      // frames stream in the background and report progress via the hook
+      // published at the end of that section's script.
+      var precision = window.__yuiPrecision || null;
+      var precisionTotal = precision ? precision.total : 0;
+      var precisionDone = !precision;
+
+      var assetTotal = criticalImgs.length + (heroVideo ? 1 : 0);
+      var total = assetTotal + precisionTotal;
       var loaded = 0;
       var shownPct = 0, targetPct = 0, ticking = false;
+
+      function progressPct() {
+        if (!total) return 100;
+        var done = loaded + (precision ? precision.loaded : 0);
+        return Math.min(100, Math.round((done / total) * 100));
+      }
 
       function tick() {
         if (shownPct < targetPct) {
@@ -3400,19 +3439,39 @@
 
       var pageLoaded = false, minTimeElapsed = false;
       function maybeFinish() {
-        if (loaded >= total && pageLoaded && minTimeElapsed) dismissPreloader();
+        if (loaded >= assetTotal && precisionDone && pageLoaded && minTimeElapsed) dismissPreloader();
       }
       function onAssetSettled() {
         loaded++;
-        bumpTo(total ? Math.round((loaded / total) * 100) : 100);
-        if (loaded >= total) maybeFinish();
+        bumpTo(progressPct());
+        maybeFinish();
+      }
+
+      if (precision) {
+        // Frames resolve in batches rather than one event apiece, so poll
+        // for the percentage instead of waiting on per-frame callbacks.
+        (function pollPrecision() {
+          if (preloader.classList.contains('hidden')) return;
+          bumpTo(progressPct());
+          if (!precisionDone) requestAnimationFrame(pollPrecision);
+        })();
+        precision.promise.catch(function () {}).then(function () {
+          precisionDone = true;
+          bumpTo(progressPct());
+          maybeFinish();
+        });
       }
 
       // Never flash-dismiss on a fast cached load — give the loader a
       // moment to actually be seen — but never hang on a slow one either.
       setTimeout(function () { minTimeElapsed = true; maybeFinish(); }, 500);
       window.addEventListener('load', function () { pageLoaded = true; maybeFinish(); });
-      setTimeout(dismissPreloader, 6000); // hard safety net
+      // Hard safety net. Generous, because the frame sequence is ~21MB and
+      // a slow connection legitimately needs a while — but finite, so a
+      // stalled download can never strand someone on the loading screen.
+      // If it fires early the section still works: its frames keep
+      // streaming in the background and it renders progressively.
+      setTimeout(dismissPreloader, 25000);
 
       if (total === 0) {
         bumpTo(100);

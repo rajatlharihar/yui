@@ -5396,12 +5396,14 @@
 .carousel3d-zoom.showing-video .carousel3d-zoom-img { display: none; }
 .carousel3d-zoom.showing-video .carousel3d-zoom-video { display: block; }
 
-/* Top-left, deliberately mirrored from the modal's own close X (top-right)
-   so the two are never sitting on top of each other. */
+/* Same top-right spot as the modal's own close X, so the X never jumps
+   sides as you move between the carousel and a zoomed photo. They never
+   collide in practice: this overlay's scrim sits above the modal's X
+   whenever it's open, so only one is ever visible/clickable. */
 .carousel3d-zoom-close {
   position: fixed;
   top: 20px;
-  left: 24px;
+  right: 24px;
   z-index: 2;
   width: 40px;
   height: 40px;
@@ -6323,6 +6325,15 @@
 /* Hide while the chat panel is open (button sits between panel and launcher) */
 .yui-panel.open + .fy-scroll-top-float {
   opacity: 0 !important;
+  pointer-events: none !important;
+}
+/* Same treatment for the launcher itself. Opening the panel only scaled it
+   to 0 and faded it out via inline styles — it kept `pointer-events: auto`
+   and z-index 10000, so it still swallowed taps. On phones it sits exactly
+   over the send button (both bottom-right), so tapping Send hit the
+   launcher instead and toggled the panel shut — the chat appeared to just
+   quit. Taking it out of hit-testing whenever the panel is open fixes it. */
+.yui-panel.open ~ .yui-launcher {
   pointer-events: none !important;
 }
 /* Phones ≤480: launcher is 56px at right/bottom 20 — centre the 40px arrow on it */
