@@ -212,24 +212,12 @@
       0%, 100% { transform: scaleY(0.22); opacity: 0.55; }
       50%      { transform: scaleY(1);    opacity: 1; }
     }
-    .preloader-status {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 7px;
-      font-family: 'Outfit', sans-serif;
-    }
     .preloader-pct {
+      font-family: 'Outfit', sans-serif;
       font-size: 13px;
       letter-spacing: 0.2em;
       color: #FFFDFE;
       font-variant-numeric: tabular-nums;
-    }
-    .preloader-label {
-      font-size: 10px;
-      letter-spacing: 0.24em;
-      text-transform: uppercase;
-      color: rgba(255, 253, 254, 0.4);
     }
   </style>
 
@@ -262,10 +250,7 @@
     <div class="preloader-inner">
       <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
       <div class="preloader-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <div class="preloader-status">
-        <span class="preloader-pct" id="preloaderPct">0%</span>
-        <span class="preloader-label" id="preloaderLabel">Preparing the room</span>
-      </div>
+      <span class="preloader-pct" id="preloaderPct">0%</span>
     </div>
   </div>
   <div id="cur-dot"></div>
@@ -3375,19 +3360,10 @@
     (function () {
       var preloader = document.getElementById('site-preloader');
       var pctEl = document.getElementById('preloaderPct');
-      var labelEl = document.getElementById('preloaderLabel');
       if (!preloader) return;
-
-      var LABELS = ['Preparing the room', 'Setting the table', 'Warming the lights', 'Almost ready'];
-      var labelStep = 0;
-      var labelTimer = setInterval(function () {
-        labelStep = (labelStep + 1) % LABELS.length;
-        if (labelEl) labelEl.textContent = LABELS[labelStep];
-      }, 900);
 
       function dismissPreloader() {
         if (preloader.classList.contains('hidden')) return;
-        clearInterval(labelTimer);
         preloader.classList.add('hidden');
         setTimeout(function () { preloader.remove(); }, 600);
       }
