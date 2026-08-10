@@ -5367,10 +5367,11 @@
   padding: 60px 24px;
   box-sizing: border-box;
   /* Own scrim: without it the carousel ring and caption stay visible
-     through the zoomed photo, which reads as a rendering glitch. */
-  background: rgba(6, 5, 4, 0.94);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+     through the zoomed photo, which reads as a rendering glitch.
+     No backdrop-filter here on purpose — at 94% opacity the blur behind is
+     imperceptible, but full-viewport backdrop blur over a playing video is
+     expensive enough to visibly cost frames. */
+  background: rgba(6, 5, 4, 0.97);
   opacity: 0;
   pointer-events: none;
   transform: scale(0.92);

@@ -215,17 +215,7 @@
       justify-content: space-between;
       padding: 0 80px;
     }
-    .pl-logo {
-      width: 30px;
-      height: auto;
-      opacity: 0.22;
-      filter: brightness(0) invert(1);
-      animation: plLogoPulse 2.6s ease-in-out infinite;
-    }
-    @keyframes plLogoPulse {
-      0%, 100% { opacity: 0.16; }
-      50%      { opacity: 0.34; }
-    }
+    .pl-nav-logo { width: 30px; height: 30px; }
     .pl-nav-links { display: flex; gap: 26px; }
     .pl-link { width: 52px; height: 9px; }
     .pl-link:nth-child(2) { width: 44px; }
@@ -259,29 +249,57 @@
     .pl-sub   { animation-delay: .24s; }
     .pl-ctas .pl-b { animation-delay: .32s; }
 
-    .preloader-pct {
+    /* Centred brand cluster, layered over the skeleton */
+    .preloader-inner {
       position: absolute;
-      right: 80px;
-      bottom: 46px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 11px;
-      letter-spacing: 0.22em;
-      color: rgba(255, 253, 254, 0.42);
-      font-variant-numeric: tabular-nums;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      pointer-events: none;
     }
-    /* Hairline progress rule along the very bottom edge */
-    .pl-progress {
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      height: 2px;
-      background: rgba(255, 253, 254, 0.07);
+    .preloader-logo {
+      width: 56px;
+      height: auto;
+      animation: preloader-hover 1.2s infinite ease-in-out alternate;
     }
-    .pl-progress span {
-      display: block;
-      width: 0;
+    @keyframes preloader-hover {
+      0%   { transform: translateY(0) scale(1);        opacity: 0.7; }
+      100% { transform: translateY(-12px) scale(1.05); opacity: 1; }
+    }
+    .preloader-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      height: 28px;
+    }
+    .preloader-bars span {
+      width: 3px;
       height: 100%;
       background: #E32527;
-      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 2px;
+      transform-origin: bottom center;
+      animation: preloader-bar 1.05s ease-in-out infinite;
+    }
+    .preloader-bars span:nth-child(1) { animation-delay: 0s; }
+    .preloader-bars span:nth-child(2) { animation-delay: .12s; }
+    .preloader-bars span:nth-child(3) { animation-delay: .24s; }
+    .preloader-bars span:nth-child(4) { animation-delay: .36s; }
+    .preloader-bars span:nth-child(5) { animation-delay: .48s; }
+    @keyframes preloader-bar {
+      0%, 100% { transform: scaleY(0.22); opacity: 0.55; }
+      50%      { transform: scaleY(1);    opacity: 1; }
+    }
+    .preloader-pct {
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: #FFFDFE;
+      font-variant-numeric: tabular-nums;
     }
 
     @media (max-width: 767px) {
@@ -294,10 +312,12 @@
       .pl-ctas { gap: 10px; }
       .pl-btn { flex: 1; width: auto; height: 52px; }
       .pl-btn-ghost { flex: 1; width: auto; }
-      .preloader-pct { right: 24px; bottom: 34px; }
+      /* Phone stacks the skeleton at the bottom, so lift the brand cluster
+         clear of it instead of overlapping the headline bars */
+      .preloader-inner { justify-content: flex-start; padding-top: 26vh; gap: 22px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .pl-b, .pl-logo { animation: none; }
+      .pl-b, .preloader-logo, .preloader-bars span { animation: none; }
     }
   </style>
 
@@ -334,7 +354,7 @@
   <div id="site-preloader">
     <div class="pl-skeleton" aria-hidden="true">
       <div class="pl-nav">
-        <img class="pl-logo" src="images/yui/Logo/yui-knot-mark.png" alt="">
+        <span class="pl-b pl-nav-logo"></span>
         <div class="pl-nav-links">
           <span class="pl-b pl-link"></span>
           <span class="pl-b pl-link"></span>
@@ -354,8 +374,12 @@
         </div>
       </div>
     </div>
-    <span class="preloader-pct" id="preloaderPct">0%</span>
-    <div class="pl-progress"><span id="preloaderBar"></span></div>
+    <!-- Brand mark + loader sit centred on top of the skeleton -->
+    <div class="preloader-inner">
+      <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+      <div class="preloader-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <span class="preloader-pct" id="preloaderPct">0%</span>
+    </div>
   </div>
   <div id="cur-dot"></div>
   <div id="cur-ring"></div>
@@ -2290,6 +2314,12 @@
 
     function openZoom(i) {
       zoomedIndex = i;
+      // The overlay completely covers the ring, so anything still playing
+      // back there is invisible work. Leaving the card's video running
+      // meant the SAME clip decoded twice at once and halved the frame
+      // rate (measured 16.6ms -> 33.1ms per frame) — that was the lag on
+      // zooming into a video tile.
+      carVideos.forEach(function (v) { if (v) v.pause(); });
       const s = SLOTS[i];
       zoomEl.classList.toggle('showing-video', !!s.vurl);
       if (s.vurl) {
@@ -2309,6 +2339,10 @@
       zoomedIndex = null;
       zoomEl.classList.remove('open');
       zoomVideo.pause();
+      // Hand playback back to the ring. renderCarousel() can't do this —
+      // it short-circuits when the front index hasn't changed.
+      const fv = carVideos[frontIndex()];
+      if (fv) { fv.currentTime = 0; fv.play().catch(function () {}); }
     }
     zoomClose.addEventListener('click', e => { e.stopPropagation(); exitZoom(); });
     zoomEl.addEventListener('click', e => { if (e.target === zoomEl) exitZoom(); });
@@ -3487,7 +3521,6 @@
     (function () {
       var preloader = document.getElementById('site-preloader');
       var pctEl = document.getElementById('preloaderPct');
-      var barEl = document.getElementById('preloaderBar');
       if (!preloader) return;
 
       function dismissPreloader() {
@@ -3532,7 +3565,6 @@
 
       function paintPct() {
         if (pctEl) pctEl.textContent = shownPct + '%';
-        if (barEl) barEl.style.width = shownPct + '%';
       }
       function tick() {
         if (shownPct < targetPct) {
