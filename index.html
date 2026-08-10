@@ -9,8 +9,13 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:wght@300;400;500;700&family=Noto+Serif+JP:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/svg+xml" href="images/yui/Logo/yui-logo-mark.svg.svg" media="(prefers-color-scheme: light)">
-  <link rel="icon" type="image/svg+xml" href="images/yui/Logo/Main_Logo_Illustrations 2.svg" media="(prefers-color-scheme: dark)">
+  <!-- One favicon that themes itself: the SVG carries its own
+       prefers-color-scheme rule (dark artwork on light browsers, white on
+       dark ones). A single <link> is deliberate — `media` on <link
+       rel="icon"> is unreliable across browsers, whereas a media query
+       inside the SVG is honoured by Chrome, Firefox and Safari. -->
+  <link rel="icon" type="image/svg+xml" href="images/yui/Logo/Fevicon.svg">
+  <link rel="apple-touch-icon" href="images/yui/Logo/Fevicon.svg">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
   <!-- Resource hints: sprite + video start downloading immediately -->
   <link rel="preload" href="images/yui/Logo/logo-frames/logo_sprite.png" as="image" fetchpriority="high">
@@ -2770,6 +2775,10 @@
       let currentP = 0;
       let scrubRaf = null;
 
+      // Read duration immediately as well as on the event — with a warm
+      // cache 'loadedmetadata' can fire before this listener is attached,
+      // which used to leave duration at 0 and pin the scrub to frame 0.
+      if (video.readyState >= 1 && video.duration) duration = video.duration;
       video.addEventListener('loadedmetadata', () => { duration = video.duration; });
 
       // Decode + paint first frame without autoplay
@@ -2778,15 +2787,34 @@
 
       function lerp(a, b, t) { return a + (b - a) * t; }
 
+      // Assigning currentTime while a seek is still in flight CANCELS that
+      // seek. Driving it from rAF meant a new seek every ~16ms, far faster
+      // than the decoder could finish one, so nearly all of them were
+      // aborted — measured 187 'seeking' events against 1 'seeked', with
+      // readyState stuck at 1 (metadata only, no decoded frame to paint).
+      // That starvation was the glitching. Now a seek is only issued when
+      // the decoder is idle, so each one completes and actually paints;
+      // the rAF loop keeps running for the eased motion regardless.
+      function seekTo(t) {
+        if (video.seeking) return;
+        if (Math.abs(video.currentTime - t) < 0.01) return;
+        if (typeof video.fastSeek === 'function') video.fastSeek(t);
+        else video.currentTime = t;
+      }
+
+      // If the loop settles while a seek is mid-flight, the last position
+      // would never be applied — land it once the decoder frees up.
+      video.addEventListener('seeked', () => {
+        if (!scrubRaf) seekTo(currentP * (duration || 0));
+      });
+
       function scrubFrame() {
         // The scrub owns the video whenever it runs — autoplay yields
         if (!video.paused) video.pause();
         const diff = targetP - currentP;
         currentP = Math.abs(diff) < 0.0008 ? targetP : lerp(currentP, targetP, 0.1);
 
-        const t = currentP * (duration || 0);
-        if (typeof video.fastSeek === 'function') video.fastSeek(t);
-        else video.currentTime = t;
+        seekTo(currentP * (duration || 0));
 
         const exp = Math.min(1, currentP / 0.4);
         const top = 18 * (1 - exp);
