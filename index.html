@@ -178,51 +178,126 @@
       opacity: 0;
       visibility: hidden;
     }
-    .preloader-inner {
+
+    /* ── Hero skeleton ──────────────────────────────────
+       Deliberately low-contrast: the blocks sit only a few percent above
+       the background so this reads as the page resolving, not as a grey
+       placeholder UI pasted over it. */
+    .pl-skeleton {
+      position: absolute;
+      inset: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 30px;
     }
-    .preloader-logo {
-      width: 56px;
-      height: auto;
-      animation: preloader-hover 1.2s infinite ease-in-out alternate;
+    .pl-b {
+      display: block;
+      border-radius: 4px;
+      background: linear-gradient(
+        100deg,
+        rgba(255, 253, 254, 0.06) 0%,
+        rgba(255, 253, 254, 0.06) 36%,
+        rgba(255, 253, 254, 0.135) 50%,
+        rgba(255, 253, 254, 0.06) 64%,
+        rgba(255, 253, 254, 0.06) 100%);
+      background-size: 220% 100%;
+      animation: plShimmer 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
-    @keyframes preloader-hover {
-      0% { transform: translateY(0) scale(1); opacity: 0.7; }
-      100% { transform: translateY(-12px) scale(1.05); opacity: 1; }
+    @keyframes plShimmer {
+      0%   { background-position: 130% 0; }
+      100% { background-position: -30% 0; }
     }
-    .preloader-bars {
+
+    .pl-nav {
+      flex-shrink: 0;
+      height: 88px;
       display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 6px;
-      height: 28px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 80px;
     }
-    .preloader-bars span {
-      width: 3px;
+    .pl-logo {
+      width: 30px;
+      height: auto;
+      opacity: 0.22;
+      filter: brightness(0) invert(1);
+      animation: plLogoPulse 2.6s ease-in-out infinite;
+    }
+    @keyframes plLogoPulse {
+      0%, 100% { opacity: 0.16; }
+      50%      { opacity: 0.34; }
+    }
+    .pl-nav-links { display: flex; gap: 26px; }
+    .pl-link { width: 52px; height: 9px; }
+    .pl-link:nth-child(2) { width: 44px; }
+    .pl-link:nth-child(4) { width: 72px; }
+    .pl-nav-cta { width: 132px; height: 34px; border-radius: 6px; }
+
+    /* Desktop hero content is vertically centred (it rides a
+       translateY(-50%)), so the skeleton centres too — bottom-anchoring it
+       parked the blocks well below where the real headline lands. */
+    .pl-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 80px 60px;
+    }
+    /* Three bars standing in for "The / Fifth / Flavor." */
+    .pl-hed { height: clamp(42px, 5.6vw, 74px); border-radius: 6px; }
+    .pl-hed-1 { width: clamp(120px, 13vw, 190px); }
+    .pl-hed-2 { width: clamp(160px, 17vw, 250px); margin-top: 10px; }
+    .pl-hed-3 { width: clamp(210px, 23vw, 330px); margin-top: 10px; }
+    .pl-sub   { width: 190px; height: 11px; margin-top: 26px; }
+    .pl-ctas  { display: flex; gap: 12px; margin-top: 30px; }
+    .pl-btn   { width: 200px; height: 52px; border-radius: 6px; }
+    .pl-btn-ghost { width: 168px; opacity: 0.6; }
+
+    /* Stagger so the shimmer travels down the page instead of pulsing
+       everything in unison */
+    .pl-hed-2 { animation-delay: .08s; }
+    .pl-hed-3 { animation-delay: .16s; }
+    .pl-sub   { animation-delay: .24s; }
+    .pl-ctas .pl-b { animation-delay: .32s; }
+
+    .preloader-pct {
+      position: absolute;
+      right: 80px;
+      bottom: 46px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: rgba(255, 253, 254, 0.42);
+      font-variant-numeric: tabular-nums;
+    }
+    /* Hairline progress rule along the very bottom edge */
+    .pl-progress {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 2px;
+      background: rgba(255, 253, 254, 0.07);
+    }
+    .pl-progress span {
+      display: block;
+      width: 0;
       height: 100%;
       background: #E32527;
-      border-radius: 2px;
-      transform-origin: bottom center;
-      animation: preloader-bar 1.05s ease-in-out infinite;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .preloader-bars span:nth-child(1) { animation-delay: 0s; }
-    .preloader-bars span:nth-child(2) { animation-delay: .12s; }
-    .preloader-bars span:nth-child(3) { animation-delay: .24s; }
-    .preloader-bars span:nth-child(4) { animation-delay: .36s; }
-    .preloader-bars span:nth-child(5) { animation-delay: .48s; }
-    @keyframes preloader-bar {
-      0%, 100% { transform: scaleY(0.22); opacity: 0.55; }
-      50%      { transform: scaleY(1);    opacity: 1; }
+
+    @media (max-width: 767px) {
+      .pl-nav { height: 64px; padding: 0 24px; }
+      .pl-nav-links { display: none; }
+      .pl-nav-cta { width: 112px; height: 30px; }
+      /* Phone hero anchors its content to the bottom, so the skeleton does too */
+      .pl-body { justify-content: flex-end; padding: 0 24px 76px; }
+      .pl-sub { width: 150px; }
+      .pl-ctas { gap: 10px; }
+      .pl-btn { flex: 1; width: auto; height: 52px; }
+      .pl-btn-ghost { flex: 1; width: auto; }
+      .preloader-pct { right: 24px; bottom: 34px; }
     }
-    .preloader-pct {
-      font-family: 'Outfit', sans-serif;
-      font-size: 13px;
-      letter-spacing: 0.2em;
-      color: #FFFDFE;
-      font-variant-numeric: tabular-nums;
+    @media (prefers-reduced-motion: reduce) {
+      .pl-b, .pl-logo { animation: none; }
     }
   </style>
 
@@ -251,12 +326,36 @@
 </head>
 
 <body>
+  <!-- Loading screen: a low-fidelity skeleton of the hero, so the wait
+       reads as the page assembling itself rather than a blank hold. The
+       block positions mirror the real hero (nav strip, three headline
+       lines, eyebrow, two CTAs) so it resolves into place instead of
+       swapping to an unrelated layout. -->
   <div id="site-preloader">
-    <div class="preloader-inner">
-      <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
-      <div class="preloader-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
-      <span class="preloader-pct" id="preloaderPct">0%</span>
+    <div class="pl-skeleton" aria-hidden="true">
+      <div class="pl-nav">
+        <img class="pl-logo" src="images/yui/Logo/yui-knot-mark.png" alt="">
+        <div class="pl-nav-links">
+          <span class="pl-b pl-link"></span>
+          <span class="pl-b pl-link"></span>
+          <span class="pl-b pl-link"></span>
+          <span class="pl-b pl-link"></span>
+        </div>
+        <span class="pl-b pl-nav-cta"></span>
+      </div>
+      <div class="pl-body">
+        <span class="pl-b pl-hed pl-hed-1"></span>
+        <span class="pl-b pl-hed pl-hed-2"></span>
+        <span class="pl-b pl-hed pl-hed-3"></span>
+        <span class="pl-b pl-sub"></span>
+        <div class="pl-ctas">
+          <span class="pl-b pl-btn"></span>
+          <span class="pl-b pl-btn pl-btn-ghost"></span>
+        </div>
+      </div>
     </div>
+    <span class="preloader-pct" id="preloaderPct">0%</span>
+    <div class="pl-progress"><span id="preloaderBar"></span></div>
   </div>
   <div id="cur-dot"></div>
   <div id="cur-ring"></div>
@@ -3388,10 +3487,14 @@
     (function () {
       var preloader = document.getElementById('site-preloader');
       var pctEl = document.getElementById('preloaderPct');
+      var barEl = document.getElementById('preloaderBar');
       if (!preloader) return;
 
       function dismissPreloader() {
         if (preloader.classList.contains('hidden')) return;
+        // Land on 100 before fading, so it never fades out mid-count
+        shownPct = 100;
+        paintPct();
         preloader.classList.add('hidden');
         setTimeout(function () { preloader.remove(); }, 600);
       }
@@ -3427,10 +3530,17 @@
         return Math.min(100, Math.round((done / total) * 100));
       }
 
+      function paintPct() {
+        if (pctEl) pctEl.textContent = shownPct + '%';
+        if (barEl) barEl.style.width = shownPct + '%';
+      }
       function tick() {
         if (shownPct < targetPct) {
-          shownPct++;
-          if (pctEl) pctEl.textContent = shownPct + '%';
+          // Ease toward the target rather than a flat +1 per frame: on a
+          // fast load the counter used to still be climbing (~50%) when the
+          // screen was already dismissed.
+          shownPct = Math.min(targetPct, shownPct + Math.max(1, Math.ceil((targetPct - shownPct) / 5)));
+          paintPct();
           requestAnimationFrame(tick);
         } else {
           ticking = false;
