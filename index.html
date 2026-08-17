@@ -261,39 +261,64 @@
       gap: 28px;
       pointer-events: none;
     }
+    .preloader-logo-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 120px;
+      height: 120px;
+    }
     .preloader-logo {
       width: 56px;
       height: auto;
+      position: relative;
+      z-index: 2;
       animation: preloader-hover 1.2s infinite ease-in-out alternate;
     }
     @keyframes preloader-hover {
-      0%   { transform: translateY(0) scale(1);        opacity: 0.7; }
-      100% { transform: translateY(-12px) scale(1.05); opacity: 1; }
+      0%   { transform: translateY(0) scale(1);        opacity: 0.85; }
+      100% { transform: translateY(-8px) scale(1.04); opacity: 1; }
     }
-    .preloader-bars {
+    /* Pulsating Ripple Loader (Wave part) */
+    .preloader-ripple-waves {
+      position: absolute;
+      inset: 0;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
-      gap: 6px;
-      height: 28px;
+      pointer-events: none;
+      z-index: 1;
     }
-    .preloader-bars span {
-      width: 3px;
+    .preloader-ripple-waves span {
+      position: absolute;
+      width: 100%;
       height: 100%;
-      background: #E32527;
-      border-radius: 2px;
-      transform-origin: bottom center;
-      animation: preloader-bar 1.05s ease-in-out infinite;
+      border-radius: 50%;
+      border: 2px solid #E32527;
+      box-shadow: 0 0 16px rgba(227, 37, 39, 0.45);
+      opacity: 0;
+      animation: ripplePulse 2.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
     }
-    .preloader-bars span:nth-child(1) { animation-delay: 0s; }
-    .preloader-bars span:nth-child(2) { animation-delay: .12s; }
-    .preloader-bars span:nth-child(3) { animation-delay: .24s; }
-    .preloader-bars span:nth-child(4) { animation-delay: .36s; }
-    .preloader-bars span:nth-child(5) { animation-delay: .48s; }
-    @keyframes preloader-bar {
-      0%, 100% { transform: scaleY(0.22); opacity: 0.55; }
-      50%      { transform: scaleY(1);    opacity: 1; }
+    .preloader-ripple-waves span:nth-child(1) { animation-delay: 0s; }
+    .preloader-ripple-waves span:nth-child(2) { animation-delay: 0.6s; }
+    .preloader-ripple-waves span:nth-child(3) { animation-delay: 1.2s; }
+    .preloader-ripple-waves span:nth-child(4) { animation-delay: 1.8s; }
+
+    @keyframes ripplePulse {
+      0% {
+        transform: scale(0.25);
+        opacity: 0.95;
+      }
+      50% {
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(1.75);
+        opacity: 0;
+      }
     }
+
     .preloader-pct {
       font-family: 'Outfit', sans-serif;
       font-size: 13px;
@@ -317,7 +342,7 @@
       .preloader-inner { justify-content: flex-start; padding-top: 26vh; gap: 22px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .pl-b, .preloader-logo, .preloader-bars span { animation: none; }
+      .pl-b, .preloader-logo, .preloader-ripple-waves span { animation: none; }
     }
   </style>
 
@@ -374,10 +399,17 @@
         </div>
       </div>
     </div>
-    <!-- Brand mark + loader sit centred on top of the skeleton -->
+    <!-- Brand mark + pulsating ripple loader sit centred on top of the skeleton -->
     <div class="preloader-inner">
-      <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
-      <div class="preloader-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="preloader-logo-wrap">
+        <div class="preloader-ripple-waves" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+      </div>
       <span class="preloader-pct" id="preloaderPct">0%</span>
     </div>
   </div>
@@ -3122,13 +3154,25 @@
       loadStarted = true;
       await loadImage(0);
       render();
-      const batchSize = window.innerWidth <= 768 ? 4 : 8; // gentler decode bursts on phone
-      for (let start = 1; start < frameCount; start += batchSize) {
-        const batch = [];
-        for (let i = start; i < Math.min(start + batchSize, frameCount); i++) batch.push(loadImage(i));
-        await Promise.all(batch);
-        if (images[sequence.frame] && images[sequence.frame]._ready) render();
+
+      // High-speed sliding window concurrency pool
+      const concurrency = window.innerWidth <= 768 ? 12 : 20;
+      let currentIndex = 1;
+
+      function loadNext() {
+        if (currentIndex >= frameCount) return Promise.resolve();
+        const idx = currentIndex++;
+        return loadImage(idx).then(() => {
+          if (images[sequence.frame] && images[sequence.frame]._ready) render();
+          return loadNext();
+        });
       }
+
+      const workers = [];
+      for (let c = 0; c < concurrency; c++) {
+        workers.push(loadNext());
+      }
+      await Promise.all(workers);
     }
 
     function paintWhite() {
@@ -3568,10 +3612,7 @@
       }
       function tick() {
         if (shownPct < targetPct) {
-          // Ease toward the target rather than a flat +1 per frame: on a
-          // fast load the counter used to still be climbing (~50%) when the
-          // screen was already dismissed.
-          shownPct = Math.min(targetPct, shownPct + Math.max(1, Math.ceil((targetPct - shownPct) / 5)));
+          shownPct = Math.min(targetPct, shownPct + Math.max(2, Math.ceil((targetPct - shownPct) / 3)));
           paintPct();
           requestAnimationFrame(tick);
         } else {
@@ -3585,7 +3626,8 @@
 
       var pageLoaded = false, minTimeElapsed = false;
       function maybeFinish() {
-        if (loaded >= assetTotal && precisionDone && pageLoaded && minTimeElapsed) dismissPreloader();
+        var precisionReady = precisionDone || (precision && precision.loaded >= 50);
+        if (loaded >= assetTotal && precisionReady && pageLoaded && minTimeElapsed) dismissPreloader();
       }
       function onAssetSettled() {
         loaded++;
@@ -3594,11 +3636,10 @@
       }
 
       if (precision) {
-        // Frames resolve in batches rather than one event apiece, so poll
-        // for the percentage instead of waiting on per-frame callbacks.
         (function pollPrecision() {
           if (preloader.classList.contains('hidden')) return;
           bumpTo(progressPct());
+          maybeFinish();
           if (!precisionDone) requestAnimationFrame(pollPrecision);
         })();
         precision.promise.catch(function () {}).then(function () {
@@ -3608,16 +3649,9 @@
         });
       }
 
-      // Never flash-dismiss on a fast cached load — give the loader a
-      // moment to actually be seen — but never hang on a slow one either.
-      setTimeout(function () { minTimeElapsed = true; maybeFinish(); }, 500);
+      setTimeout(function () { minTimeElapsed = true; maybeFinish(); }, 300);
       window.addEventListener('load', function () { pageLoaded = true; maybeFinish(); });
-      // Hard safety net. Generous, because the frame sequence is ~21MB and
-      // a slow connection legitimately needs a while — but finite, so a
-      // stalled download can never strand someone on the loading screen.
-      // If it fires early the section still works: its frames keep
-      // streaming in the background and it renders progressively.
-      setTimeout(dismissPreloader, 25000);
+      setTimeout(dismissPreloader, 8000);
 
       if (total === 0) {
         bumpTo(100);
@@ -3832,9 +3866,77 @@
         }
       }, { threshold: 0 }).observe(resSection);
     }
-
   })();
+  </script>
 
+  <!-- Background Audio with Hero Scroll Fade-Out -->
+  <audio id="bgMusic" src="audio/hitslab-japan-japanese-music-502006.mp3" loop preload="auto"></audio>
+  <script>
+  (function() {
+    var bgMusic = document.getElementById('bgMusic');
+    var heroSection = document.getElementById('home');
+    if (!bgMusic) return;
+
+    var audioStarted = false;
+    bgMusic.volume = 1;
+
+    function tryPlayAudio() {
+      if (audioStarted) return;
+      bgMusic.play().then(function() {
+        audioStarted = true;
+        removeAudioListeners();
+        updateAudioVolume();
+      }).catch(function() {});
+    }
+
+    function removeAudioListeners() {
+      ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(function(evt) {
+        window.removeEventListener(evt, tryPlayAudio);
+      });
+    }
+
+    ['click', 'touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(function(evt) {
+      window.addEventListener(evt, tryPlayAudio, { passive: true, once: false });
+    });
+
+    // Attempt autoplay immediately
+    tryPlayAudio();
+
+    function updateAudioVolume() {
+      if (!bgMusic) return;
+      var scrollY = window.scrollY || window.pageYOffset || 0;
+      var heroHeight = heroSection ? (heroSection.offsetHeight - window.innerHeight) : (window.innerHeight * 1.5);
+      if (heroHeight <= 0) heroHeight = window.innerHeight;
+
+      // Full volume at top, slowly fades to 0 as user completes the hero scroll section
+      var fadeStart = heroHeight * 0.2;
+      var fadeEnd = heroHeight * 0.95;
+
+      var targetVol = 1;
+      if (scrollY <= fadeStart) {
+        targetVol = 1;
+      } else if (scrollY >= fadeEnd) {
+        targetVol = 0;
+      } else {
+        targetVol = 1 - ((scrollY - fadeStart) / (fadeEnd - fadeStart));
+      }
+      targetVol = Math.max(0, Math.min(1, targetVol));
+
+      bgMusic.volume = targetVol;
+
+      if (targetVol <= 0.01) {
+        if (!bgMusic.paused) bgMusic.pause();
+      } else {
+        if (bgMusic.paused && audioStarted) {
+          bgMusic.play().catch(function() {});
+        }
+      }
+    }
+
+    window.addEventListener('scroll', updateAudioVolume, { passive: true });
+    if (window.lenis) window.lenis.on('scroll', updateAudioVolume);
+  })();
   </script>
 </body>
 </html>
+
