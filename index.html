@@ -261,62 +261,38 @@
       gap: 28px;
       pointer-events: none;
     }
-    .preloader-logo-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 120px;
-      height: 120px;
-    }
     .preloader-logo {
       width: 56px;
       height: auto;
-      position: relative;
-      z-index: 2;
       animation: preloader-hover 1.2s infinite ease-in-out alternate;
     }
     @keyframes preloader-hover {
-      0%   { transform: translateY(0) scale(1);        opacity: 0.85; }
-      100% { transform: translateY(-8px) scale(1.04); opacity: 1; }
+      0%   { transform: translateY(0) scale(1);        opacity: 0.7; }
+      100% { transform: translateY(-12px) scale(1.05); opacity: 1; }
     }
-    /* Pulsating Ripple Loader (Wave part) */
-    .preloader-ripple-waves {
-      position: absolute;
-      inset: 0;
+    .preloader-bars {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       justify-content: center;
-      pointer-events: none;
-      z-index: 1;
+      gap: 6px;
+      height: 28px;
     }
-    .preloader-ripple-waves span {
-      position: absolute;
-      width: 100%;
+    .preloader-bars span {
+      width: 3px;
       height: 100%;
-      border-radius: 50%;
-      border: 2px solid #E32527;
-      box-shadow: 0 0 16px rgba(227, 37, 39, 0.45);
-      opacity: 0;
-      animation: ripplePulse 2.4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+      background: #E32527;
+      border-radius: 2px;
+      transform-origin: bottom center;
+      animation: preloader-bar 1.05s ease-in-out infinite;
     }
-    .preloader-ripple-waves span:nth-child(1) { animation-delay: 0s; }
-    .preloader-ripple-waves span:nth-child(2) { animation-delay: 0.6s; }
-    .preloader-ripple-waves span:nth-child(3) { animation-delay: 1.2s; }
-    .preloader-ripple-waves span:nth-child(4) { animation-delay: 1.8s; }
-
-    @keyframes ripplePulse {
-      0% {
-        transform: scale(0.25);
-        opacity: 0.95;
-      }
-      50% {
-        opacity: 0.5;
-      }
-      100% {
-        transform: scale(1.75);
-        opacity: 0;
-      }
+    .preloader-bars span:nth-child(1) { animation-delay: 0s; }
+    .preloader-bars span:nth-child(2) { animation-delay: .12s; }
+    .preloader-bars span:nth-child(3) { animation-delay: .24s; }
+    .preloader-bars span:nth-child(4) { animation-delay: .36s; }
+    .preloader-bars span:nth-child(5) { animation-delay: .48s; }
+    @keyframes preloader-bar {
+      0%, 100% { transform: scaleY(0.22); opacity: 0.55; }
+      50%      { transform: scaleY(1);    opacity: 1; }
     }
 
     .preloader-pct {
@@ -342,7 +318,7 @@
       .preloader-inner { justify-content: flex-start; padding-top: 26vh; gap: 22px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      .pl-b, .preloader-logo, .preloader-ripple-waves span { animation: none; }
+      .pl-b, .preloader-logo, .preloader-bars span { animation: none; }
     }
   </style>
 
@@ -399,17 +375,10 @@
         </div>
       </div>
     </div>
-    <!-- Brand mark + pulsating ripple loader sit centred on top of the skeleton -->
+    <!-- Brand mark + loader sit centred on top of the skeleton -->
     <div class="preloader-inner">
-      <div class="preloader-logo-wrap">
-        <div class="preloader-ripple-waves" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
-      </div>
+      <img src="images/yui/Logo/Main_Logo_Illustrations%202.svg" alt="Yui Logo" class="preloader-logo" style="filter: brightness(0) saturate(100%) invert(27%) sepia(82%) saturate(2186%) hue-rotate(347deg) brightness(91%) contrast(89%);">
+      <div class="preloader-bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
       <span class="preloader-pct" id="preloaderPct">0%</span>
     </div>
   </div>
@@ -3649,7 +3618,8 @@
         });
       }
 
-      setTimeout(function () { minTimeElapsed = true; maybeFinish(); }, 300);
+      // Set ~1.2s min duration (halfway between original long wait and instant dismiss)
+      setTimeout(function () { minTimeElapsed = true; maybeFinish(); }, 1200);
       window.addEventListener('load', function () { pageLoaded = true; maybeFinish(); });
       setTimeout(dismissPreloader, 8000);
 
