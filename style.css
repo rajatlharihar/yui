@@ -1084,7 +1084,8 @@
     #heroVideo {
       /* deeper letterbox: top band reaches lower, bottom band higher */
       clip-path: inset(18% 0 15% 0);
-      transition: clip-path 0.1s linear;
+      /* No CSS transition — the JS scrub loop drives clip-path every rAF
+         frame; a CSS transition fights those updates and causes stutter. */
     }
 
     /* Japanese vertical body text — right side of hero */
@@ -1443,7 +1444,7 @@
         width: 100%;
         height: 58vh;
         object-fit: cover;
-        object-position: 48% center;
+        object-position: 32% center;
         clip-path: none !important;
         top: auto !important;
         left: auto !important;

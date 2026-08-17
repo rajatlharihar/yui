@@ -2945,7 +2945,7 @@
         // The scrub owns the video whenever it runs — autoplay yields
         if (!video.paused) video.pause();
         const diff = targetP - currentP;
-        currentP = Math.abs(diff) < 0.0008 ? targetP : lerp(currentP, targetP, 0.1);
+        currentP = Math.abs(diff) < 0.0008 ? targetP : lerp(currentP, targetP, 0.18);
 
         seekTo(currentP * (duration || 0));
 
@@ -3644,7 +3644,7 @@
         direction: 'vertical',
         gestureDirection: 'vertical',
         smooth: true,
-        lerp: 0.075, /* lower = longer, silkier glide */
+        lerp: 0.1, /* lower = longer, silkier glide; raised from 0.075 for snappier hero response */
         mouseMultiplier: 1,
         smoothTouch: false,
         touchMultiplier: 2,
