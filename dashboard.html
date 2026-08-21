@@ -807,6 +807,125 @@
     .cal-day.selected { background: var(--red) !important; color: white !important; font-weight: 700; }
     .cal-day.disabled { color: rgba(26,22,18,0.15); cursor: default; }
     .cal-day.other-month { opacity: 0.3; }
+
+    /* ══════════════════════════════════════════════════════════
+       Mobile Nav — Hamburger + Dropdown (mirrors index.html pattern)
+       ══════════════════════════════════════════════════════════ */
+    .dash-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .dash-hamburger span {
+      display: block;
+      width: 100%;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform .3s var(--ease), opacity .3s var(--ease);
+    }
+    .dash-hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .dash-hamburger.active span:nth-child(2) { opacity: 0; }
+    .dash-hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ══════════════════════════════════════════════════════════
+       Responsive — Tablet & below
+       ══════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .top-nav { padding: 0 20px; }
+      .nav-left { gap: 16px; }
+      .dash-hamburger { display: flex; }
+
+      .nav-links {
+        position: fixed;
+        left: 0;
+        right: 0;
+        top: 72px;
+        transform: none;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        box-shadow: 0 16px 32px rgba(0,0,0,0.08);
+        padding: 8px 20px 16px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transition: max-height .35s var(--ease), opacity .25s var(--ease);
+      }
+      .nav-links.open {
+        max-height: 260px;
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .nav-link { width: 100%; padding: 14px 4px; }
+      .nav-link.active::after { position: absolute; right: 4px; }
+
+      .nav-right { gap: 14px; }
+      .staff-badge span:not(:first-child) { display: none; }
+
+      .main-content { padding: 32px 20px; gap: 40px; }
+      .header-title h1 { font-size: 30px !important; }
+
+      .stats-bar { flex-wrap: wrap; gap: 24px 40px; }
+
+      .filters-section { flex-direction: column; align-items: stretch; gap: 16px; }
+      .search-wrapper { width: 100%; }
+      .date-filter { flex-wrap: wrap; gap: 12px; }
+
+      /* Reservation list → stacked cards on mobile */
+      .res-list-header { display: none; }
+      .res-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 20px 16px;
+      }
+      .res-row > div:nth-child(5) { display: flex; }
+      .res-row > div:last-child { justify-content: flex-start !important; }
+
+      .settings-card { padding: 32px 24px; }
+
+      /* Analytics & Settings — inline grids need to stack too */
+      .analytics-grid-4 { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; }
+      .analytics-grid-2 { grid-template-columns: 1fr !important; gap: 24px !important; }
+      .settings-grid-2 { grid-template-columns: 1fr !important; gap: 40px !important; }
+
+      /* Manual booking modal */
+      .manual-modal-inner { padding: 32px 20px !important; width: 94% !important; }
+      #manual-form { grid-template-columns: 1fr !important; gap: 20px !important; }
+    }
+
+    @media (max-width: 480px) {
+      .analytics-grid-4 { grid-template-columns: 1fr !important; }
+    }
+
+    @media (max-width: 640px) {
+      /* Login screen: credentials panel must never overlap the form */
+      #creds-float {
+        position: static !important;
+        right: auto !important;
+        top: auto !important;
+        width: 100%;
+        align-items: center;
+        margin-top: 24px;
+      }
+      #creds-panel { width: 100% !important; max-width: 320px; }
+    }
+
+    @media (max-width: 480px) {
+      .login-wrap { padding: 40px 24px; }
+      .stat-value { font-size: 26px; }
+      .stats-bar { gap: 20px 28px; }
+      .settings-card { padding: 24px 18px; }
+      .header-title h1 { font-size: 26px !important; }
+    }
   </style>
   <link rel="icon" type="image/svg+xml" href="images/yui/Logo/yui-logo-mark.svg.svg" media="(prefers-color-scheme: light)">
   <link rel="icon" type="image/svg+xml" href="images/yui/Logo/Main_Logo_Illustrations 2.svg" media="(prefers-color-scheme: dark)">
@@ -929,7 +1048,7 @@
               fill="#1A1612" />
           </svg>
         </a>
-        <nav class="nav-links">
+        <nav class="nav-links" id="navLinks">
           <div class="nav-link active" data-tab="reservations">Reservations</div>
           <div class="nav-link" data-tab="analytics">Analytics</div>
           <div class="nav-link" data-tab="settings">Settings</div>
@@ -938,6 +1057,7 @@
       <div class="nav-right">
         <div class="staff-badge"><span></span> Staff Portal</div>
         <div id="logout-btn">Sign Out</div>
+        <div class="dash-hamburger" id="dashHamburger" aria-label="Toggle menu"><span></span><span></span><span></span></div>
       </div>
     </header>
 
@@ -1054,8 +1174,8 @@
         <!-- Manual Booking Modal -->
         <div id="manual-booking-modal"
           style="display:none; position: fixed; inset: 0; background: rgba(253,252,251,0.8); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
-          <div
-            style="background: var(--surface); padding: 56px; max-width: 720px; width: 90%; position: relative; border-radius: 24px; box-shadow: 0 24px 80px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border);">
+          <div class="manual-modal-inner"
+            style="background: var(--surface); padding: 56px; max-width: 720px; width: 90%; position: relative; border-radius: 24px; box-shadow: 0 24px 80px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); max-height: 90vh; overflow-y: auto;">
             <div id="close-modal"
               style="position: absolute; top: 24px; right: 24px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; cursor: pointer; color: var(--text); font-size: 20px; transition: .2s; background: var(--bg-warm); border: 1px solid var(--border);">
               <i class="ph ph-x"></i>
@@ -1146,7 +1266,7 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px;">
+        <div class="analytics-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px;">
           <div class="chart-card"
             style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
             <h4
@@ -1177,7 +1297,7 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 24px;">
+        <div class="analytics-grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 24px;">
           <div class="chart-card"
             style="border: 1px solid var(--border); padding: 32px; border-radius: 12px; background: var(--surface);">
             <h4
@@ -1208,7 +1328,7 @@
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px;">
+        <div class="analytics-grid-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 32px;">
           <!-- Volume Trend Chart -->
           <div class="chart-card"
             style="border: 1px solid var(--border); padding: 48px; border-radius: 12px; background: var(--surface);">
@@ -1272,7 +1392,7 @@
           </div>
         </div>
 
-        <div style="margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px 64px;">
+        <div class="settings-grid-2" style="margin-top: 48px; display: grid; grid-template-columns: 1fr 1fr; gap: 48px 64px;">
           <div>
             <h3 style="font-size: 18px; margin-bottom: 16px; font-weight: 600;">Service Capacity</h3>
             <p style="color: var(--muted); margin-bottom: 24px; font-size: 14px; line-height: 1.6;">Maximum covers per
@@ -1551,6 +1671,16 @@
       const mPartyEl = document.getElementById('m-party');
       if (mPartyEl) mPartyEl.value = 2;
 
+      // Handle Mobile Nav Toggle
+      const dashHamburger = document.getElementById('dashHamburger');
+      const navLinksEl = document.getElementById('navLinks');
+      if (dashHamburger && navLinksEl) {
+        dashHamburger.addEventListener('click', () => {
+          dashHamburger.classList.toggle('active');
+          navLinksEl.classList.toggle('open');
+        });
+      }
+
       // Handle Tab Switching
       document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
@@ -1565,6 +1695,12 @@
               else el.setAttribute('data-hidden', 'true');
             }
           });
+
+          // Close mobile menu after selecting a tab
+          if (dashHamburger && navLinksEl) {
+            dashHamburger.classList.remove('active');
+            navLinksEl.classList.remove('open');
+          }
         });
       });
 
