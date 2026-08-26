@@ -163,6 +163,36 @@
       .precision-section { height: 140vh !important; }
     }
 
+    /* MUSIC TOGGLE — bottom-left so it never collides with the chat
+       launcher stack (yui-wrapper/fy-scroll-top-float) parked bottom-right */
+    #musicToggle {
+      position: fixed;
+      left: 28px;
+      bottom: 28px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #0B0B09;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10000;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      transition: transform 0.3s var(--ease, ease), box-shadow 0.3s var(--ease, ease);
+      padding: 0;
+    }
+    #musicToggle:hover { transform: scale(1.08); }
+    #musicToggle svg { width: 20px; height: 20px; }
+    #musicToggle .mt-on { display: block; }
+    #musicToggle .mt-off { display: none; }
+    #musicToggle.muted .mt-on { display: none; }
+    #musicToggle.muted .mt-off { display: block; }
+    @media (max-width: 768px) {
+      #musicToggle { left: 18px; bottom: 18px; width: 44px; height: 44px; }
+    }
+
     /* PRELOADER */
     #site-preloader {
       position: fixed;
@@ -3091,11 +3121,20 @@
         const img = new Image();
         img.onload = () => {
           // Phone: shrink the 5120px frames OFF the main thread — a canvas
-          // resize here was stuttering the logo/video playing during load
-          if (window.innerWidth <= 768 && img.naturalWidth > 1280 && typeof createImageBitmap === 'function') {
-            const scale = 1280 / img.naturalWidth;
+          // resize here was stuttering the logo/video playing during load.
+          // Target width tracks the canvas's actual render width (canvas.width
+          // is set to window.innerWidth, unscaled by devicePixelRatio) instead
+          // of a flat 1280px — keeping all 169 decoded frames pinned in memory
+          // at 1280px wide (~2.5MB/frame, ~430MB total) was blowing past the
+          // per-tab memory ceiling on iPhones and mid-range Androids, which
+          // silently reload the page mid-scroll — that's what looked like the
+          // preloader "looping". A ~2x-canvas-width target still looks sharp
+          // at this scrubbed-canvas size but cuts that footprint by ~4x.
+          const phoneTargetWidth = Math.min(1280, Math.max(640, Math.round(window.innerWidth * 1.5)));
+          if (window.innerWidth <= 768 && img.naturalWidth > phoneTargetWidth && typeof createImageBitmap === 'function') {
+            const scale = phoneTargetWidth / img.naturalWidth;
             createImageBitmap(img, {
-              resizeWidth: 1280,
+              resizeWidth: phoneTargetWidth,
               resizeHeight: Math.round(img.naturalHeight * scale),
               resizeQuality: 'low'
             }).then(bmp => {
@@ -3841,17 +3880,31 @@
 
   <!-- Background Audio with Hero Scroll Fade-Out -->
   <audio id="bgMusic" src="audio/hitslab-japan-japanese-music-502006.mp3" loop preload="auto"></audio>
+  <button id="musicToggle" type="button" aria-label="Turn music off">
+    <svg class="mt-on" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+    <svg class="mt-off" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4V5Z"/><path d="m23 9-6 6"/><path d="m17 9 6 6"/></svg>
+  </button>
   <script>
   (function() {
     var bgMusic = document.getElementById('bgMusic');
     var heroSection = document.getElementById('home');
+    var musicToggle = document.getElementById('musicToggle');
     if (!bgMusic) return;
 
     var audioStarted = false;
+    var userMuted = false;
+    try { userMuted = localStorage.getItem('yuiMusicMuted') === '1'; } catch (e) {}
     bgMusic.volume = 1;
 
+    function paintToggle() {
+      if (!musicToggle) return;
+      musicToggle.classList.toggle('muted', userMuted);
+      musicToggle.setAttribute('aria-label', userMuted ? 'Turn music on' : 'Turn music off');
+    }
+    paintToggle();
+
     function tryPlayAudio() {
-      if (audioStarted) return;
+      if (audioStarted || userMuted) return;
       bgMusic.play().then(function() {
         audioStarted = true;
         removeAudioListeners();
@@ -3869,11 +3922,12 @@
       window.addEventListener(evt, tryPlayAudio, { passive: true, once: false });
     });
 
-    // Attempt autoplay immediately
+    // Attempt autoplay immediately (no-ops if userMuted)
     tryPlayAudio();
 
     function updateAudioVolume() {
       if (!bgMusic) return;
+      if (userMuted) { if (!bgMusic.paused) bgMusic.pause(); return; }
       var scrollY = window.scrollY || window.pageYOffset || 0;
       var heroHeight = heroSection ? (heroSection.offsetHeight - window.innerHeight) : (window.innerHeight * 1.5);
       if (heroHeight <= 0) heroHeight = window.innerHeight;
@@ -3905,6 +3959,20 @@
 
     window.addEventListener('scroll', updateAudioVolume, { passive: true });
     if (window.lenis) window.lenis.on('scroll', updateAudioVolume);
+
+    if (musicToggle) {
+      musicToggle.addEventListener('click', function() {
+        userMuted = !userMuted;
+        try { localStorage.setItem('yuiMusicMuted', userMuted ? '1' : '0'); } catch (e) {}
+        paintToggle();
+        if (userMuted) {
+          bgMusic.pause();
+        } else {
+          tryPlayAudio();
+          updateAudioVolume();
+        }
+      });
+    }
   })();
   </script>
 </body>
