@@ -3175,16 +3175,50 @@
       requestAnimationFrame(renderLoop);
     }
 
+    // Source sequence is 25fps, so anything finer than one frame-duration
+    // is a seek that decodes the exact same picture again.
+    const FRAME_DUR = 1 / 25;
+    let lastSeekedFrame = -1;
+
     function renderLoop() {
       if (!isVisible) { loopRunning = false; return; }
+      // Read the live scroll position every frame rather than waiting on
+      // 'scroll' events. The page runs Lenis smooth-scroll, which animates
+      // scroll position on its own rAF tick — sampling it here keeps the
+      // scrub in lockstep with what's actually on screen instead of
+      // trailing whatever the last dispatched scroll event said.
+      update();
       const diff = targetTime - currentTime;
-      if (Math.abs(diff) > 0.008) currentTime += diff * 0.15;
+      // Slightly snappier than before (0.15): seeks are throttled below, so
+      // the easing no longer needs to be gentle to avoid flooding the decoder,
+      // and a faster follow reads as less "laggy" behind the finger.
+      if (Math.abs(diff) > 0.004) currentTime += diff * 0.24;
       else currentTime = targetTime;
-      if (videoReady && Math.abs(video.currentTime - currentTime) > 0.016) {
-        try { video.currentTime = currentTime; } catch (e) {}
+
+      // Two throttles, both needed on mobile:
+      //  1. video.seeking — never stack a seek on top of an in-flight one.
+      //     Assigning currentTime every rAF tick (60/s) while the decoder is
+      //     still resolving the last seek makes it thrash and lag behind the
+      //     scroll. Reading the spec's own `seeking` flag (rather than
+      //     tracking a 'seeked' listener) is self-healing: a dropped or
+      //     failed seek can't leave us permanently blocked.
+      //  2. frame quantisation — snap to the nearest real frame and skip if
+      //     it's the one already displayed, which kills the long tail of
+      //     sub-frame seeks the easing above would otherwise generate as it
+      //     asymptotically approaches the target.
+      if (videoReady && !video.seeking) {
+        const frame = Math.round(currentTime / FRAME_DUR);
+        if (frame !== lastSeekedFrame) {
+          lastSeekedFrame = frame;
+          try { video.currentTime = frame * FRAME_DUR; } catch (e) {}
+        }
       }
       requestAnimationFrame(renderLoop);
     }
+
+    // Queried once instead of on every update() call — update() now runs
+    // every animation frame while the section is on screen.
+    const precisionLeft = document.querySelector('.precision-left');
 
     function update() {
       const scrollY = window.scrollY;
@@ -3208,7 +3242,6 @@
       // Subtle parallax on desktop only — kept gentle so the heading never
       // drifts far enough to be hard to read
       if (window.innerWidth > 768) {
-        const precisionLeft = document.querySelector('.precision-left');
         if (precisionLeft) precisionLeft.style.transform = 'translateY(' + (progress * 20) + 'px)';
         if (typewriter) typewriter.style.transform = 'translateY(' + (progress * 10) + 'px)';
       }
