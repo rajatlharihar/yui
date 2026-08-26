@@ -44,11 +44,18 @@
       justify-content: center;
       background: #fff;
     }
-    #precisionCanvas {
+    #precisionVideo {
       width: 100%;
       height: 100%;
       display: block;
       background: #fff;
+      object-fit: cover;
+    }
+    /* Ultra-wide frames letterboxed into a thin strip below this — only
+       very large desktops keep the full-frame contain fit (matches the
+       old canvas's useCover = innerWidth <= 1680 logic). */
+    @media (min-width: 1681px) {
+      #precisionVideo { object-fit: contain; }
     }
     .precision-overlay {
       position: absolute;
@@ -494,13 +501,13 @@
       </div>
     </div>
   </section>
-  <!-- Japanese Precision: canvas scroll sequence -->
+  <!-- Japanese Precision: video scroll sequence -->
   <section id="japanese-precision" class="precision-section">
     <div id="about" style="position: absolute; top: -100px;"></div>
     <div class="precision-track">
       <div class="precision-sticky">
         <div class="precision-visual-container" style="position: relative; width: 100%; height: 100%;">
-          <canvas id="precisionCanvas"></canvas>
+          <video id="precisionVideo" src="videos/japanese-precision.mp4" muted playsinline preload="auto"></video>
           <div class="marquee" style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 10; background: var(--red); color: #fff; padding: 13px 0; border: none;">
             <div class="marquee-inner"><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div>
           </div>
@@ -2529,28 +2536,52 @@
       closeModal();
     });
 
-    // Phone: when the tray first appears it drifts very slowly to the
-    // right (a real scroll, so it stays where it lands) — "swipe me".
-    // A touch on the tray hands control straight to the user.
+    // Phone: when the tray first appears it slowly drifts left-and-right
+    // a few times (a real scroll, so a touch mid-drift hands off from
+    // wherever it currently sits) — "swipe me". A touch anywhere on the
+    // tray cancels the hint immediately and gives control to the user.
     const trayScroll = document.querySelector('.bento-tray-scroll');
     if (trayScroll && window.innerWidth <= 767) {
       let driftCancelled = false;
-      trayScroll.addEventListener('touchstart', () => { driftCancelled = true; }, { once: true, passive: true });
-      const driftRight = () => {
-        const dur = 5000, to = 110;
-        const t0 = performance.now();
-        const step = (now) => {
+      const cancelDrift = () => { driftCancelled = true; };
+      trayScroll.addEventListener('touchstart', cancelDrift, { once: true, passive: true });
+      trayScroll.addEventListener('pointerdown', cancelDrift, { once: true, passive: true });
+
+      const easeInOutQuad = p => p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+      function driftTo(target, dur) {
+        return new Promise(resolve => {
+          const from = trayScroll.scrollLeft;
+          const t0 = performance.now();
+          const step = (now) => {
+            if (driftCancelled) return;
+            const p = Math.min(1, (now - t0) / dur);
+            trayScroll.scrollLeft = from + (target - from) * easeInOutQuad(p);
+            if (p < 1) requestAnimationFrame(step); else resolve();
+          };
+          requestAnimationFrame(step);
+        });
+      }
+      const wait = (ms) => new Promise(r => setTimeout(r, ms));
+
+      async function driftHint() {
+        const maxScroll = trayScroll.scrollWidth - trayScroll.clientWidth;
+        if (maxScroll <= 0) return;
+        const target = Math.min(maxScroll, maxScroll * 0.65);
+        // A few slow back-and-forth passes, then settle back at the start
+        // and hand off — enough to register as "this moves" without
+        // looping forever once nobody's watching.
+        for (let i = 0; i < 3 && !driftCancelled; i++) {
+          await driftTo(target, 2600);
           if (driftCancelled) return;
-          const p = Math.min(1, (now - t0) / dur);
-          const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; // easeInOutQuad
-          trayScroll.scrollLeft = to * e;
-          if (p < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      };
+          await wait(500);
+          await driftTo(0, 2600);
+          if (driftCancelled) return;
+          await wait(700);
+        }
+      }
       new IntersectionObserver((entries, obs) => {
         if (entries[0].isIntersecting) {
-          setTimeout(driftRight, 500);
+          setTimeout(driftHint, 500);
           obs.disconnect();
         }
       }, { threshold: 0.3 }).observe(trayScroll);
@@ -3083,80 +3114,29 @@
   </script>
 
 
-  <!-- Japanese Precision: Sequence + Typewriter + Glitch -->
+  <!-- Japanese Precision: Video Scrub + Typewriter
+       Replaces the old 169-JPEG canvas-scrub sequence with a real <video>,
+       scrubbed via currentTime. That sequence needed a hand-rolled memory
+       cache (decoded frames were ~2.5MB each pinned in memory), a manual
+       devicePixelRatio-scaled canvas, and still ended up either blurry or
+       crashing phones under memory pressure. An H.264 encode of the same
+       169 frames is ~2MB total (vs 21MB of JPEGs), hardware-decoded by the
+       browser, natively sharp at any pixel density, and needs none of
+       that — the browser owns buffering and memory entirely. -->
   <script>
   (function() {
     const section = document.getElementById('japanese-precision');
-    const canvas = document.getElementById('precisionCanvas');
+    const video = document.getElementById('precisionVideo');
     const typewriter = document.getElementById('precisionTypewriter');
-    const headline = document.getElementById('precisionHeadline');
-    if (!section || !canvas) return;
+    if (!section || !video) return;
 
-    const context = canvas.getContext('2d', { alpha: false });
-    const offCanvas = document.createElement('canvas');
-    const offCtx = offCanvas.getContext('2d', { alpha: false });
+    const fullText = "Yui brings a quiet Japanese presence and craft into the heart of Bangalore. Through shared meals and the warmth of togetherness, we celebrate ‘The Fifth Flavor’—the elusive feeling of connection created around the table, where craft meets emotion.";
 
-    const frameCount = 169;
-    const images = [];
-    const sequence = { frame: 0 };
     let isVisible = false;
-    let loadStarted = false;
     let loopRunning = false;
-    let sectionTop = 0;
-    let sectionHeight = 0;
-
-    // Phone: cap how many decoded frames stay resident in memory at once.
-    // Keeping all 169 pinned (even shrunk) still totalled 100MB+, which was
-    // enough to push iPhones and mid-range Androids over their per-tab
-    // memory ceiling — the browser would silently reload the page mid-scroll,
-    // which is what looked like the preloader "looping". Frames outside this
-    // window get released and re-decoded on demand (from the browser's HTTP
-    // cache, so no re-download) as scrubbing reaches them.
-    const isPhone = window.innerWidth <= 768;
-    const RESIDENT_CAP = isPhone ? 30 : frameCount;
-    let residentIndices = [];
-    let lastGoodImg = null;
-    const pendingLoads = new Set();
-
-    function releaseFrame(i) {
-      const img = images[i];
-      if (img && typeof img.close === 'function') {
-        try { img.close(); } catch (e) {}
-      }
-      images[i] = null;
-      const pos = residentIndices.indexOf(i);
-      if (pos !== -1) residentIndices.splice(pos, 1);
-    }
-
-    function enforceResidentCap() {
-      while (residentIndices.length > RESIDENT_CAP) {
-        let farthestIdx = -1, farthestDist = -1, farthestPos = -1;
-        for (let p = 0; p < residentIndices.length; p++) {
-          const idx = residentIndices[p];
-          const dist = Math.abs(idx - sequence.frame);
-          if (dist > farthestDist) { farthestDist = dist; farthestIdx = idx; farthestPos = p; }
-        }
-        if (farthestIdx === -1) break;
-        releaseFrame(farthestIdx);
-      }
-    }
-
-    function markResident(i) {
-      if (!residentIndices.includes(i)) residentIndices.push(i);
-      if (RESIDENT_CAP < frameCount) enforceResidentCap();
-    }
-
-    // Re-decodes a frame that was evicted from the resident window, without
-    // touching the framesLoaded progress counter (that's only for the
-    // one-time initial pass the preloader waits on).
-    function ensureFrameLoaded(i) {
-      if (images[i] || pendingLoads.has(i)) return;
-      pendingLoads.add(i);
-      loadImageRaw(i).then(() => {
-        pendingLoads.delete(i);
-        if (i === sequence.frame) render();
-      });
-    }
+    let sectionTop = 0, sectionHeight = 0;
+    let targetTime = 0, currentTime = 0, lastCharsToShow = -1;
+    let videoReady = false;
 
     function getElementOffsetTop(el) {
       let top = 0;
@@ -3164,195 +3144,15 @@
       return top;
     }
 
-    const fullText = "Yui brings a quiet Japanese presence and craft into the heart of Bangalore. Through shared meals and the warmth of togetherness, we celebrate ‘The Fifth Flavor’—the elusive feeling of connection created around the table, where craft meets emotion.";
-
-    function getFramePath(i) {
-      const fileName = `Screenshot 2026-04-14 at 9-08-27 PM${i.toString().padStart(3, '0')}.jpg`;
-      return `images/yui/Japanese Precision Video/${fileName.replace(/ /g, '%20')}`;
-    }
-
-    for (let i = 0; i < frameCount; i++) images.push(null);
-
-    // Counts every frame that has settled (decoded or errored), so the
-    // preloader can show real progress across the whole sequence.
-    let framesLoaded = 0;
-    function loadImage(i) {
-      return loadImageRaw(i).then(() => { framesLoaded++; });
-    }
-
-    function loadImageRaw(i) {
-      return new Promise(resolve => {
-        const img = new Image();
-        img.onload = () => {
-          // Phone: shrink the 5120px frames OFF the main thread — a canvas
-          // resize here was stuttering the logo/video playing during load.
-          // Target width tracks the canvas's actual render width (~1:1, not
-          // supersampled) since frames get replaced dozens of times a second
-          // while scrubbing anyway — the extra sharpness of a wider target
-          // wasn't visible but tripled the memory cost of each resident frame.
-          // Now that only ~RESIDENT_CAP frames stay resident at once (see
-          // above) instead of all 169, there's plenty of memory headroom to
-          // size these for actual sharpness — worst case ~30 frames × 1280px
-          // is still only ~75MB, nowhere near what was crashing phones.
-          // 'high' resizeQuality is a proper resample (not nearest-neighbor)
-          // and costs CPU time, not memory, so it's free to turn up.
-          const phoneTargetWidth = Math.min(1280, Math.max(800, Math.round(window.innerWidth * 2)));
-          if (isPhone && img.naturalWidth > phoneTargetWidth && typeof createImageBitmap === 'function') {
-            const scale = phoneTargetWidth / img.naturalWidth;
-            createImageBitmap(img, {
-              resizeWidth: phoneTargetWidth,
-              resizeHeight: Math.round(img.naturalHeight * scale),
-              resizeQuality: 'high'
-            }).then(bmp => {
-              bmp._ready = true;
-              images[i] = bmp;
-              markResident(i);
-              resolve();
-            }).catch(() => {
-              img._ready = true;
-              images[i] = img;
-              markResident(i);
-              resolve();
-            });
-          } else {
-            img._ready = true;
-            images[i] = img;
-            markResident(i);
-            resolve();
-          }
-        };
-        img.onerror = () => resolve();
-        img.src = getFramePath(i);
-      });
-    }
-
-    async function startLoading() {
-      if (loadStarted) return;
-      loadStarted = true;
-      await loadImage(0);
-      render();
-
-      // High-speed sliding window concurrency pool
-      // Transient decode spikes were never the crash cause (permanent
-      // retention of all 169 frames was) — the resident cap above already
-      // guards steady-state memory, so this can go back to a fast pace.
-      const concurrency = isPhone ? 12 : 20;
-      let currentIndex = 1;
-
-      function loadNext() {
-        if (currentIndex >= frameCount) return Promise.resolve();
-        const idx = currentIndex++;
-        return loadImage(idx).then(() => {
-          if (images[sequence.frame] && images[sequence.frame]._ready) render();
-          return loadNext();
-        });
-      }
-
-      const workers = [];
-      for (let c = 0; c < concurrency; c++) {
-        workers.push(loadNext());
-      }
-      await Promise.all(workers);
-    }
-
-    function paintWhite() {
-      if (canvas.width > 0 && canvas.height > 0) {
-        context.fillStyle = '#ffffff';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-
-    function render() {
-      let img = images[sequence.frame];
-      if (!img && isPhone) {
-        // Was evicted from the resident window (or never loaded yet) —
-        // kick off a re-decode and hold the last good frame on screen in
-        // the meantime instead of flashing white.
-        ensureFrameLoaded(sequence.frame);
-        img = lastGoodImg;
-      }
-      const iw = img && (img.naturalWidth || img.width);
-      const ih = img && (img.naturalHeight || img.height);
-      if (!img || !img._ready || !iw) { paintWhite(); return; }
-      const w = canvas.width, h = canvas.height;
-      // Cover (fill + crop) on phone, tablet AND laptop — the ultra-wide
-      // frames letterboxed into a small strip below ~1680px. Only very
-      // large desktops keep the full-frame contain fit.
-      const useCover = window.innerWidth <= 1680;
-      const scale = useCover
-        ? Math.max(w / iw, h / ih)
-        : Math.min(w / iw, h / ih);
-      const dW = iw * scale, dH = ih * scale;
-      const x = (w - dW) / 2, y = (h - dH) / 2;
-      offCtx.fillStyle = '#ffffff';
-      offCtx.fillRect(0, 0, w, h);
-      offCtx.drawImage(img, x, y, dW, dH);
-      context.drawImage(offCanvas, 0, 0);
-      lastGoodImg = img;
-    }
-
-    let lastCanvasCssWidth = 0;
-    function resize() {
-      // The canvas's CSS size is 100% of its (viewport-sized) container,
-      // but its backing-store resolution was only ever set to raw CSS
-      // pixels (window.innerWidth/innerHeight) — on a 2-3x retina phone
-      // the browser then has to upscale that low-res bitmap ~2-3x to fill
-      // the actual screen, which is what read as "blurry/144p" regardless
-      // of how sharp the source frames were. Capped at 2x (not the full
-      // 3x some phones report) to keep the backing buffer reasonable.
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      const cssWidth = window.innerWidth;
-
-      // iOS Safari fires 'resize' repeatedly during scroll as the address
-      // bar collapses/expands (innerHeight changes, innerWidth doesn't).
-      // Reassigning canvas.width/height CLEARS its content per spec, so
-      // reallocating on every such event was wiping and redrawing a canvas
-      // — now 4x heavier post-DPR-fix — dozens of times while scrolling,
-      // which is what looked "broken"/flickery on real phones (this never
-      // showed up testing in a headless browser, which doesn't simulate
-      // the address-bar-driven resize churn). Only reallocate on an actual
-      // width change (real viewport/orientation change); a height-only
-      // change just re-measures layout and lets the existing buffer
-      // stretch to fit — a barely-perceptible momentary stretch beats
-      // constant clear-and-redraw.
-      if (cssWidth !== lastCanvasCssWidth) {
-        canvas.width = Math.round(cssWidth * dpr);
-        canvas.height = Math.round(window.innerHeight * dpr);
-        offCanvas.width = canvas.width;
-        offCanvas.height = canvas.height;
-        lastCanvasCssWidth = cssWidth;
-        paintWhite();
-      }
-      sectionTop = getElementOffsetTop(section);
-      sectionHeight = section.offsetHeight;
-      render();
-    }
-
-    let isGlitching = false;
-    function triggerGlitch() {
-      if (isGlitching) return;
-      isGlitching = true;
-      const en = headline.querySelector('.en');
-      const jp = headline.querySelector('.jp');
-      let count = 0;
-      const interval = setInterval(() => {
-        if (count % 2 === 0) { en.classList.remove('active'); jp.classList.add('active'); }
-        else { en.classList.add('active'); jp.classList.remove('active'); }
-        count++;
-        if (count > 5) {
-          clearInterval(interval);
-          en.classList.add('active'); jp.classList.remove('active');
-          setTimeout(() => { isGlitching = false; }, 2000);
-        }
-      }, 80);
-    }
-
-    let targetFrame = 0, currentFrame = 0, lastCharsToShow = -1;
-
     // Phone: body copy is pre-loaded, not scroll-revealed
     if (window.innerWidth <= 768 && typewriter) {
       typewriter.innerText = fullText;
       lastCharsToShow = fullText.length;
+    }
+
+    function resize() {
+      sectionTop = getElementOffsetTop(section);
+      sectionHeight = section.offsetHeight;
     }
 
     function startLoop() {
@@ -3363,20 +3163,11 @@
 
     function renderLoop() {
       if (!isVisible) { loopRunning = false; return; }
-      const diff = targetFrame - currentFrame;
-      if (Math.abs(diff) > 0.01) currentFrame += diff * 0.1;
-      else currentFrame = targetFrame;
-      const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrame)));
-      if (sequence.frame !== frameIndex) {
-        sequence.frame = frameIndex;
-        render();
-        if (isPhone) {
-          enforceResidentCap();
-          // Prefetch a couple of frames ahead so re-decode latency doesn't
-          // show up as lag while actively scrubbing.
-          const dir = diff >= 0 ? 1 : -1;
-          for (let k = 1; k <= 2; k++) ensureFrameLoaded(Math.min(frameCount - 1, Math.max(0, frameIndex + dir * k)));
-        }
+      const diff = targetTime - currentTime;
+      if (Math.abs(diff) > 0.008) currentTime += diff * 0.15;
+      else currentTime = targetTime;
+      if (videoReady && Math.abs(video.currentTime - currentTime) > 0.016) {
+        try { video.currentTime = currentTime; } catch (e) {}
       }
       requestAnimationFrame(renderLoop);
     }
@@ -3389,7 +3180,8 @@
       const scrollDepth = -rectTop;
       const scrollMax = sectionHeight - window.innerHeight;
       const progress = Math.max(0, Math.min(1, scrollDepth / scrollMax));
-      targetFrame = progress * (frameCount - 1);
+      const duration = video.duration || 6.76;
+      targetTime = progress * duration;
       // Phone: body copy is shown in full immediately (no typewriter reveal).
       // Desktop: completes at ~70% so it's fully readable before the section ends.
       const charsToShow = window.innerWidth <= 768
@@ -3406,32 +3198,17 @@
         if (precisionLeft) precisionLeft.style.transform = 'translateY(' + (progress * 20) + 'px)';
         if (typewriter) typewriter.style.transform = 'translateY(' + (progress * 10) + 'px)';
       }
-      // glitch disabled — heading stays in English
     }
 
-    const lazyObs = new IntersectionObserver(entries => {
+    const visIO = new IntersectionObserver(entries => {
       const wasVisible = isVisible;
       isVisible = entries[0].isIntersecting;
-      if (isVisible) { startLoading(); if (!wasVisible) startLoop(); }
+      if (isVisible && !wasVisible) startLoop();
     }, {
-      // Phone: only start pulling the 169 frames when the section is truly
-      // near — preloading them at page load was flooding the main thread
-      // exactly while the logo reveal and hero video were playing.
-      // Asymmetric now: a generous BOTTOM margin still starts the render
-      // loop early as you scroll down toward the hero, but a small TOP
-      // margin means it stops soon after you've scrolled past it, instead
-      // of the old symmetric 600px keeping it "visible" (and its per-frame
-      // canvas draw running) for 600px of scroll into the Artisans section
-      // right below it, competing with that section's own scroll-driven
-      // animation for main-thread time.
       rootMargin: window.innerWidth <= 768 ? '40px 0px 120px 0px' : '100px 0px 600px 0px'
     });
-    lazyObs.observe(section);
+    visIO.observe(section);
 
-    // Dragging a window edge fires 'resize' dozens of times a second — resize()
-    // clears and redraws two full-screen canvases synchronously, so calling it
-    // on every tick was the main cause of drag-to-resize jank. Debounced so the
-    // expensive redraw only runs once the drag actually pauses/ends.
     let resizeDebounce = null;
     window.addEventListener('resize', () => {
       clearTimeout(resizeDebounce);
@@ -3440,19 +3217,42 @@
     window.addEventListener('scroll', update, { passive: true });
     resize();
 
-    // Start pulling the frame sequence immediately rather than waiting for
-    // the IntersectionObserver, and publish its progress so the preloader
-    // can hold the loading screen until the whole sequence is decoded —
-    // that's what keeps this section from hitching the first time it's
-    // scrolled into view. Downloading during the preloader is safe (unlike
-    // the old eager load this replaces): the preloader is covering the
-    // screen, so there's no logo reveal or hero video competing for the
-    // main thread yet. lazyObs still calls startLoading(), which no-ops
-    // once loadStarted is set.
-    const precisionPromise = startLoading();
+    // iOS Safari (and some older Android WebViews) can leave a video
+    // element showing only its poster/first frame — currentTime seeks
+    // update internally but never repaint on screen — until the video has
+    // actually been played at least once. Priming it with a brief muted
+    // play+pause (allowed without a user gesture since it's muted) wakes
+    // up the decoder so subsequent scrub seeks reliably render.
+    function primeVideo() {
+      const p = video.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => video.pause()).catch(() => {});
+      } else {
+        video.pause();
+      }
+    }
+
+    function markReady() {
+      if (videoReady) return;
+      videoReady = true;
+      primeVideo();
+      update();
+    }
+    if (video.readyState >= 2) markReady();
+    video.addEventListener('loadeddata', markReady, { once: true });
+
+    // Preloader hook — same shape as before (total/loaded/promise) so the
+    // preloader script needs no changes. A ~2MB video loads essentially
+    // instantly, so this just waits for enough of it to scrub smoothly
+    // instead of tracking per-frame progress.
+    const precisionPromise = new Promise(resolve => {
+      if (video.readyState >= 3) { resolve(); return; }
+      video.addEventListener('canplaythrough', () => resolve(), { once: true });
+      setTimeout(resolve, 5000); // safety net on a very slow connection
+    });
     window.__yuiPrecision = {
-      total: frameCount,
-      get loaded() { return framesLoaded; },
+      total: 1,
+      get loaded() { return videoReady ? 1 : 0; },
       promise: precisionPromise,
     };
   })();
