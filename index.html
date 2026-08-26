@@ -3096,6 +3096,59 @@
     let sectionTop = 0;
     let sectionHeight = 0;
 
+    // Phone: cap how many decoded frames stay resident in memory at once.
+    // Keeping all 169 pinned (even shrunk) still totalled 100MB+, which was
+    // enough to push iPhones and mid-range Androids over their per-tab
+    // memory ceiling — the browser would silently reload the page mid-scroll,
+    // which is what looked like the preloader "looping". Frames outside this
+    // window get released and re-decoded on demand (from the browser's HTTP
+    // cache, so no re-download) as scrubbing reaches them.
+    const isPhone = window.innerWidth <= 768;
+    const RESIDENT_CAP = isPhone ? 30 : frameCount;
+    let residentIndices = [];
+    let lastGoodImg = null;
+    const pendingLoads = new Set();
+
+    function releaseFrame(i) {
+      const img = images[i];
+      if (img && typeof img.close === 'function') {
+        try { img.close(); } catch (e) {}
+      }
+      images[i] = null;
+      const pos = residentIndices.indexOf(i);
+      if (pos !== -1) residentIndices.splice(pos, 1);
+    }
+
+    function enforceResidentCap() {
+      while (residentIndices.length > RESIDENT_CAP) {
+        let farthestIdx = -1, farthestDist = -1, farthestPos = -1;
+        for (let p = 0; p < residentIndices.length; p++) {
+          const idx = residentIndices[p];
+          const dist = Math.abs(idx - sequence.frame);
+          if (dist > farthestDist) { farthestDist = dist; farthestIdx = idx; farthestPos = p; }
+        }
+        if (farthestIdx === -1) break;
+        releaseFrame(farthestIdx);
+      }
+    }
+
+    function markResident(i) {
+      if (!residentIndices.includes(i)) residentIndices.push(i);
+      if (RESIDENT_CAP < frameCount) enforceResidentCap();
+    }
+
+    // Re-decodes a frame that was evicted from the resident window, without
+    // touching the framesLoaded progress counter (that's only for the
+    // one-time initial pass the preloader waits on).
+    function ensureFrameLoaded(i) {
+      if (images[i] || pendingLoads.has(i)) return;
+      pendingLoads.add(i);
+      loadImageRaw(i).then(() => {
+        pendingLoads.delete(i);
+        if (i === sequence.frame) render();
+      });
+    }
+
     function getElementOffsetTop(el) {
       let top = 0;
       while (el) { top += el.offsetTop; el = el.offsetParent; }
@@ -3124,16 +3177,12 @@
         img.onload = () => {
           // Phone: shrink the 5120px frames OFF the main thread — a canvas
           // resize here was stuttering the logo/video playing during load.
-          // Target width tracks the canvas's actual render width (canvas.width
-          // is set to window.innerWidth, unscaled by devicePixelRatio) instead
-          // of a flat 1280px — keeping all 169 decoded frames pinned in memory
-          // at 1280px wide (~2.5MB/frame, ~430MB total) was blowing past the
-          // per-tab memory ceiling on iPhones and mid-range Androids, which
-          // silently reload the page mid-scroll — that's what looked like the
-          // preloader "looping". A ~2x-canvas-width target still looks sharp
-          // at this scrubbed-canvas size but cuts that footprint by ~4x.
-          const phoneTargetWidth = Math.min(1280, Math.max(640, Math.round(window.innerWidth * 1.5)));
-          if (window.innerWidth <= 768 && img.naturalWidth > phoneTargetWidth && typeof createImageBitmap === 'function') {
+          // Target width tracks the canvas's actual render width (~1:1, not
+          // supersampled) since frames get replaced dozens of times a second
+          // while scrubbing anyway — the extra sharpness of a wider target
+          // wasn't visible but tripled the memory cost of each resident frame.
+          const phoneTargetWidth = Math.min(960, Math.max(480, Math.round(window.innerWidth * 1.1)));
+          if (isPhone && img.naturalWidth > phoneTargetWidth && typeof createImageBitmap === 'function') {
             const scale = phoneTargetWidth / img.naturalWidth;
             createImageBitmap(img, {
               resizeWidth: phoneTargetWidth,
@@ -3142,15 +3191,18 @@
             }).then(bmp => {
               bmp._ready = true;
               images[i] = bmp;
+              markResident(i);
               resolve();
             }).catch(() => {
               img._ready = true;
               images[i] = img;
+              markResident(i);
               resolve();
             });
           } else {
             img._ready = true;
             images[i] = img;
+            markResident(i);
             resolve();
           }
         };
@@ -3166,7 +3218,7 @@
       render();
 
       // High-speed sliding window concurrency pool
-      const concurrency = window.innerWidth <= 768 ? 12 : 20;
+      const concurrency = isPhone ? 6 : 20;
       let currentIndex = 1;
 
       function loadNext() {
@@ -3193,7 +3245,14 @@
     }
 
     function render() {
-      const img = images[sequence.frame];
+      let img = images[sequence.frame];
+      if (!img && isPhone) {
+        // Was evicted from the resident window (or never loaded yet) —
+        // kick off a re-decode and hold the last good frame on screen in
+        // the meantime instead of flashing white.
+        ensureFrameLoaded(sequence.frame);
+        img = lastGoodImg;
+      }
       const iw = img && (img.naturalWidth || img.width);
       const ih = img && (img.naturalHeight || img.height);
       if (!img || !img._ready || !iw) { paintWhite(); return; }
@@ -3211,6 +3270,7 @@
       offCtx.fillRect(0, 0, w, h);
       offCtx.drawImage(img, x, y, dW, dH);
       context.drawImage(offCanvas, 0, 0);
+      lastGoodImg = img;
     }
 
     function resize() {
@@ -3263,7 +3323,17 @@
       if (Math.abs(diff) > 0.01) currentFrame += diff * 0.1;
       else currentFrame = targetFrame;
       const frameIndex = Math.min(frameCount - 1, Math.max(0, Math.round(currentFrame)));
-      if (sequence.frame !== frameIndex) { sequence.frame = frameIndex; render(); }
+      if (sequence.frame !== frameIndex) {
+        sequence.frame = frameIndex;
+        render();
+        if (isPhone) {
+          enforceResidentCap();
+          // Prefetch a couple of frames ahead so re-decode latency doesn't
+          // show up as lag while actively scrubbing.
+          const dir = diff >= 0 ? 1 : -1;
+          for (let k = 1; k <= 2; k++) ensureFrameLoaded(Math.min(frameCount - 1, Math.max(0, frameIndex + dir * k)));
+        }
+      }
       requestAnimationFrame(renderLoop);
     }
 
