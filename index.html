@@ -507,7 +507,21 @@
     <div class="precision-track">
       <div class="precision-sticky">
         <div class="precision-visual-container" style="position: relative; width: 100%; height: 100%;">
-          <video id="precisionVideo" src="videos/japanese-precision.mp4" muted playsinline preload="auto"></video>
+          <video id="precisionVideo" muted playsinline preload="auto"></video>
+          <script>
+            /* Pick the encode before the browser starts fetching: phones get
+               a 1280px cut (~2.8MB), desktop the native 2560px one (~8.5MB).
+               A phone screen can't resolve 2560px anyway, and the smaller
+               frames also decode faster per scrub-seek on mobile silicon.
+               Inline (rather than in the main script below) so the download
+               starts during initial parse, alongside the other hero assets. */
+            (function () {
+              var v = document.getElementById('precisionVideo');
+              v.src = window.innerWidth <= 768
+                ? 'videos/japanese-precision-mobile.mp4'
+                : 'videos/japanese-precision.mp4';
+            })();
+          </script>
           <div class="marquee" style="position: absolute; bottom: 0; left: 0; width: 100%; z-index: 10; background: var(--red); color: #fff; padding: 13px 0; border: none;">
             <div class="marquee-inner"><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span><span class="marquee-item">食<span class="marquee-sep"></span></span><span class="marquee-item">集い<span class="marquee-sep"></span></span><span class="marquee-item">つながり<span class="marquee-sep"></span></span><span class="marquee-item">味<span class="marquee-sep"></span></span><span class="marquee-item">静寂<span class="marquee-sep"></span></span><span class="marquee-item">料理<span class="marquee-sep"></span></span><span class="marquee-item">心<span class="marquee-sep"></span></span><span class="marquee-item">縁<span class="marquee-sep"></span></span><span class="marquee-item">日本料理<span class="marquee-sep"></span></span><span class="marquee-item">温もり<span class="marquee-sep"></span></span></div>
           </div>
