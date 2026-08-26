@@ -163,12 +163,16 @@
       .precision-section { height: 140vh !important; }
     }
 
-    /* MUSIC TOGGLE — bottom-left so it never collides with the chat
-       launcher stack (yui-wrapper/fy-scroll-top-float) parked bottom-right */
+    /* MUSIC TOGGLE — bottom-right, stacked above the chat launcher stack
+       (yui-wrapper at bottom:28/right:28/60px, fy-scroll-top-float above
+       it at bottom:104/right:38/40px). This sits one tier above both:
+       104 + 40 (scroll-top button) + 16 (gap) = 160px. Right offset keeps
+       it centred on the same 58px-from-edge column as the other two
+       (column centre = 28 + 60/2 = 58; right = 58 − buttonWidth/2). */
     #musicToggle {
       position: fixed;
-      left: 28px;
-      bottom: 28px;
+      right: 34px;
+      bottom: 160px;
       width: 48px;
       height: 48px;
       border-radius: 10px;
@@ -192,7 +196,7 @@
     #musicToggle.muted .mt-on { display: none; }
     #musicToggle.muted .mt-off { display: block; }
     @media (max-width: 768px) {
-      #musicToggle { left: 18px; bottom: 18px; width: 44px; height: 44px; }
+      #musicToggle { right: 36px; bottom: 150px; width: 44px; height: 44px; }
     }
 
     /* PRELOADER */
