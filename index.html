@@ -3291,6 +3291,7 @@
       lastGoodImg = img;
     }
 
+    let lastCanvasCssWidth = 0;
     function resize() {
       // The canvas's CSS size is 100% of its (viewport-sized) container,
       // but its backing-store resolution was only ever set to raw CSS
@@ -3300,13 +3301,30 @@
       // of how sharp the source frames were. Capped at 2x (not the full
       // 3x some phones report) to keep the backing buffer reasonable.
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(window.innerWidth * dpr);
-      canvas.height = Math.round(window.innerHeight * dpr);
-      offCanvas.width = canvas.width;
-      offCanvas.height = canvas.height;
+      const cssWidth = window.innerWidth;
+
+      // iOS Safari fires 'resize' repeatedly during scroll as the address
+      // bar collapses/expands (innerHeight changes, innerWidth doesn't).
+      // Reassigning canvas.width/height CLEARS its content per spec, so
+      // reallocating on every such event was wiping and redrawing a canvas
+      // — now 4x heavier post-DPR-fix — dozens of times while scrolling,
+      // which is what looked "broken"/flickery on real phones (this never
+      // showed up testing in a headless browser, which doesn't simulate
+      // the address-bar-driven resize churn). Only reallocate on an actual
+      // width change (real viewport/orientation change); a height-only
+      // change just re-measures layout and lets the existing buffer
+      // stretch to fit — a barely-perceptible momentary stretch beats
+      // constant clear-and-redraw.
+      if (cssWidth !== lastCanvasCssWidth) {
+        canvas.width = Math.round(cssWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        offCanvas.width = canvas.width;
+        offCanvas.height = canvas.height;
+        lastCanvasCssWidth = cssWidth;
+        paintWhite();
+      }
       sectionTop = getElementOffsetTop(section);
       sectionHeight = section.offsetHeight;
-      paintWhite();
       render();
     }
 
