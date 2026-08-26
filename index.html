@@ -171,7 +171,7 @@
       bottom: 28px;
       width: 48px;
       height: 48px;
-      border-radius: 50%;
+      border-radius: 10px;
       background: #0B0B09;
       border: none;
       display: flex;
@@ -180,9 +180,11 @@
       cursor: pointer;
       z-index: 10000;
       box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-      transition: transform 0.3s var(--ease, ease), box-shadow 0.3s var(--ease, ease);
+      opacity: 1;
+      transition: transform 0.3s var(--ease, ease), box-shadow 0.3s var(--ease, ease), opacity 0.3s var(--ease, ease);
       padding: 0;
     }
+    #musicToggle.hidden-scroll { opacity: 0; pointer-events: none; }
     #musicToggle:hover { transform: scale(1.08); }
     #musicToggle svg { width: 20px; height: 20px; }
     #musicToggle .mt-on { display: block; }
@@ -3927,14 +3929,21 @@
 
     function updateAudioVolume() {
       if (!bgMusic) return;
-      if (userMuted) { if (!bgMusic.paused) bgMusic.pause(); return; }
       var scrollY = window.scrollY || window.pageYOffset || 0;
-      var heroHeight = heroSection ? (heroSection.offsetHeight - window.innerHeight) : (window.innerHeight * 1.5);
-      if (heroHeight <= 0) heroHeight = window.innerHeight;
 
-      // Full volume at top, slowly fades to 0 as user completes the hero scroll section
-      var fadeStart = heroHeight * 0.2;
-      var fadeEnd = heroHeight * 0.95;
+      // Fade window is one hero-screen's worth of scroll, not the full
+      // (much taller) pinned scroll-scrub track behind the hero video —
+      // the music should be gone by the time you've scrolled past the
+      // first hero screen, not still audible deep into the page.
+      var fadeDistance = window.innerHeight || 800;
+      var fadeStart = fadeDistance * 0.2;
+      var fadeEnd = fadeDistance * 0.95;
+
+      if (musicToggle) {
+        musicToggle.classList.toggle('hidden-scroll', scrollY >= fadeEnd);
+      }
+
+      if (userMuted) { if (!bgMusic.paused) bgMusic.pause(); return; }
 
       var targetVol = 1;
       if (scrollY <= fadeStart) {
@@ -3959,6 +3968,7 @@
 
     window.addEventListener('scroll', updateAudioVolume, { passive: true });
     if (window.lenis) window.lenis.on('scroll', updateAudioVolume);
+    updateAudioVolume(); // sets correct initial button visibility even before autoplay succeeds
 
     if (musicToggle) {
       musicToggle.addEventListener('click', function() {
