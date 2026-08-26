@@ -163,16 +163,17 @@
       .precision-section { height: 140vh !important; }
     }
 
-    /* MUSIC TOGGLE — bottom-right, stacked above the chat launcher stack
-       (yui-wrapper at bottom:28/right:28/60px, fy-scroll-top-float above
-       it at bottom:104/right:38/40px). This sits one tier above both:
-       104 + 40 (scroll-top button) + 16 (gap) = 160px. Right offset keeps
-       it centred on the same 58px-from-edge column as the other two
-       (column centre = 28 + 60/2 = 58; right = 58 − buttonWidth/2). */
+    /* MUSIC TOGGLE — sits in the exact slot the fy-scroll-top-float button
+       (bottom:104/right:38/40px) occupies once it appears. Since that
+       button only shows past scrollY > innerHeight*0.8 and this one hides
+       right around there (fadeEnd at innerHeight*0.95), the speaker hands
+       off to the up-arrow in the same spot rather than stacking above it.
+       Right offset centres the 48px button on the same 58px-from-edge
+       column as the chat launcher/scroll-top button (58 − 48/2 = 34). */
     #musicToggle {
       position: fixed;
       right: 34px;
-      bottom: 160px;
+      bottom: 104px;
       width: 48px;
       height: 48px;
       border-radius: 10px;
@@ -185,18 +186,22 @@
       z-index: 1000000;
       box-shadow: 0 6px 20px rgba(0,0,0,0.25);
       opacity: 1;
-      transition: transform 0.3s var(--ease, ease), box-shadow 0.3s var(--ease, ease), opacity 0.3s var(--ease, ease);
+      transform: translateY(0);
+      transition: transform 0.3s ease, box-shadow 0.3s var(--ease, ease), opacity 0.3s ease;
       padding: 0;
     }
-    #musicToggle.hidden-scroll { opacity: 0; pointer-events: none; }
-    #musicToggle:hover { transform: scale(1.08); }
+    /* Sinks down as it fades — mirrors the distance/timing of
+       fy-scroll-top-float's rise-in (translateY(10px)→0, 0.3s ease) so the
+       two read as one continuous handoff rather than an abrupt pop-swap. */
+    #musicToggle.hidden-scroll { opacity: 0; pointer-events: none; transform: translateY(10px); }
+    #musicToggle:hover { transform: translateY(0) scale(1.08); }
     #musicToggle svg { width: 20px; height: 20px; }
     #musicToggle .mt-on { display: block; }
     #musicToggle .mt-off { display: none; }
     #musicToggle.muted .mt-on { display: none; }
     #musicToggle.muted .mt-off { display: block; }
     @media (max-width: 768px) {
-      #musicToggle { right: 36px; bottom: 150px; width: 44px; height: 44px; }
+      #musicToggle { right: 36px; bottom: 104px; width: 44px; height: 44px; }
     }
 
     /* PRELOADER */
@@ -4022,7 +4027,10 @@
       // first hero screen, not still audible deep into the page.
       var fadeDistance = window.innerHeight || 800;
       var fadeStart = fadeDistance * 0.2;
-      var fadeEnd = fadeDistance * 0.95;
+      // Matches the fy-scroll-top-float appearance threshold exactly (0.8)
+      // so the speaker hides right as the up-arrow takes its spot — no
+      // window where both are visible stacked on each other.
+      var fadeEnd = fadeDistance * 0.8;
 
       if (musicToggle) {
         musicToggle.classList.toggle('hidden-scroll', scrollY >= fadeEnd);
