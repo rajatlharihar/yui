@@ -3181,13 +3181,19 @@
           // supersampled) since frames get replaced dozens of times a second
           // while scrubbing anyway — the extra sharpness of a wider target
           // wasn't visible but tripled the memory cost of each resident frame.
-          const phoneTargetWidth = Math.min(960, Math.max(480, Math.round(window.innerWidth * 1.1)));
+          // Now that only ~RESIDENT_CAP frames stay resident at once (see
+          // above) instead of all 169, there's plenty of memory headroom to
+          // size these for actual sharpness — worst case ~30 frames × 1280px
+          // is still only ~75MB, nowhere near what was crashing phones.
+          // 'high' resizeQuality is a proper resample (not nearest-neighbor)
+          // and costs CPU time, not memory, so it's free to turn up.
+          const phoneTargetWidth = Math.min(1280, Math.max(800, Math.round(window.innerWidth * 2)));
           if (isPhone && img.naturalWidth > phoneTargetWidth && typeof createImageBitmap === 'function') {
             const scale = phoneTargetWidth / img.naturalWidth;
             createImageBitmap(img, {
               resizeWidth: phoneTargetWidth,
               resizeHeight: Math.round(img.naturalHeight * scale),
-              resizeQuality: 'low'
+              resizeQuality: 'high'
             }).then(bmp => {
               bmp._ready = true;
               images[i] = bmp;
@@ -3218,7 +3224,10 @@
       render();
 
       // High-speed sliding window concurrency pool
-      const concurrency = isPhone ? 6 : 20;
+      // Transient decode spikes were never the crash cause (permanent
+      // retention of all 169 frames was) — the resident cap above already
+      // guards steady-state memory, so this can go back to a fast pace.
+      const concurrency = isPhone ? 12 : 20;
       let currentIndex = 1;
 
       function loadNext() {
@@ -3706,7 +3715,9 @@
 
       var pageLoaded = false, minTimeElapsed = false;
       function maybeFinish() {
-        var precisionReady = precisionDone || (precision && precision.loaded >= 50);
+        // 30 matches the phone resident-frame window — enough for smooth
+        // scrubbing from the top of the section without waiting on all 169.
+        var precisionReady = precisionDone || (precision && precision.loaded >= 30);
         if (loaded >= assetTotal && precisionReady && pageLoaded && minTimeElapsed) dismissPreloader();
       }
       function onAssetSettled() {
