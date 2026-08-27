@@ -491,9 +491,18 @@
            starts during initial parse with the other hero assets. */
         (function () {
           var v = document.getElementById('heroVideo');
-          v.src = window.innerWidth <= 767
-            ? 'videos/Box-mobile.mp4'
-            : 'videos/Box.mp4';
+          /* matchMedia, NOT innerWidth: this has to resolve to the exact same
+             answer as the stylesheet's @media (max-width: 767px), and
+             innerWidth does not guarantee that — some Android browsers report
+             it in device pixels, so a 992px-wide phone took the desktop
+             branch while the CSS took the mobile one. That mismatch pointed
+             the mobile framing at the full-width encode and parked the hero
+             on the plant instead of the box. */
+          var mobile = window.matchMedia('(max-width: 767px)').matches;
+          v.src = mobile ? 'videos/Box-mobile.mp4' : 'videos/Box.mp4';
+          /* Framing follows the file that actually loaded, so the two can
+             never drift apart again. */
+          if (mobile) v.classList.add('is-mobile-cut');
         })();
       </script>
       <div class="hero-content" id="heroContent">
@@ -3010,7 +3019,7 @@
        there and bails on every event. That left the clip frozen — the
        scrub's own play().then(pause) parks it on frame 0 and nothing ever
        advanced it again. Phones just loop it instead. */
-    const heroScrubs = window.innerWidth > 767;
+    const heroScrubs = !window.matchMedia('(max-width: 767px)').matches;
 
     if (video && !heroScrubs) {
       video.loop = true;

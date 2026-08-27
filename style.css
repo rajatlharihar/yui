@@ -1450,11 +1450,21 @@
         width: 100%;
         height: 58vh;
         object-fit: cover;
-        object-position: 20% center;
+        /* Fallback framing, used only if the full-width encode is what
+           loaded here. 85% still lands on the box; the mobile cut's own 20%
+           applied to Box.mp4 would land on the plant. */
+        object-position: 85% center;
         clip-path: none !important;
         top: auto !important;
         left: auto !important;
         z-index: 1;
+      }
+
+      /* The real framing, keyed to the class the loader adds when it picks
+         Box-mobile.mp4 — so the crop and its object-position can only ever
+         apply together. */
+      #heroVideo.is-mobile-cut {
+        object-position: 20% center;
       }
 
       /* JP text: overlaid on video, inset from edge */
