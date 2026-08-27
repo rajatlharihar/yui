@@ -478,9 +478,24 @@
 
   <section id="home" class="hero">
     <div class="hero-sticky-track">
-      <video id="heroVideo" muted preload="auto" playsinline fetchpriority="high">
-        <source src="videos/Box.mp4" type="video/mp4">
-      </video>
+      <video id="heroVideo" muted preload="auto" playsinline fetchpriority="high"></video>
+      <script>
+        /* Box.mp4 is 1920x800 (2.4:1). The phone hero is a portrait-ish block,
+           so object-fit:cover only ever showed a ~630px-wide slice of it —
+           narrower than the bento box itself (~830px), meaning no
+           object-position could fit the whole box in frame. Box-mobile.mp4 is
+           a 940x800 crop pre-framed on the box (and 1.4MB vs 12MB, so phones
+           also stop pulling the full-width encode). 767 matches the hero's
+           mobile media query in style.css exactly — a mismatch there would
+           pair the mobile crop with the tablet layout. Inline so the fetch
+           starts during initial parse with the other hero assets. */
+        (function () {
+          var v = document.getElementById('heroVideo');
+          v.src = window.innerWidth <= 767
+            ? 'videos/Box-mobile.mp4'
+            : 'videos/Box.mp4';
+        })();
+      </script>
       <div class="hero-content" id="heroContent">
         <div class="glitch-hed-wrapper" id="heroInteractionTarget">
           <h1 class="glitch-hed" id="heroHeadline">

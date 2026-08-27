@@ -1437,26 +1437,32 @@
         flex-shrink: 0;
       }
 
-      /* Video: scaled-up flow element, focal point shifted left */
+      /* Video: flow element showing Box-mobile.mp4's full frame. That encode
+         is already cropped to 940x800 around the bento box (see the source
+         swap in index.html), so the block takes the clip's own aspect ratio
+         and does no further cropping — the previous 58vh + object-fit:cover
+         sliced the box's edges off no matter where object-position sat. */
       #heroVideo {
         position: relative !important;
         flex-shrink: 0;
         width: 100%;
-        height: 58vh;
+        height: auto;
+        aspect-ratio: 940 / 800;
         object-fit: cover;
-        object-position: 32% center;
+        object-position: center;
         clip-path: none !important;
         top: auto !important;
         left: auto !important;
         z-index: 1;
       }
 
-      /* JP text: overlaid on video, inset from edge */
+      /* JP text: overlaid on video, inset from edge. Height tracks the video
+         block, which is now 100vw wide at the clip's 940:800 ratio. */
       .hero-jp-panel {
         position: absolute;
         right: 28px;
         top: 88px;
-        height: 58vh;
+        height: calc(100vw * 800 / 940);
         transform: none;
         overflow: hidden;
         display: flex;
@@ -1479,7 +1485,11 @@
         bottom: auto !important;
         transform: none !important;
         will-change: auto !important;
-        margin-top: -150px;
+        /* Was -150px against a 58vh video. The video block is shorter now, so
+           that much overlap ran the headline up over the box itself; -40px
+           still laps onto the clip's dark lower table edge without touching
+           the food. */
+        margin-top: -40px;
         padding: 0 24px 48px;
         flex: 1;
         z-index: 10;
