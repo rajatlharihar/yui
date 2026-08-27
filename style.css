@@ -1442,15 +1442,15 @@
          and its outer edges are allowed to run off. Serving the 940x800
          mobile crop (see index.html) still matters here: the visible window
          lands entirely inside it, so none of Box.mp4's wasted left half gets
-         downloaded. object-position sits right of centre to push the image
-         left, off the box's left edge and onto the food. */
+         downloaded. object-position keeps the box's left edge and the petal
+         in shot while letting its right side run off. */
       #heroVideo {
         position: relative !important;
         flex-shrink: 0;
         width: 100%;
         height: 58vh;
         object-fit: cover;
-        object-position: 65% center;
+        object-position: 20% center;
         clip-path: none !important;
         top: auto !important;
         left: auto !important;
