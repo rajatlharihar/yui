@@ -3004,7 +3004,25 @@
     const video = document.getElementById('heroVideo');
     const heroSection = document.getElementById('home');
 
-    if (video && heroSection) {
+    /* The scrub needs pinned depth to map scroll onto currentTime. Desktop
+       has it (.hero is 250vh behind a sticky track); the phone hero is a
+       plain flow block at min-height:100vh, so onHeroScroll's `depth` is 0
+       there and bails on every event. That left the clip frozen — the
+       scrub's own play().then(pause) parks it on frame 0 and nothing ever
+       advanced it again. Phones just loop it instead. */
+    const heroScrubs = window.innerWidth > 767;
+
+    if (video && !heroScrubs) {
+      video.loop = true;
+      const tryPlay = () => { const r = video.play(); if (r) r.catch(() => {}); };
+      tryPlay();
+      video.addEventListener('loadeddata', tryPlay, { once: true });
+      // Fallback for browsers that refuse the programmatic play until the
+      // page has been interacted with, despite muted + playsinline.
+      document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
+    }
+
+    if (video && heroSection && heroScrubs) {
       let duration = 0;
       let targetP = 0;
       let currentP = 0;

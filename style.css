@@ -1437,32 +1437,32 @@
         flex-shrink: 0;
       }
 
-      /* Video: flow element showing Box-mobile.mp4's full frame. That encode
-         is already cropped to 940x800 around the bento box (see the source
-         swap in index.html), so the block takes the clip's own aspect ratio
-         and does no further cropping — the previous 58vh + object-fit:cover
-         sliced the box's edges off no matter where object-position sat. */
+      /* Video: back to the taller 58vh block, cropping into Box-mobile.mp4
+         rather than showing its whole frame — the box reads bigger this way
+         and its outer edges are allowed to run off. Serving the 940x800
+         mobile crop (see index.html) still matters here: the visible window
+         lands entirely inside it, so none of Box.mp4's wasted left half gets
+         downloaded. object-position sits right of centre to push the image
+         left, off the box's left edge and onto the food. */
       #heroVideo {
         position: relative !important;
         flex-shrink: 0;
         width: 100%;
-        height: auto;
-        aspect-ratio: 940 / 800;
+        height: 58vh;
         object-fit: cover;
-        object-position: center;
+        object-position: 65% center;
         clip-path: none !important;
         top: auto !important;
         left: auto !important;
         z-index: 1;
       }
 
-      /* JP text: overlaid on video, inset from edge. Height tracks the video
-         block, which is now 100vw wide at the clip's 940:800 ratio. */
+      /* JP text: overlaid on video, inset from edge */
       .hero-jp-panel {
         position: absolute;
         right: 28px;
         top: 88px;
-        height: calc(100vw * 800 / 940);
+        height: 58vh;
         transform: none;
         overflow: hidden;
         display: flex;
@@ -1485,11 +1485,7 @@
         bottom: auto !important;
         transform: none !important;
         will-change: auto !important;
-        /* Was -150px against a 58vh video. The video block is shorter now, so
-           that much overlap ran the headline up over the box itself; -40px
-           still laps onto the clip's dark lower table edge without touching
-           the food. */
-        margin-top: -40px;
+        margin-top: -150px;
         padding: 0 24px 48px;
         flex: 1;
         z-index: 10;
