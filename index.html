@@ -3013,25 +3013,12 @@
     const video = document.getElementById('heroVideo');
     const heroSection = document.getElementById('home');
 
-    /* The scrub needs pinned depth to map scroll onto currentTime. Desktop
-       has it (.hero is 250vh behind a sticky track); the phone hero is a
-       plain flow block at min-height:100vh, so onHeroScroll's `depth` is 0
-       there and bails on every event. That left the clip frozen — the
-       scrub's own play().then(pause) parks it on frame 0 and nothing ever
-       advanced it again. Phones just loop it instead. */
-    const heroScrubs = !window.matchMedia('(max-width: 767px)').matches;
-
-    if (video && !heroScrubs) {
-      video.loop = true;
-      const tryPlay = () => { const r = video.play(); if (r) r.catch(() => {}); };
-      tryPlay();
-      video.addEventListener('loadeddata', tryPlay, { once: true });
-      // Fallback for browsers that refuse the programmatic play until the
-      // page has been interacted with, despite muted + playsinline.
-      document.addEventListener('touchstart', tryPlay, { once: true, passive: true });
-    }
-
-    if (video && heroSection && heroScrubs) {
+    /* Both breakpoints scrub now — the phone hero is pinned for a viewport
+       of travel (see .hero in style.css), so it finally has the depth this
+       maps scroll onto. Box-mobile.mp4 is cut with a 5-frame GOP for the
+       same reason the desktop encode is all-intra: a seek must land without
+       decoding far. */
+    if (video && heroSection) {
       let duration = 0;
       let targetP = 0;
       let currentP = 0;
@@ -3043,9 +3030,18 @@
       if (video.readyState >= 1 && video.duration) duration = video.duration;
       video.addEventListener('loadedmetadata', () => { duration = video.duration; });
 
-      // Decode + paint first frame without autoplay
-      video.play().then(() => { video.pause(); video.currentTime = 0; })
-           .catch(() => { video.currentTime = 0.001; });
+      // Decode + paint first frame without autoplay. The nudge in the catch
+      // has to wait for decodable data: phones refuse the programmatic play
+      // far more often than desktop, and issuing that seek at readyState 0
+      // left one in flight for seconds. seekTo() bails while video.seeking,
+      // so every scrub seek was dropped until it cleared — the phone hero
+      // just sat on frame 0 while you scrolled.
+      const primeFrame = () => {
+        video.play().then(() => { video.pause(); video.currentTime = 0; })
+             .catch(() => { if (video.readyState >= 2) video.currentTime = 0.001; });
+      };
+      if (video.readyState >= 2) primeFrame();
+      else video.addEventListener('loadeddata', primeFrame, { once: true });
 
       function lerp(a, b, t) { return a + (b - a) * t; }
 
@@ -3058,6 +3054,8 @@
       // the decoder is idle, so each one completes and actually paints;
       // the rAF loop keeps running for the eased motion regardless.
       function seekTo(t) {
+        // Nothing decodable to land on yet — seeking here is what stalls.
+        if (video.readyState < 2) return;
         if (video.seeking) return;
         if (Math.abs(video.currentTime - t) < 0.01) return;
         if (typeof video.fastSeek === 'function') video.fastSeek(t);
@@ -3095,6 +3093,9 @@
       };
       window.addEventListener('scroll', onHeroScroll, { passive: true });
       if (window.lenis) window.lenis.on('scroll', onHeroScroll);
+      // Land the scroll position that arrived while the video was still
+      // undecodable, rather than waiting for the next scroll event.
+      video.addEventListener('loadeddata', onHeroScroll, { once: true });
     }
 
     // ── HERO PARALLAX ──

@@ -1409,23 +1409,29 @@
       #logoCanvas { width: 48px !important; height: auto !important; }
       .nav-hamburger { gap: 6px; }
 
-      /* ── HERO SHELL — natural flow; the video autoplays on phone ── */
+      /* ── HERO SHELL — pinned, so the clip scrubs with scroll ──
+         Was height:auto/min-height:100vh, which left the section exactly one
+         viewport tall. The scrub derives its progress from
+         (hero height - viewport), so that measured 0 and the scroll handler
+         bailed on every event — the phone had no choice but to autoplay.
+         200vh gives it one viewport of travel to scrub through, same idea as
+         desktop's 250vh, just shorter so the phone clears the hero sooner. */
       .hero {
-        height: auto;
-        min-height: 100vh;
+        height: calc(var(--vh, 1vh) * 200);
+        min-height: 0;
         background: #0D0C0A;
       }
 
-      /* Flex column: nav-spacer → video → content */
+      /* Flex column: nav-spacer → video → content, pinned for one viewport */
       .hero-sticky-track {
-        position: relative !important;
-        top: auto;
-        height: auto;
-        min-height: 100vh;
+        position: sticky !important;
+        top: 0;
+        height: calc(var(--vh, 1vh) * 100);
+        min-height: 0;
         display: flex;
         flex-direction: column;
         padding-top: 0;
-        overflow: visible;
+        overflow: hidden;
         background: #0D0C0A;
       }
 
