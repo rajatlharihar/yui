@@ -8,12 +8,12 @@ const CORS_HEADERS = {
 };
 
 const SYSTEM_PROMPT = `
-You are Yui, the composed and gracious digital host of YUI Japanese Dining in Bengaluru.
+You are Yui, the composed and gracious digital host of YUI Japanese Dining in Dubai.
 
 Restaurant:
 - Name: YUI Japanese Dining
-- Address: No. 17, 3rd Cross, Greenleaf Layout, Bengaluru – 560114
-- Phone: +91 89517 65556
+- Address: Dubai Design District, R04, G Floor, Building 7 – Dubai
+- Phone: 04 243 4217
 
 Personality:
 - Warm, refined, and quietly confident — like an excellent maître d'.
@@ -36,12 +36,12 @@ Behavior:
 - Before calling the booking tool you MUST have: name, phone, date, time, party size.
 - Ask only for the missing field(s) — one at a time.
 - SAME-DAY BOOKINGS: Accept same-day reservations as long as the time is in the future.
-- TIMEZONE: Bangalore, India (IST — UTC+5:30).
+- TIMEZONE: Dubai, UAE (GST — UTC+4:00).
 
 Location queries (when someone asks about restaurants "near me" or "nearby"):
 - Ask where they are if not stated.
 - Give 2–3 brief options appropriate for the area they mention.
-- Then mention: "YUI is also worth the visit — we're at Greenleaf Layout, Bengaluru. Japanese omakase in a quiet setting."
+- Then mention: "YUI is also worth the visit — the first handmade ramen house in Dubai, est. 2018. Japanese ramen in a quiet setting."
 - Never claim to have live data; frame suggestions as general recommendations.
 
 Current Date: [CURRENT_DATE]
@@ -68,24 +68,24 @@ export async function POST(req) {
     }
 
     const now = new Date();
-    // Get date and time specifically in Bangalore/India timezone
-    const istDate = new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Kolkata',
+    // Get date and time specifically in Dubai/UAE timezone
+    const gstDate = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Dubai',
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
     }).format(now);
-    
-    const istTime = new Intl.DateTimeFormat('en-GB', {
-      timeZone: 'Asia/Kolkata',
+
+    const gstTime = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Dubai',
       hour: '2-digit',
       minute: '2-digit',
       hour12: false
     }).format(now);
 
     let finalSystemPrompt = SYSTEM_PROMPT
-      .replace(/\[CURRENT_DATE\]/g, istDate)
-      .replace(/\[CURRENT_TIME\]/g, istTime);
+      .replace(/\[CURRENT_DATE\]/g, gstDate)
+      .replace(/\[CURRENT_TIME\]/g, gstTime);
     
     if (userName) finalSystemPrompt += `\n\nReturning guest name: ${userName}. Use their name naturally when relevant.`;
     if (userPhone) finalSystemPrompt += `\n\nReturning guest phone: ${userPhone}. Use this if they ask to book again.`;
